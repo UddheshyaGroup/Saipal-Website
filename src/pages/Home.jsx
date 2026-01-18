@@ -198,7 +198,7 @@ export default function Home() {
         </div>
       </section>
 
-      Scholarship Highlight
+      {/* Scholarship Highlight
       <section className="bg-white text-gray-900 py-20">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold mb-6">Scholarships for Future Leaders</h2>
@@ -214,7 +214,7 @@ export default function Home() {
             Apply for Scholarship
           </Link>
         </div>
-      </section>
+      </section> */}
 
       {/* Call to Action Footer */}
       <section className="bg-white text-gray-900 py-16 text-center">

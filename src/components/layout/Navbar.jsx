@@ -4,7 +4,6 @@ import { Menu, X, ChevronDown } from "lucide-react";
 
 export default function Navbar() {
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
-  const [aboutOpen, setAboutOpen] = useState(false);
   const [programsOpen, setProgramsOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
@@ -76,66 +75,22 @@ export default function Navbar() {
             Home
           </NavLink>
 
-          {/* About Dropdown */}
-          <div className="relative border-b border-gray-200 pb-2">
-            <button
-              className={`flex items-center justify-between w-full ${location.pathname.includes("/about") || location.pathname.includes("/gallery")
-                  ? "text-accent font-semibold"
-                  : "hover:text-primary"
-                }`}
-              onClick={() => setAboutOpen(!aboutOpen)}
-            >
-              About <ChevronDown size={16} />
-            </button>
-
-            {aboutOpen && (
-              <div className="mt-2 ml-4 flex flex-col gap-2">
-                <NavLink
-                  to="/about/introduction"
-                  className="hover:text-primary text-sm"
-                  onClick={() => setDesktopMenuOpen(false)}
-                >
-                  Introduction
-                </NavLink>
-                <NavLink
-                  to="/about/principal"
-                  className="hover:text-primary text-sm"
-                  onClick={() => setDesktopMenuOpen(false)}
-                >
-                  Message from Principal
-                </NavLink>
-                <NavLink
-                  to="/about/life-at-saipal"
-                  className="hover:text-primary text-sm"
-                  onClick={() => setDesktopMenuOpen(false)}
-                >
-                  Life at Saipal
-                </NavLink>
-                <NavLink
-                  to="/gallery"
-                  className="hover:text-primary text-sm"
-                  onClick={() => setDesktopMenuOpen(false)}
-                >
-                  Gallery
-                </NavLink>
-                <NavLink
-                  to="/about/events"
-                  className="hover:text-primary text-sm"
-                  onClick={() => setDesktopMenuOpen(false)}
-                >
-                  Events
-                </NavLink>
-              </div>
-            )}
-          </div>
+          <NavLink
+            to="/about"
+            className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+            onClick={() => setDesktopMenuOpen(false)}
+          >
+            About
+          </NavLink>
 
           {/* Programs Dropdown */}
           <div className="relative border-b border-gray-200 pb-2">
             <button
-              className={`flex items-center justify-between w-full ${location.pathname.includes("/programs")
+              className={`flex items-center justify-between w-full ${
+                location.pathname.includes("/programs")
                   ? "text-accent font-semibold"
                   : "hover:text-primary"
-                }`}
+              }`}
               onClick={() => setProgramsOpen(!programsOpen)}
             >
               Programs <ChevronDown size={16} />
@@ -182,7 +137,13 @@ export default function Navbar() {
           >
             Scholarships
           </NavLink>
-
+          <NavLink
+            to="/gallery"
+            className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+            onClick={() => setDesktopMenuOpen(false)}
+          >
+            Gallery
+          </NavLink>
           <NavLink
             to="/blog"
             className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
@@ -211,25 +172,13 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="md:hidden bg-white border-t">
           <nav className="flex flex-col px-6 py-4 gap-4">
-            {/* About Mobile Dropdown */}
-            <div>
-              <button
-                className={`flex items-center justify-between w-full ${location.pathname.includes("/about") ? "text-accent font-semibold" : ""
-                  }`}
-                onClick={() => setAboutOpen(!aboutOpen)}
-              >
-                About <ChevronDown size={16} />
-              </button>
-              {aboutOpen && (
-                <div className="mt-2 ml-4 flex flex-col gap-2 border-l border-gray-200 pl-4">
-                  <NavLink to="/about/introduction" onClick={() => setMobileOpen(false)} className="hover:text-primary text-sm">Introduction</NavLink>
-                  <NavLink to="/about/principal" onClick={() => setMobileOpen(false)} className="hover:text-primary text-sm">Message from Principal</NavLink>
-                  <NavLink to="/about/life-at-saipal" onClick={() => setMobileOpen(false)} className="hover:text-primary text-sm">Life at Saipal</NavLink>
-                  <NavLink to="/gallery" onClick={() => setMobileOpen(false)} className="hover:text-primary text-sm">Gallery</NavLink>
-                  <NavLink to="/about/events" onClick={() => setMobileOpen(false)} className="hover:text-primary text-sm">Events</NavLink>
-                </div>
-              )}
-            </div>
+            <NavLink
+              to="/about"
+              onClick={() => setMobileOpen(false)}
+              className={({ isActive }) => (isActive ? "text-accent font-semibold" : "")}
+            >
+              About
+            </NavLink>
             <NavLink
               to="/programs"
               onClick={() => setMobileOpen(false)}
