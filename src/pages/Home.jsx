@@ -109,15 +109,11 @@ export default function Home() {
       {/* ================= STATS ================= */}
       <section className="bg-primary py-20">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-white text-center mb-14">
-            Saipal Academy at a Glance
-          </h2>
-
-          <div className="grid md:grid-cols-4 gap-10 text-center">
-            <StatCard label="Years of Excellence" value={20} suffix="+" />
-            <StatCard label="Students Graduated" value={2500} suffix="+" />
-            <StatCard label="College Placement Rate" value={95} suffix="%" />
-            <StatCard label="Qualified Faculty" value={100} suffix="+" />
+          <div className="grid md:grid-cols-4 gap-16 text-center">
+            <StatCard value={20} suffix="+" label="Years of Excellence" />
+            <StatCard value={2500} suffix="+" label="Students Graduated" />
+            <StatCard value={95} suffix="%" label="Placement Rate" />
+            <StatCard value={100} suffix="+" label="Qualified Faculty" />
           </div>
         </div>
       </section>
@@ -283,7 +279,7 @@ function AchievementCard({ icon, title, description }) {
   );
 }
 
-function StatCard({ label, value, suffix }) {
+function StatCard({ value, suffix, label }) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -301,11 +297,28 @@ function StatCard({ label, value, suffix }) {
   }, [value]);
 
   return (
-    <div className="bg-gray-50 p-10 rounded-xl shadow-md">
-      <h3 className="text-5xl font-extrabold text-primary">
-        {count}{suffix}
-      </h3>
-      <p className="mt-4 text-lg text-gray-700 font-medium">{label}</p>
+    <div className="flex flex-col items-center">
+      {/* Laurel Container */}
+      <div className="relative w-[520px] h-[320px] mb-8">
+        <img
+          src="/award.png"
+          alt="Achievement"
+          className="w-full h-full object-contain"
+          loading="lazy"
+        />
+
+        {/* Number + Title inside image */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 pointer-events-none">
+          <h3 className="text-4xl font-extrabold text-white">
+            {count}
+            {suffix}
+          </h3>
+          <p className="text-sm font-semibold text-white text-center px-2">
+            {label}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
+
