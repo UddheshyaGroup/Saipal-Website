@@ -88,6 +88,120 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ================= NOTICE TICKER ================= */}
+      <motion.section
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="bg-accent text-white overflow-hidden"
+      >
+        <div className="max-w-7xl mx-auto px-6 h-12 flex items-center gap-4">
+          {/* Static label */}
+          <span className="font-bold whitespace-nowrap leading-none">
+            📢 Important Notice:
+          </span>
+
+          {/* Scrolling text wrapper */}
+          <div className="relative flex-1 overflow-hidden">
+            <motion.div
+              className="whitespace-nowrap leading-none"
+              animate={{ x: ["100%", "-100%"] }}
+              transition={{
+                repeat: Infinity,
+                duration: 18,
+                ease: "linear",
+              }}
+            >
+              Admissions Open for 2025 Batch • NEB Pre-Board Exam Routine Published •
+              Holiday on Maghe Sankranti
+            </motion.div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* ================= NOTICE BOARD ================= */}
+      <section className="bg-white py-16">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-between mb-10"
+          >
+            <h2 className="text-3xl font-bold text-primary">
+              📌 Notice Board
+            </h2>
+
+            <Link
+              to="/notices"
+              className="text-accent font-semibold hover:underline"
+            >
+              View All
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: { staggerChildren: 0.15 },
+              },
+            }}
+            className="grid md:grid-cols-3 gap-8"
+          >
+            {[
+              {
+                title: "Admissions Open for 2025 Batch",
+                date: "Jan 15, 2026",
+                tag: "New",
+                color: "bg-accent",
+              },
+              {
+                title: "NEB +2 Pre-Board Examination Routine Published",
+                date: "Jan 10, 2026",
+                tag: "Exam",
+                color: "bg-primary",
+              },
+              {
+                title: "Holiday Notice: Maghe Sankranti",
+                date: "Jan 05, 2026",
+                tag: "Holiday",
+                color: "bg-gray-600",
+              },
+            ].map((notice, i) => (
+              <motion.div
+                key={i}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0 },
+                }}
+                whileHover={{ y: -6 }}
+                className="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition"
+              >
+                <span
+                  className={`inline-block mb-3 text-xs font-semibold text-white px-3 py-1 rounded-full ${notice.color}`}
+                >
+                  {notice.tag}
+                </span>
+
+                <h3 className="font-semibold text-lg text-primary mb-2">
+                  {notice.title}
+                </h3>
+
+                <p className="text-sm text-gray-500">
+                  Published on {notice.date}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
       {/* ================= WHY CHOOSE ================= */}
       <section className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-6">
@@ -173,7 +287,7 @@ export default function Home() {
               description="National Education Board curriculum focused on academic excellence and holistic development."
             />
             <ProgramCard
-              image="/pabson.png"
+              image="/neb.png"
               title="School Level"
               description="Strong academic foundation nurturing curiosity, discipline, and lifelong learning skills."
             />
@@ -209,8 +323,8 @@ export default function Home() {
             }}
             className="grid md:grid-cols-4 gap-10 text-center"
           >
-            <StatCard label="Years of Excellence" value={20} suffix="+" />
-            <StatCard label="Students Graduated" value={2500} suffix="+" />
+            <StatCard label="Years of Excellence" value={25} suffix="+" />
+            <StatCard label="Students Graduated" value={9000} suffix="+" />
             <StatCard label="College Placement Rate" value={95} suffix="%" />
             <StatCard label="Qualified Faculty" value={100} suffix="+" />
           </motion.div>

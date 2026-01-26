@@ -8,12 +8,14 @@ import Scholarships from "../pages/Scholarships";
 import Faculty from "../pages/Faculty";
 import Gallery from "../pages/Gallery";
 import Blog from "../pages/Blog";
+import Legacy from "../pages/legacy";
 import BlogDetail from "../pages/BlogDetail";
 import Contact from "../pages/Contact";
 import InquiryForm from "../pages/InquiryForm";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ScrollToTop from "../components/layout/ScrollToTop";
+import Career from "../pages/career";
 
 function AppRouter() {
   return (
@@ -33,6 +35,8 @@ function AppRouter() {
         <Route path="/blog/:id" element={<BlogDetail />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/enquiry" element={<InquiryForm />} />
+        <Route path="/legacy" element={<Legacy />} />
+        <Route path="/career" element={<Career />} />
       </Routes>
 
       <Footer />

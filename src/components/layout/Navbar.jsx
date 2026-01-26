@@ -140,7 +140,7 @@ export default function Navbar() {
               )}
             </div>
 
-            {["gallery", "blog", "faculty", "contact"].map(
+            {["gallery", "blog", "faculty", "contact", "legacy", "career"].map(
               (route) => (
                 <NavLink
                   key={route}
@@ -167,6 +167,7 @@ export default function Navbar() {
               <NavLink to="/blog" onClick={() => setMobileOpen(false)}>Blog</NavLink>
               <NavLink to="/faculty" onClick={() => setMobileOpen(false)}>Faculty</NavLink>
               <NavLink to="/contact" onClick={() => setMobileOpen(false)}>Contact</NavLink>
+              <NavLink to="/legacy" onClick={() => setMobileOpen(false)}>Legacy</NavLink>
 
               <NavLink
                 to="/admissions"

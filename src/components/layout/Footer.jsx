@@ -63,7 +63,14 @@ export default function Footer() {
           <ul className="space-y-4 text-gray-300">
             <li className="flex items-center gap-3">
               <FaMapMarkerAlt />
-              <span>Dhumbarahi, Kathmandu, Nepal</span>
+              <a
+                href="https://share.google/IoNNEL9YgYxK3Ge6q"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-accent transition"
+              >
+                Dhumbarahi, Kathmandu, Nepal
+              </a>
             </li>
             <li className="flex items-center gap-3">
               <FaPhoneAlt />
@@ -87,23 +94,37 @@ export default function Footer() {
         </div>
 
         {/* Office Hours */}
+        {/* Academic Hours */}
         <div>
           <h3 className="text-xl font-bold mt-6 mb-6">Academic Hours</h3>
 
           <ul className="space-y-4 text-gray-300">
+            {/* School Timing */}
             <li className="flex items-start gap-3">
               <FaClock className="mt-1" />
               <div>
-                <p className="font-medium text-white">Sunday – Friday</p>
-                <p>9:00 AM – 5:00 PM</p>
+                <p className="font-medium text-white">School</p>
+                <p>9:00 AM – 6:00 PM</p>
               </div>
             </li>
 
+            {/* College Timing */}
             <li className="flex items-start gap-3">
               <FaClock className="mt-1" />
               <div>
-                <p className="font-medium text-white">Admissions Desk</p>
-                <p>9:00 AM – 4:00 PM</p>
+                <p className="font-medium text-white">College</p>
+
+                <p>
+                  6:00 AM – 11:00 AM{" "}
+                  <span className="text-gray-400">(Management)</span>
+                </p>
+
+                <p>
+                  11:00 AM – 5:00 PM
+                  <span className="block text-gray-400">
+                    (Science & A-Levels)
+                  </span>
+                </p>
               </div>
             </li>
           </ul>

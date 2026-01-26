@@ -187,7 +187,7 @@ export default function About() {
           </div>
 
           {/* CTA SECTION */}
-          <div className="mt-20 text-center max-w-3xl mx-auto text-white">
+          {/* <div className="mt-20 text-center max-w-3xl mx-auto text-white">
             <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
               Ready to Begin Your Learning Journey?
             </h3>
@@ -201,7 +201,7 @@ export default function About() {
             >
               Make an Enquiry
             </Link>
-          </div>
+          </div> */}
         </div>
       </section>
 
