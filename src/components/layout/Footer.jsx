@@ -12,7 +12,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-primary text-white py-16 mt-20">
+    <footer className="bg-primary text-white pb-16 pt-0">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-10">
 
         {/* About Saipal */}

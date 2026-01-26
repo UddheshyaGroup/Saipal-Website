@@ -29,28 +29,39 @@ export default function Navbar() {
     <>
       {/* 🔹 TOP INFO BAR */}
       <div
-        className={`bg-accent text-white text-sm transition-all duration-300 ${
-          showTopBar ? "h-10 opacity-100" : "h-0 opacity-0 overflow-hidden"
-        }`}
+        className={`bg-accent text-white text-[11px] sm:text-sm transition-all duration-300 ${showTopBar ? "h-8 sm:h-10 opacity-100" : "h-0 opacity-0 overflow-hidden"
+          }`}
       >
-        <div className="max-w-7xl mx-auto px-6 h-10 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 h-full flex items-center justify-between gap-2">
+
           {/* Left */}
-          <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2">
-              <Mail size={14} /> mail@saipal.edu.np
+          <div className="flex items-center gap-3 sm:gap-6 min-w-0">
+            <span className="flex items-center gap-1 truncate">
+              <Mail size={12} className="shrink-0" />
+              <span className="truncate">mail@saipal.edu.np</span>
             </span>
-            <span className="flex items-center gap-2">
-              <Phone size={14} /> +977-01-4378154
+
+            <span className="flex items-center gap-1 truncate">
+              <Phone size={12} className="shrink-0" />
+              <span className="truncate">+977-01-4378154</span>
             </span>
           </div>
 
-          {/* Right */}
-          <div className="flex items-center gap-2">
-            <MapPin size={14} />
-            <span>Dhumbarahi, Kathmandu, Nepal</span>
+          <div className="flex items-center gap-1 min-w-0">
+            <MapPin size={12} className="shrink-0" />
+
+            <span className="truncate hidden sm:block">
+              Dhumbarahi, Kathmandu, Nepal
+            </span>
+
+            <span className="truncate sm:hidden">
+              Dhumbarahi, Ktm
+            </span>
           </div>
+
         </div>
       </div>
+
 
       {/* 🔹 MAIN NAVBAR */}
       <header className="sticky top-0 z-50 bg-white border-b">
@@ -111,11 +122,10 @@ export default function Navbar() {
             {/* Programs */}
             <div className="border-b border-gray-200 pb-2">
               <button
-                className={`flex justify-between w-full ${
-                  location.pathname.includes("/programs")
-                    ? "text-accent font-semibold"
-                    : ""
-                }`}
+                className={`flex justify-between w-full ${location.pathname.includes("/programs")
+                  ? "text-accent font-semibold"
+                  : ""
+                  }`}
                 onClick={() => setProgramsOpen(!programsOpen)}
               >
                 Programs <ChevronDown size={16} />
@@ -130,7 +140,7 @@ export default function Navbar() {
               )}
             </div>
 
-            {["admissions", "scholarships", "gallery", "blog", "faculty", "contact"].map(
+            {["gallery", "blog", "faculty", "contact"].map(
               (route) => (
                 <NavLink
                   key={route}
@@ -153,7 +163,9 @@ export default function Navbar() {
             <nav className="flex flex-col px-6 py-4 gap-4">
               <NavLink to="/about" onClick={() => setMobileOpen(false)}>About</NavLink>
               <NavLink to="/programs" onClick={() => setMobileOpen(false)}>Programs</NavLink>
-              <NavLink to="/admissions" onClick={() => setMobileOpen(false)}>Admissions</NavLink>
+              <NavLink to="/gallery" onClick={() => setMobileOpen(false)}>Gallery</NavLink>
+              <NavLink to="/blog" onClick={() => setMobileOpen(false)}>Blog</NavLink>
+              <NavLink to="/faculty" onClick={() => setMobileOpen(false)}>Faculty</NavLink>
               <NavLink to="/contact" onClick={() => setMobileOpen(false)}>Contact</NavLink>
 
               <NavLink
