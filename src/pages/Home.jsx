@@ -36,55 +36,56 @@ export default function Home() {
   return (
     <main className="overflow-x-hidden">
       {/* ================= HERO SECTION ================= */}
-      <section className="relative bg-primary text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 py-14 grid md:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6"
-          >
-            <h1 className="text-5xl font-extrabold leading-tight">
-              Empowering Future Leaders <br />
-              with <span className="text-accent">World-Class Education</span>
-            </h1>
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 -z-10">
+          <img
+            src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=2000&q=80"
+            alt="Outdoor university campus shot"
+            className="h-full w-full object-cover brightness-105 contrast-105"
+          />
 
-            <p className="text-lg max-w-xl">
-              Saipal Academy offers Cambridge A-Levels, NEB +2, and School
-              programs that prepare students for success both in Nepal and
-              internationally.
-            </p>
+          {/* Overlay (lighter = more image visible) */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/65 to-primary/30" />
+        </div>
 
-            <div className="flex flex-wrap gap-4 mt-6">
-              <Link
-                to="/admissions"
-                className="bg-accent px-8 py-3 rounded-md text-white font-semibold hover:opacity-90 transition"
-              >
-                Apply Now
-              </Link>
+        {/* Content */}
+        <div className="relative z-10 w-full">
+          <div className="max-w-7xl mx-auto px-6 py-24">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9 }}
+              className="max-w-3xl space-y-7 text-left"
+            >
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-white">
+                Empowering Future Leaders <br />
+                with <span className="text-accent">World-Class Education</span>
+              </h1>
 
-              <Link
-                to="/programs"
-                className="border border-white px-8 py-3 rounded-md text-white font-semibold hover:bg-white hover:text-primary transition"
-              >
-                Explore Programs
-              </Link>
-            </div>
-          </motion.div>
+              <p className="text-base sm:text-lg text-white/90 font-medium leading-relaxed">
+                Saipal Academy offers Cambridge A-Levels, NEB +2, and School
+                programs that prepare students for success both in Nepal and
+                internationally.
+              </p>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="hidden md:flex justify-center"
-          >
-            <img
-              src="/images/logo.png"
-              alt="Saipal Academy Campus"
-              className="rounded-3xl shadow-xl max-w-full object-cover"
-              loading="lazy"
-            />
-          </motion.div>
+              <div className="flex flex-wrap gap-4 pt-4">
+                <Link
+                  href="/admissions"
+                  className="bg-accent px-8 py-3.5 rounded-xl text-white font-bold shadow-lg hover:scale-105 hover:opacity-95 transition"
+                >
+                  Apply Now
+                </Link>
+
+                <Link
+                  href="/programs"
+                  className="border-2 border-white/80 px-8 py-3.5 rounded-xl text-white font-bold hover:bg-white hover:text-primary transition"
+                >
+                  Explore Programs
+                </Link>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 

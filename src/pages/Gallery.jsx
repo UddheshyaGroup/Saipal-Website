@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 /* ---------------- GALLERY DATA ---------------- */
 
@@ -57,77 +57,165 @@ const galleryImages = [
 /* ---------------- COMPONENT ---------------- */
 
 export default function Gallery() {
-  const [activeImage, setActiveImage] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const thumbContainerRef = useRef(null);
 
-  // Disable background scroll when popup is open
   useEffect(() => {
-    if (activeImage) {
+    if (activeIndex !== null) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = "";
     }
-  }, [activeImage]);
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeIndex]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (activeIndex === null) return;
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        nextImage();
+      }
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        prevImage();
+      }
+      if (e.key === "Escape") setActiveIndex(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeIndex]);
+
+  const openImage = (index) => setActiveIndex(index);
+  const closeModal = () => setActiveIndex(null);
+  const nextImage = () => setActiveIndex((prev) => (prev + 1) % galleryImages.length);
+  const prevImage = () =>
+    setActiveIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+
+  useEffect(() => {
+    if (thumbContainerRef.current && activeIndex !== null) {
+      const activeThumb = thumbContainerRef.current.children[activeIndex];
+      if (activeThumb) {
+        activeThumb.scrollIntoView({
+          behavior: "smooth",
+          inline: "center",
+          block: "nearest",
+        });
+      }
+    }
+  }, [activeIndex]);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12 text-gray-900">
+    <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="text-center mb-10">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-3">
+      <div className="mb-10 text-center">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
           School Gallery
         </h1>
-        <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">
-          Discover the vibrant moments, events, and everyday experiences that
-          make life at Saipal inspiring and memorable.
+        <p className="mt-3 text-base text-gray-600 sm:text-lg">
+          Moments that make Saipal Academy special – events, activities, and everyday joy.
         </p>
       </div>
 
-      {/* Gallery Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {galleryImages.map((img) => (
+      {/* Grid */}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        {galleryImages.map((img, index) => (
           <button
             key={img.id}
-            onClick={() => setActiveImage(img)}
-            className="group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-lg transition bg-gray-100"
+            type="button"
+            onClick={() => openImage(index)}
+            className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100 shadow-sm transition-all hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             <img
               src={img.image}
               alt={img.title}
-              className="w-full h-40 sm:h-48 md:h-52 object-cover group-hover:scale-105 transition duration-500"
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-
-            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-end">
-              <p className="text-white text-sm font-semibold p-3">
-                {img.title}
-              </p>
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+            <p className="absolute bottom-3 left-3 right-3 truncate text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
+              {img.title}
+            </p>
           </button>
         ))}
       </div>
 
-      {/* Popup Modal */}
-      {activeImage && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-            {/* Top Bar */}
-            <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-accent text-white">
-              <h2 className="text-sm sm:text-base font-semibold truncate">
-                {activeImage.title}
+      {/* Modal */}
+      {activeIndex !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 sm:p-4 backdrop-blur-md transition-opacity duration-300">
+          {/* Modal Container - slightly narrower & more elegant on large screens */}
+          <div className="relative flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200/50 md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
+
+            {/* Header - clean & professional */}
+            <div className="flex items-center justify-between border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-5 py-3.5 sm:px-6">
+              <h2 className="truncate pr-6 text-lg font-semibold text-gray-800 sm:text-xl">
+                {galleryImages[activeIndex].title}
               </h2>
               <button
-                onClick={() => setActiveImage(null)}
-                className="hover:text-red-300 transition"
+                onClick={closeModal}
+                className="flex items-center justify-center rounded-full bg-white/80 p-2 text-gray-600 shadow-sm transition hover:bg-white hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
+                aria-label="Close gallery"
               >
-                <X size={26} />
+                <X size={26} strokeWidth={2.5} />
               </button>
             </div>
 
-            {/* Image Area */}
-            <div className="flex-1 flex items-center justify-center p-3 sm:p-5 overflow-hidden">
+            {/* Main Image Area - better proportions & centering */}
+            <div className="relative flex flex-1 items-center justify-center bg-gradient-to-b from-gray-50 to-white p-4 sm:p-8">
               <img
-                src={activeImage.image}
-                alt={activeImage.title}
-                className="max-h-full max-w-full object-contain"
+                src={galleryImages[activeIndex].image}
+                alt={galleryImages[activeIndex].title}
+                className="h-[60vh] sm:h-[70vh] max-w-full object-contain rounded-lg shadow-xl"
               />
+
+              {/* Navigation Arrows - larger touch areas, semi-transparent */}
+              <button
+                onClick={prevImage}
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:h-14 sm:w-14"
+                aria-label="Previous image"
+              >
+                <ChevronLeft size={32} strokeWidth={2.5} />
+              </button>
+
+              <button
+                onClick={nextImage}
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:h-14 sm:w-14"
+                aria-label="Next image"
+              >
+                <ChevronRight size={32} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            {/* Footer with Thumbnails + Optional Caption */}
+            <div className="border-t border-gray-200 bg-gray-50 px-4 py-4 sm:px-6">
+              {/* Title/Caption repeated here for context when scrolling thumbnails */}
+              <p className="mb-3 text-center text-sm font-medium text-gray-700 sm:hidden">
+                {galleryImages[activeIndex].title}
+              </p>
+
+              <div
+                ref={thumbContainerRef}
+                className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-blue-400 sm:gap-3"
+              >
+                {galleryImages.map((img, idx) => (
+                  <button
+                    key={img.id}
+                    onClick={() => setActiveIndex(idx)}
+                    className={`group flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-200 ${idx === activeIndex
+                      ? "border-blue-500 shadow-md scale-105"
+                      : "border-transparent hover:border-blue-300 hover:shadow-sm hover:scale-105"
+                      }`}
+                  >
+                    <img
+                      src={img.image}
+                      alt={img.title}
+                      className="h-14 w-20 object-cover transition-transform duration-300 group-hover:scale-110 sm:h-16 sm:w-24"
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

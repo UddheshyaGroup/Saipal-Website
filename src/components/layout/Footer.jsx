@@ -18,7 +18,7 @@ export default function Footer() {
         {/* About Saipal */}
         <div>
           <h3 className="text-xl font-bold mt-6 mb-6">Saipal Academy</h3>
-          <p className="text-gray-300 mb-4">
+          <p className="text-gray-200  mb-4">
             Providing world-class education through Cambridge A-Levels, NEB +2,
             and School programs with a focus on excellence and leadership.
           </p>
@@ -49,8 +49,6 @@ export default function Footer() {
             <li><a href="/" className="hover:text-accent transition">Home</a></li>
             <li><a href="/about" className="hover:text-accent transition">About Us</a></li>
             <li><a href="/programs" className="hover:text-accent transition">Programs</a></li>
-            <li><a href="/admissions" className="hover:text-accent transition">Admissions</a></li>
-            <li><a href="/scholarships" className="hover:text-accent transition">Scholarships</a></li>
             <li><a href="/gallery" className="hover:text-accent transition">Gallery</a></li>
             <li><a href="/faculty" className="hover:text-accent transition">Faculty</a></li>
             <li><a href="/contact" className="hover:text-accent transition">Contact</a></li>
