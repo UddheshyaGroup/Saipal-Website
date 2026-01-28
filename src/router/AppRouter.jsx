@@ -8,14 +8,17 @@ import Scholarships from "../pages/Scholarships";
 import Faculty from "../pages/Faculty";
 import Gallery from "../pages/Gallery";
 import Blog from "../pages/Blog";
+import BlogDetail from "../pages/BlogDetail";
 import Contact from "../pages/Contact";
-
+import InquiryForm from "../pages/InquiryForm";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import ScrollToTop from "../components/layout/ScrollToTop";
 
 function AppRouter() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Navbar />
 
       <Routes>
@@ -27,7 +30,9 @@ function AppRouter() {
         <Route path="/faculty" element={<Faculty />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:id" element={<BlogDetail />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/enquiry" element={<InquiryForm />} />
       </Routes>
 
       <Footer />
