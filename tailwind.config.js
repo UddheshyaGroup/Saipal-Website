@@ -1,17 +1,14 @@
 // tailwind.config.js
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,jsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       colors: {
-        primary: "#00AEEF",
-        accent: "#2E3192",
+        accent: "#00AEEF",
+        primary: "#2E3192",
       },
       fontFamily: {
-        sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ["Poppins", "ui-sans-serif", "system-ui", "sans-serif"],
       },
     },
   },
