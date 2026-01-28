@@ -164,17 +164,17 @@ export default function Home() {
             className="grid md:grid-cols-3 gap-10"
           >
             <ProgramCard
-              image="public/a-levels.jpeg"
+              image="/a-levels.jpeg"
               title="Cambridge A-Levels"
               description="Globally recognized curriculum designed to prepare students for leading universities worldwide."
             />
             <ProgramCard
-              image="public/+2lelvels.jpeg"
+              image="/+2lelvels.jpeg"
               title="NEB +2"
               description="National Education Board curriculum focused on academic excellence and holistic development."
             />
             <ProgramCard
-              image="public/school-level.jpeg"
+              image="/school-level.jpeg"
               title="School Level"
               description="Strong academic foundation nurturing curiosity, discipline, and lifelong learning skills."
             />
