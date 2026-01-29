@@ -46,7 +46,7 @@ export default function Home() {
           />
 
           {/* Overlay (lighter = more image visible) */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/65 to-primary/30" />
+          <div className="absolute inset-0 bg-gradient-to-r from-accent/85 via-accent/65 to-accent/30" />
         </div>
 
         {/* Content */}
@@ -60,7 +60,7 @@ export default function Home() {
             >
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-white">
                 Empowering Future Leaders <br />
-                with <span className="text-accent">World-Class Education</span>
+                with <span className="text-primary">World-Class Education</span>
               </h1>
 
               <p className="text-base sm:text-lg text-white/90 font-medium leading-relaxed">
@@ -72,7 +72,7 @@ export default function Home() {
               <div className="flex flex-wrap gap-4 pt-4">
                 <Link
                   href="/admissions"
-                  className="bg-accent px-8 py-3.5 rounded-xl text-white font-bold shadow-lg hover:scale-105 hover:opacity-95 transition"
+                  className="bg-primary px-8 py-3.5 rounded-xl text-white font-bold shadow-lg hover:scale-105 hover:opacity-95 transition"
                 >
                   Apply Now
                 </Link>
@@ -115,22 +115,22 @@ export default function Home() {
             className="grid md:grid-cols-4 gap-10 max-w-6xl mx-auto"
           >
             <FeatureCard
-              icon={<FaGraduationCap className="text-accent text-5xl" />}
+              icon={<FaGraduationCap className="text-primary text-5xl" />}
               title="Global Curriculum"
               description="Cambridge A-Levels & NEB +2 aligned with international standards."
             />
             <FeatureCard
-              icon={<FaChalkboardTeacher className="text-accent text-5xl" />}
+              icon={<FaChalkboardTeacher className="text-primary text-5xl" />}
               title="Experienced Faculty"
               description="Highly qualified teachers committed to student excellence."
             />
             <FeatureCard
-              icon={<FaUsers className="text-accent text-5xl" />}
+              icon={<FaUsers className="text-primary text-5xl" />}
               title="Student-Centered Learning"
               description="Personal attention with focus on holistic development."
             />
             <FeatureCard
-              icon={<FaAward className="text-accent text-5xl" />}
+              icon={<FaAward className="text-primary text-5xl" />}
               title="Scholarship Programs"
               description="Merit-based scholarships for deserving students."
             />
@@ -164,17 +164,17 @@ export default function Home() {
             className="grid md:grid-cols-3 gap-10"
           >
             <ProgramCard
-              image="/alevels.png"
+              image="/alevel.jpeg"
               title="Cambridge A-Levels"
               description="Globally recognized curriculum designed to prepare students for leading universities worldwide."
             />
             <ProgramCard
-              image="/neb.png"
+              image="/neb.jpeg"
               title="NEB +2"
               description="National Education Board curriculum focused on academic excellence and holistic development."
             />
             <ProgramCard
-              image="/pabson.png"
+              image="/pabson.jpeg"
               title="School Level"
               description="Strong academic foundation nurturing curiosity, discipline, and lifelong learning skills."
             />
@@ -347,7 +347,7 @@ export default function Home() {
           </p>
           <Link
             to="/admissions"
-            className="bg-accent text-white px-12 py-4 rounded-md font-semibold hover:opacity-90 transition"
+            className="bg-primary text-white px-12 py-4 rounded-md font-semibold hover:opacity-90 transition"
           >
             Apply Now
           </Link>
@@ -357,7 +357,7 @@ export default function Home() {
       {/* ================= VIRTUAL TOUR BUTTON ================= */}
       <button
         onClick={() => setTourOpen(true)}
-        className="fixed bottom-6 right-6 z-50 bg-accent text-white px-6 py-3 rounded-full shadow-lg font-semibold hover:scale-105 transition"
+        className="fixed bottom-6 right-6 z-50 bg-primary text-white px-6 py-3 rounded-full shadow-lg font-semibold hover:scale-105 transition"
       >
         Click for Virtual Tour
       </button>
@@ -442,13 +442,13 @@ function ProgramCard({ image, title, description }) {
         <div className="flex gap-4">
           <Link
             to="/programs"
-            className="w-full border border-accent text-accent px-5 py-3 rounded-md font-semibold hover:bg-accent hover:text-white transition"
+            className="w-full border border-primary text-primary px-5 py-3 rounded-md font-semibold hover:bg-primary hover:text-white transition"
           >
             Learn More
           </Link>
           <Link
             to="/contact"
-            className="w-full bg-accent text-white px-5 py-3 rounded-md font-semibold hover:opacity-90 transition"
+            className="w-full bg-primary text-white px-5 py-3 rounded-md font-semibold hover:opacity-90 transition"
           >
             Apply Now
           </Link>
@@ -468,7 +468,7 @@ function FacilityCard({ icon, title, description }) {
       whileHover={{ scale: 1.05 }}
       className="bg-white p-6 rounded-lg shadow-md text-center"
     >
-      <div className="text-accent text-4xl mb-4 flex justify-center">
+      <div className="text-primary text-4xl mb-4 flex justify-center">
         {icon}
       </div>
       <h3 className="text-xl font-semibold mb-2 text-primary">{title}</h3>
@@ -488,7 +488,7 @@ function AchievementCard({ icon, title, description }) {
       transition={{ duration: 0.3 }}
       className="bg-gray-50 p-10 rounded-xl shadow-md text-center"
     >
-      <div className="text-accent text-5xl mb-6 flex justify-center">
+      <div className="text-primary text-5xl mb-6 flex justify-center">
         {icon}
       </div>
       <h3 className="text-2xl font-semibold mb-4 text-primary">{title}</h3>

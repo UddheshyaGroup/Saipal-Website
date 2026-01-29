@@ -78,7 +78,7 @@ export default function About() {
             whileHover={{ y: -10 }}
             className="bg-white p-12 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col items-center text-center"
           >
-            <div className="w-20 h-20 bg-accent/10 rounded-2xl flex items-center justify-center text-accent mb-8">
+            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-8">
               <Target className="w-10 h-10" />
             </div>
             <h3 className="text-3xl font-bold text-primary mb-6">Our Mission</h3>
@@ -135,7 +135,7 @@ export default function About() {
 
 
       {/* ================= MESSAGE FROM PRINCIPAL ================= */}
-      <section className="py-24 bg-accent px-6 overflow-hidden relative">
+      <section className="py-24 bg-primary px-6 overflow-hidden relative">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full translate-x-1/2 -translate-y-1/2" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/10 rounded-full -translate-x-1/2 translate-y-1/2" />
@@ -204,10 +204,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
-
-
-
     </main >
   );
 }

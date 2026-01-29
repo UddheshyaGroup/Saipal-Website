@@ -189,7 +189,7 @@ export default function ALevelSection() {
 
       <div className="mt-16 grid gap-8 lg:grid-cols-2">
         {/* WHY A LEVEL */}
-        <div className="group relative overflow-hidden rounded-[2.5rem] bg-accent py-8 pl-8 pr-4 text-white shadow-2xl transition-all duration-500 hover:-translate-y-2">
+        <div className="group relative overflow-hidden rounded-[2.5rem] bg-primary py-8 pl-8 pr-4 text-white shadow-2xl transition-all duration-500 hover:-translate-y-2">
           <div className="absolute top-0 right-0 -mr-20 -mt-20 h-64 w-64 rounded-full bg-white/10 blur-3xl transition-transform duration-700 group-hover:scale-110" />
 
           <div className="relative z-10">
@@ -239,10 +239,11 @@ export default function ALevelSection() {
                 setActiveStream("science");
                 setActiveTable("medical");
               }}
-              className={`group relative overflow-hidden rounded-2xl py-4 font-bold transition-all duration-300 ${activeStream === "science"
-                ? "bg-primary text-white shadow-lg shadow-blue-200"
-                : "bg-slate-50 text-slate-600 hover:bg-slate-100"
-                }`}
+              className={`group relative overflow-hidden rounded-2xl py-4 font-bold transition-all duration-300 ${
+                activeStream === "science"
+                  ? "bg-primary text-white shadow-lg shadow-blue-200"
+                  : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+              }`}
             >
               Science
             </button>
@@ -251,10 +252,11 @@ export default function ALevelSection() {
                 setActiveStream("non-science");
                 setActiveTable("management");
               }}
-              className={`group relative overflow-hidden rounded-2xl py-4 font-bold transition-all duration-300 ${activeStream === "non-science"
-                ? "bg-primary text-white shadow-lg shadow-blue-200"
-                : "bg-slate-50 text-slate-600 hover:bg-slate-100"
-                }`}
+              className={`group relative overflow-hidden rounded-2xl py-4 font-bold transition-all duration-300 ${
+                activeStream === "non-science"
+                  ? "bg-primary text-white shadow-lg shadow-blue-200"
+                  : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+              }`}
             >
               Non-Science
             </button>
@@ -265,10 +267,11 @@ export default function ALevelSection() {
               <button
                 key={stream}
                 onClick={() => setActiveTable(stream)}
-                className={`rounded-xl px-5 py-2.5 text-xs font-bold transition-all duration-300 ${activeTable === stream
-                  ? "bg-blue-50 text-blue-600 ring-2 ring-blue-500/20"
-                  : "text-slate-500 hover:bg-slate-50"
-                  }`}
+                className={`rounded-xl px-5 py-2.5 text-xs font-bold transition-all duration-300 ${
+                  activeTable === stream
+                    ? "bg-blue-50 text-blue-600 ring-2 ring-blue-500/20"
+                    : "text-slate-500 hover:bg-slate-50"
+                }`}
               >
                 {stream.charAt(0).toUpperCase() + stream.slice(1)}
               </button>
@@ -298,10 +301,11 @@ export default function ALevelSection() {
                     </td>
                     <td className="px-5 py-4 text-center text-xs">
                       <span
-                        className={`inline-flex rounded-full px-3 py-1 font-bold ${course.type === "Core"
-                          ? "bg-rose-50 text-rose-600"
-                          : "bg-amber-50 text-amber-600"
-                          }`}
+                        className={`inline-flex rounded-full px-3 py-1 font-bold ${
+                          course.type === "Core"
+                            ? "bg-rose-50 text-rose-600"
+                            : "bg-amber-50 text-amber-600"
+                        }`}
                       >
                         {course.type}
                       </span>
@@ -387,11 +391,13 @@ export default function ALevelSection() {
           return (
             <div
               key={index}
-              className={`group relative overflow-hidden rounded-[2.5rem] py-8 pl-8 pr-4 transition-all duration-500 hover:-translate-y-2 ${isFullWidth ? "md:col-span-2" : ""
-                } ${isSpecialBg
-                  ? "bg-accent text-white shadow-xl"
+              className={`group relative overflow-hidden rounded-[2.5rem] py-8 pl-8 pr-4 transition-all duration-500 hover:-translate-y-2 ${
+                isFullWidth ? "md:col-span-2" : ""
+              } ${
+                isSpecialBg
+                  ? "bg-primary text-white shadow-xl"
                   : "bg-white border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.03)] hover:shadow-[0_40px_80px_-15px_rgba(59,130,246,0.1)]"
-                }`}
+              }`}
             >
               <div className="absolute top-0 right-0 -mr-16 -mt-16 h-32 w-32 rounded-full bg-blue-500/10 blur-2xl transition-transform duration-700 group-hover:scale-150" />
 
@@ -406,15 +412,17 @@ export default function ALevelSection() {
 
                 <div className="flex-1 min-w-0">
                   <h2
-                    className={`text-2xl font-bold mb-4 ${isSpecialBg ? "text-white" : "text-primary"
-                      }`}
+                    className={`text-2xl font-bold mb-4 ${
+                      isSpecialBg ? "text-white" : "text-primary"
+                    }`}
                   >
                     {section.title}
                   </h2>
 
                   <div
-                    className={`whitespace-pre-line break-words leading-relaxed text-sm sm:text-base font-medium ${isSpecialBg ? "text-blue-50" : "text-slate-600"
-                      }`}
+                    className={`whitespace-pre-line break-words leading-relaxed text-sm sm:text-base font-medium ${
+                      isSpecialBg ? "text-blue-50" : "text-slate-600"
+                    }`}
                   >
                     <p>{section.content}</p>
                   </div>
@@ -481,8 +489,6 @@ export default function ALevelSection() {
       {/* SCHOLARSHIP */}
       <div className="md:col-span-2 group relative overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white py-8 pl-8 pr-4 mt-8 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_80px_-15px_rgba(99,102,241,0.12)]">
         <div className="relative z-10 flex items-start gap-6">
-
-
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-bold text-primary mb-2">
               Our Scholarships
@@ -548,6 +554,12 @@ export default function ALevelSection() {
           </div>
         </div>
       </div>
+      <ScholarshipCTA
+        title="Begin Your Journey at Saipal"
+        description="Shape your child's future with a strong academic foundation. Contact our admissions desk to learn more about our school programs."
+        link="/enquiry"
+        buttonText="Learn More"
+      />
     </>
   );
 }

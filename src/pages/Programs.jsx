@@ -59,7 +59,7 @@ function Programs() {
             onClick={() => handleTabChange(key)}
             className={`group relative overflow-hidden rounded-2xl px-6 py-3 sm:px-8 sm:py-3.5 text-xs sm:text-sm font-bold transition-all hover:scale-105 active:scale-95 ${
               activeTab === key
-                ? "bg-accent text-white shadow-lg ring-4 ring-blue-100"
+                ? "bg-primary text-white shadow-lg ring-4 ring-blue-100"
                 : "bg-white text-slate-700 hover:bg-blue-50 border border-slate-50 shadow-sm"
             }`}
           >

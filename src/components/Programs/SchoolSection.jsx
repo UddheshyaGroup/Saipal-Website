@@ -25,7 +25,7 @@ export default function SchoolSection() {
             <ImageSlider images={SCHOOL_IMAGES} />
 
             <div className="mt-16 space-y-8">
-                <div className="group relative overflow-hidden rounded-[2.5rem] bg-accent p-8 text-white shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                <div className="group relative overflow-hidden rounded-[2.5rem] bg-primary p-8 text-white shadow-2xl transition-all duration-500 hover:-translate-y-2">
                     <div className="absolute top-0 right-0 -mr-20 -mt-20 h-64 w-64 rounded-full bg-white/10 blur-3xl transition-transform duration-700 group-hover:scale-110" />
                     <div className="relative z-10 flex items-start gap-6">
                         <div className="rounded-2xl bg-white/20 p-4 backdrop-blur-md shadow-inner">

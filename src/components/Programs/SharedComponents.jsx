@@ -130,7 +130,7 @@ export function ScholarshipCTA({
     buttonText = "Apply Now",
 }) {
     return (
-        <section className="mt-8 p-10 sm:p-14 bg-accent rounded-3xl text-center text-white shadow-lg">
+        <section className="mt-8 p-10 sm:p-14 bg-primary rounded-3xl text-center text-white shadow-lg">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">{title}</h2>
             <p className="text-blue-50 text-lg sm:text-xl max-w-2xl mx-auto mb-8">
                 {description}

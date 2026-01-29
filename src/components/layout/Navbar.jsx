@@ -11,7 +11,7 @@ export default function Navbar() {
   const location = useLocation();
 
   const activeClass =
-    "border-accent text-accent font-semibold pb-2 border-b";
+    "border-primary text-primary font-semibold pb-2 border-b";
   const inactiveClass =
     "border-gray-200 hover:text-primary pb-2 border-b";
 
@@ -76,7 +76,7 @@ export default function Navbar() {
             {/* Apply Now */}
             <NavLink
               to="/admissions"
-              className="bg-accent text-white px-4 py-2 rounded-md hover:opacity-90 hidden md:block mr-3"
+              className="bg-primary text-white px-4 py-2 rounded-md hover:opacity-90 hidden md:block mr-3"
             >
               Apply Now
             </NavLink>
@@ -123,7 +123,7 @@ export default function Navbar() {
             <div className="border-b border-gray-200 pb-2">
               <button
                 className={`flex justify-between w-full ${location.pathname.includes("/programs")
-                  ? "text-accent font-semibold"
+                  ? "text-primary font-semibold"
                   : ""
                   }`}
                 onClick={() => setProgramsOpen(!programsOpen)}
