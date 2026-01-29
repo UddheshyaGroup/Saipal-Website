@@ -1,12 +1,94 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { FaCalendarAlt, FaUser, FaTag, FaArrowRight } from "react-icons/fa";
+import Toast from "../components/layout/resuables/Toast";
 
 import { BLOG_POSTS } from "../data/blogData";
 
 export default function Blog() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState({
+    submitting: false,
+    info: { error: false, msg: null },
+  });
+
+  const clearStatus = () => {
+    setStatus((prev) => ({ ...prev, info: { error: false, msg: null } }));
+  };
+
+  const handleResponse = (resStatus, msg) => {
+    if (resStatus === 200) {
+      setStatus({
+        submitting: false,
+        info: { error: false, msg: msg },
+      });
+      setEmail("");
+    } else {
+      setStatus({
+        submitting: false,
+        info: { error: true, msg: msg },
+      });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setStatus((prevStatus) => ({ ...prevStatus, submitting: true }));
+
+    const BREVO_API_KEY = import.meta.env.VITE_BREVO_API_KEY || import.meta.env.BREVO_API_KEY;
+    const BREVO_FROM = import.meta.env.VITE_BREVO_FROM || import.meta.env.BREVO_FROM || "mail@saipal.edu.np";
+
+    if (!BREVO_API_KEY) {
+      handleResponse(400, "API configuration missing.");
+      return;
+    }
+
+    try {
+      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "api-key": BREVO_API_KEY,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          sender: { name: "Saipal Website", email: BREVO_FROM },
+          to: [{ email: BREVO_FROM, name: "Saipal Academy Admin" }],
+          subject: `New Newsletter Subscription - ${email}`,
+          htmlContent: `
+            <h3>New Newsletter Subscription</h3>
+            <p>A new user has subscribed to the Saipal Academy newsletter.</p>
+            <p><strong>Email:</strong> ${email}</p>
+          `,
+        }),
+      });
+
+      if (res.ok) {
+        handleResponse(200, "Thank you for subscribing to our newsletter!");
+      } else {
+        const errorData = await res.json();
+        handleResponse(res.status, errorData.message || "Something went wrong.");
+      }
+    } catch (error) {
+      handleResponse(500, "Could not complete subscription. Please try later.");
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gray-50 pb-20">
+      <AnimatePresence>
+        {status.info.msg && (
+          <Toast
+            message={status.info.msg}
+            type={status.info.error ? "error" : "success"}
+            onClose={clearStatus}
+          />
+        )}
+      </AnimatePresence>
+
       {/* ================= HERO SECTION ================= */}
       <section className="text-primary pt-5 pb-5 relative overflow-hidden">
         {/* Abstract background elements */}
@@ -55,14 +137,22 @@ export default function Blog() {
             </p>
           </div>
           <div className="flex-1 w-full md:ml-8">
-            <form className="flex flex-col sm:flex-row gap-3">
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
               <input
                 type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your email address"
                 className="flex-grow px-6 py-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
               />
-              <button className="bg-primary text-white px-8 py-4 rounded-xl font-bold hover:shadow-lg transition-all active:scale-95">
-                Subscribe
+              <button
+                type="submit"
+                disabled={status.submitting}
+                className={`bg-primary text-white px-8 py-4 rounded-xl font-bold hover:shadow-lg transition-all active:scale-95 ${status.submitting ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+              >
+                {status.submitting ? "Joining..." : "Subscribe"}
               </button>
             </form>
           </div>
