@@ -71,14 +71,14 @@ export default function Home() {
 
               <div className="flex flex-wrap gap-4 pt-4">
                 <Link
-                  href="/admissions"
+                  to="/admissions"
                   className="bg-accent px-8 py-3.5 rounded-xl text-white font-bold shadow-lg hover:scale-105 hover:opacity-95 transition"
                 >
                   Apply Now
                 </Link>
 
                 <Link
-                  href="/programs"
+                  to="/programs"
                   className="border-2 border-white/80 px-8 py-3.5 rounded-xl text-white font-bold hover:bg-white hover:text-primary transition"
                 >
                   Explore Programs
@@ -357,7 +357,7 @@ export default function Home() {
       {/* ================= VIRTUAL TOUR BUTTON ================= */}
       <button
         onClick={() => setTourOpen(true)}
-        className="fixed bottom-6 right-6 z-50 bg-accent text-white px-6 py-3 rounded-full shadow-lg font-semibold hover:scale-105 transition"
+        className="fixed bottom-6 right-6 z-40 bg-accent text-white px-6 py-3 rounded-full shadow-lg font-semibold hover:scale-105 transition"
       >
         Click for Virtual Tour
       </button>
