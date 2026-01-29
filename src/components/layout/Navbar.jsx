@@ -180,7 +180,7 @@ export default function Navbar() {
 
                     {[
                       { to: "/gallery", label: "Gallery" },
-                      { to: "/blog", label: "Insights & Blog" },
+                      { to: "/blog", label: "Blogs" },
                       { to: "/faculty", label: "Our Faculty" },
                       { to: "/contact", label: "Contact Us" }
                     ].map((item) => (
@@ -241,7 +241,7 @@ export default function Navbar() {
                     onClick={() => setDesktopMenuOpen(false)}
                     className="flex items-center justify-center w-full bg-accent text-white py-4 rounded-2xl font-bold shadow-lg shadow-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                   >
-                    Apply Now for 2024
+                    Apply Now
                   </NavLink>
                 </div>
               </motion.div>

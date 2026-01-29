@@ -4,8 +4,10 @@ import { AnimatePresence } from "framer-motion";
 
 function Contact() {
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
+    phone: "",
     message: "",
   });
   const [status, setStatus] = useState({
@@ -31,8 +33,10 @@ function Contact() {
         info: { error: false, msg: msg },
       });
       setFormData({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
+        phone: "",
         message: "",
       });
     } else {
@@ -55,6 +59,8 @@ function Contact() {
       return;
     }
 
+    const fullName = `${formData.firstName} ${formData.lastName}`;
+
     try {
       const res = await fetch("https://api.brevo.com/v3/smtp/email", {
         method: "POST",
@@ -66,12 +72,14 @@ function Contact() {
         body: JSON.stringify({
           sender: { name: "Saipal Website", email: BREVO_FROM },
           to: [{ email: BREVO_FROM, name: "Saipal Academy Admin" }],
-          replyTo: { email: formData.email, name: formData.name },
-          subject: `New Contact Form Submission from ${formData.name}`,
+          replyTo: { email: formData.email, name: fullName },
+          subject: `New Contact Form Submission from ${fullName}`,
           htmlContent: `
             <h3>New Message from Contact Form</h3>
-            <p><strong>Name:</strong> ${formData.name}</p>
+            <p><strong>First Name:</strong> ${formData.firstName}</p>
+            <p><strong>Last Name:</strong> ${formData.lastName}</p>
             <p><strong>Email:</strong> ${formData.email}</p>
+            <p><strong>Phone:</strong> ${formData.phone}</p>
             <p><strong>Message:</strong></p>
             <p>${formData.message}</p>
           `,
@@ -113,23 +121,32 @@ function Contact() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
         {/* Contact Form */}
-        <div className="flex flex-col">
+        <div className="h-full">
           <form
             onSubmit={handleSubmit}
-            className="space-y-5 sm:space-y-6 bg-white p-6 sm:p-8 rounded-3xl shadow-lg border border-gray-100"
+            className="h-full flex flex-col space-y-5 sm:space-y-6 bg-white p-6 sm:p-8 rounded-3xl shadow-lg border border-gray-100"
           >
-            <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input
                 type="text"
-                name="name"
-                placeholder="Your Name"
+                name="firstName"
+                placeholder="First Name"
                 required
-                value={formData.name}
+                value={formData.firstName}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              />
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Last Name"
+                required
+                value={formData.lastName}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               />
             </div>
-            <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input
                 type="email"
                 name="email"
@@ -139,16 +156,24 @@ function Contact() {
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               />
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Phone Number"
+                required
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              />
             </div>
-            <div>
+            <div className="flex-grow">
               <textarea
                 name="message"
                 placeholder="Your Message"
                 required
                 value={formData.message}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                rows="5"
+                className="w-full h-full min-h-[150px] border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition resize-none"
               ></textarea>
             </div>
             <button
