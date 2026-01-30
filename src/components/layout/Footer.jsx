@@ -14,7 +14,6 @@ export default function Footer() {
   return (
     <footer className="bg-primary text-white pb-16 pt-0">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-10">
-
         {/* About Saipal */}
         <div>
           <h3 className="text-xl font-bold mt-6 mb-6">Saipal Academy</h3>
@@ -24,19 +23,44 @@ export default function Footer() {
           </p>
 
           <div className="flex space-x-4 text-gray-300">
-            <a href="https://facebook.com/saipalacademy" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition">
+            <a
+              href="https://facebook.com/saipalacademy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-accent transition"
+            >
               <FaFacebookF size={20} />
             </a>
-            <a href="https://twitter.com/saipalacademy" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition">
+            <a
+              href="https://twitter.com/saipalacademy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-accent transition"
+            >
               <FaTwitter size={20} />
             </a>
-            <a href="https://instagram.com/saipalacademy" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition">
+            <a
+              href="https://instagram.com/saipalacademy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-accent transition"
+            >
               <FaInstagram size={20} />
             </a>
-            <a href="https://linkedin.com/company/saipalacademy" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition">
+            <a
+              href="https://linkedin.com/company/saipalacademy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-accent transition"
+            >
               <FaLinkedinIn size={20} />
             </a>
-            <a href="https://youtube.com/saipalacademy" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition">
+            <a
+              href="https://youtube.com/saipalacademy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-accent transition"
+            >
               <FaYoutube size={20} />
             </a>
           </div>
@@ -46,12 +70,36 @@ export default function Footer() {
         <div>
           <h3 className="text-xl font-bold mt-6 mb-6">Quick Links</h3>
           <ul className="grid grid-cols-2 gap-2 text-gray-300">
-            <li><a href="/" className="hover:text-accent transition">Home</a></li>
-            <li><a href="/about" className="hover:text-accent transition">About Us</a></li>
-            <li><a href="/programs" className="hover:text-accent transition">Programs</a></li>
-            <li><a href="/gallery" className="hover:text-accent transition">Gallery</a></li>
-            <li><a href="/faculty" className="hover:text-accent transition">Faculty</a></li>
-            <li><a href="/contact" className="hover:text-accent transition">Contact</a></li>
+            <li>
+              <a href="/" className="hover:text-accent transition">
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="/about" className="hover:text-accent transition">
+                About Us
+              </a>
+            </li>
+            <li>
+              <a href="/programs" className="hover:text-accent transition">
+                Programs
+              </a>
+            </li>
+            <li>
+              <a href="/gallery" className="hover:text-accent transition">
+                Gallery
+              </a>
+            </li>
+            <li>
+              <a href="/faculty" className="hover:text-accent transition">
+                Faculty
+              </a>
+            </li>
+            <li>
+              <a href="/contact" className="hover:text-accent transition">
+                Contact
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -65,19 +113,28 @@ export default function Footer() {
             </li>
             <li className="flex items-center gap-3">
               <FaPhoneAlt />
-              <a href="tel:+977014378154" className="hover:text-accent transition">
+              <a
+                href="tel:+977014378154"
+                className="hover:text-accent transition"
+              >
                 +977-01-4378154
               </a>
             </li>
             <li className="flex items-center gap-3">
               <FaPhoneAlt />
-              <a href="tel:+977014009054" className="hover:text-accent transition">
+              <a
+                href="tel:+977014009054"
+                className="hover:text-accent transition"
+              >
                 +977-01-4009054
               </a>
             </li>
             <li className="flex items-center gap-3">
               <FaEnvelope />
-              <a href="mailto:mail@saipal.edu.np" className="hover:text-accent transition">
+              <a
+                href="mailto:mail@saipal.edu.np"
+                className="hover:text-accent transition"
+              >
                 mail@saipal.edu.np
               </a>
             </li>
@@ -89,19 +146,32 @@ export default function Footer() {
           <h3 className="text-xl font-bold mt-6 mb-6">Academic Hours</h3>
 
           <ul className="space-y-4 text-gray-300">
+            {/* School Timing */}
             <li className="flex items-start gap-3">
               <FaClock className="mt-1" />
               <div>
-                <p className="font-medium text-white">Sunday – Friday</p>
-                <p>9:00 AM – 5:00 PM</p>
+                <p className="font-medium text-white">School</p>
+                <p>9:00 AM – 6:00 PM</p>
               </div>
             </li>
 
+            {/* College Timing */}
             <li className="flex items-start gap-3">
               <FaClock className="mt-1" />
               <div>
-                <p className="font-medium text-white">Admissions Desk</p>
-                <p>9:00 AM – 4:00 PM</p>
+                <p className="font-medium text-white">College</p>
+
+                <p>
+                  6:00 AM – 11:00 AM{" "}
+                  <span className="text-gray-400">(Management)</span>
+                </p>
+
+                <p>
+                  11:00 AM – 5:00 PM
+                  <span className="block text-gray-400">
+                    (Science & A-Levels)
+                  </span>
+                </p>
               </div>
             </li>
           </ul>
@@ -112,7 +182,8 @@ export default function Footer() {
       <div className="border-t border-primary/50 mt-8">
         <div className="max-w-7xl mx-auto px-6 py-1 flex flex-col md:flex-row items-center justify-between text-sm text-gray-300">
           <span>
-            © {new Date().getFullYear()} Saipal Academy. All rights reserved. Powered by: {" "}
+            © {new Date().getFullYear()} Saipal Academy. All rights reserved.
+            Powered by:{" "}
             <a
               href="https://uddheshyagroup.com"
               target="_blank"
