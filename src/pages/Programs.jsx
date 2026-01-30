@@ -44,7 +44,7 @@ function Programs() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white m-0">
       <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-primary sm:text-5xl lg:text-6xl">
+        <h1 className="text-4xl font-bold pt-12 tracking-tight text-primary sm:text-5xl lg:text-6xl">
           Our Programs
         </h1>
         <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
