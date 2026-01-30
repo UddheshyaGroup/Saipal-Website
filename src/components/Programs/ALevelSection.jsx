@@ -221,11 +221,11 @@ export default function ALevelSection() {
                 </p>
               </div>
             </div>
-            <div className="mt-8 space-y-6 text-blue-50/90 leading-relaxed flex justify-center">
+            <div className="mt-8 space-y-6 text-blue-50/90 leading-relaxed flex justify-center ">
               <img
                 src="/a-levels.jpeg"
                 alt="Cambridge A Levels"
-                className="w-auto max-w-full h-[200px] rounded-3xl object-cover object-center"
+                className="w-auto max-w-full h-[200px] rounded-3xl object-cover object-center remove-bg"
               />
             </div>
           </div>
