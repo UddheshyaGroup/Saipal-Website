@@ -278,16 +278,19 @@ export default function Home() {
             <ProgramCard
               image="/a-levels.jpeg"
               title="Cambridge A-Levels"
+              query="alevels"
               description="Globally recognized curriculum designed to prepare students for leading universities worldwide."
             />
             <ProgramCard
               image="/+2lelvels.jpeg"
               title="NEB +2"
+              query="neb"
               description="National Education Board curriculum focused on academic excellence and holistic development."
             />
             <ProgramCard
               image="/school-level.jpeg"
               title="School Level"
+              query="school"
               description="Strong academic foundation nurturing curiosity, discipline, and lifelong learning skills."
             />
           </motion.div>
@@ -535,7 +538,7 @@ function FeatureCard({ icon, title, description }) {
   );
 }
 
-function ProgramCard({ image, title, description }) {
+function ProgramCard({ image, query, title, description }) {
   return (
     <motion.div
       variants={{
@@ -553,13 +556,13 @@ function ProgramCard({ image, title, description }) {
         <p className="text-gray-700 mb-8 flex-grow">{description}</p>
         <div className="flex gap-4">
           <Link
-            to="/programs"
+            to={`/programs#${query}`}
             className="w-full border border-accent text-accent px-5 py-3 rounded-md font-semibold hover:bg-accent hover:text-white transition"
           >
             Learn More
           </Link>
           <Link
-            to="/contact"
+            to="/admissions"
             className="w-full bg-accent text-white px-5 py-3 rounded-md font-semibold hover:opacity-90 transition"
           >
             Apply Now

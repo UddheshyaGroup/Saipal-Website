@@ -7,16 +7,31 @@ import {
   BookOpen,
   Globe,
   CheckCircle,
-  Quote
+  Quote,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-
-
 export default function About() {
+  const VisonMission = [
+    {
+      id: 1,
+      title: "Our Vision",
+      description:
+        "The vision of the institution is to establish itself as a Model Educational Centre that enhances the capacity of individuals for living and contributes to the nation's overall development.\"",
+      imageUrl:
+        "https://i.etsystatic.com/63092697/r/il/ba7389/7520843685/il_1588xN.7520843685_jrw5.jpg",
+    },
+    {
+      id: 2,
+      title: "Our Mission",
+      description:
+        "Saipal promotes a world-class learning opportunity to each individual and encourages one and all to explore their inherent potentiality to become competent citizen globally. It facilitates an environment where each individual feels special and think out of the box to stand up for tomorrow’s challenges.",
+      imageUrl:
+        "https://i.pinimg.com/1200x/82/ec/ac/82ecace974cb3ca43b6586967a093e2b.jpg",
+    },
+  ];
   return (
     <main className="min-h-screen bg-white">
-
       {/* ================= About Us ================= */}
       <section className="py-12 px-6">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
@@ -26,18 +41,30 @@ export default function About() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="text-sm font-bold text-accent uppercase tracking-widest mb-4">About Us</h2>
+            <h2 className="text-sm font-bold text-accent uppercase tracking-widest mb-4">
+              About Us
+            </h2>
             <h3 className="text-3xl md:text-5xl font-bold text-primary mb-8 leading-tight">
               Introduction
             </h3>
             <div className="space-y-6 text-gray-700 text-lg leading-relaxed">
               <p>
-                Saipal is a time-tested and Nepal’s premier learning institution which was established in the year 2002. Its commitment to excellence ensures quality education for life. Saipal is known for its student-centred learning, a distinction that has made it one of the most sought after institutions in Kathmandu.
+                Saipal is a time-tested and Nepal’s premier learning institution
+                which was established in the year 2002. Its commitment to
+                excellence ensures quality education for life. Saipal is known
+                for its student-centred learning, a distinction that has made it
+                one of the most sought after institutions in Kathmandu.
               </p>
               <p>
-                At Saipal, every individual student can explore and experience all aspects of life. Each child is equipped with confidence, self-respect, and dynamism.  Ultimately, these qualities prepare children for real-life challenges and make them capable to contribute to the overall development of the nation. Highly competent faculties, top-notch infrastructure and facilities and super learning environment combine to establish Saipal as a leading educational institution of Nepal.
+                At Saipal, every individual student can explore and experience
+                all aspects of life. Each child is equipped with confidence,
+                self-respect, and dynamism. Ultimately, these qualities prepare
+                children for real-life challenges and make them capable to
+                contribute to the overall development of the nation. Highly
+                competent faculties, top-notch infrastructure and facilities and
+                super learning environment combine to establish Saipal as a
+                leading educational institution of Nepal.
               </p>
-
             </div>
           </motion.div>
 
@@ -59,32 +86,45 @@ export default function About() {
       </section>
 
       {/* ================= VISION & MISSION ================= */}
-      <section className="py-24 bg-gray-50 px-6">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8">
+      <section className="py-18 bg-gray-50 px-6">
+        <div className="max-w-7xl mx-auto grid md:grid-col gap-8">
           <motion.div
-            whileHover={{ y: -10 }}
-            className="bg-white p-12 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col items-center text-center"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
           >
-            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-8">
-              <Eye className="w-10 h-10" />
-            </div>
-            <h3 className="text-3xl font-bold text-primary mb-6">Our Vision</h3>
-            <p className="text-gray-600 text-lg leading-relaxed italic">
-              "The vision of the institution is to establish itself as a Model Educational Centre that enhances the capacity of individuals for living and contributes to the nation’s overall development."
-            </p>
-          </motion.div>
-
-          <motion.div
-            whileHover={{ y: -10 }}
-            className="bg-white p-12 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col items-center text-center"
-          >
-            <div className="w-20 h-20 bg-accent/10 rounded-2xl flex items-center justify-center text-accent mb-8">
-              <Target className="w-10 h-10" />
-            </div>
-            <h3 className="text-3xl font-bold text-primary mb-6">Our Mission</h3>
-            <p className="text-gray-600 text-lg leading-relaxed italic">
-              "Saipal promotes a world-class learning opportunity to each individual and encourages one and all to explore their inherent potentiality to become competent citizen globally. It facilitates an environment where each individual feels special and think out of the box to stand up for tomorrow’s challenges."
-            </p>
+            {VisonMission.map((item) => (
+              <div
+                key={item.id}
+                className="flex flex-col lg:flex-row items-center gap-8 mb-12"
+              >
+                <div className="flex p-12 bg-white rounded-[2.5rem] shadow-sm border border-gray-100 flex-col items-center md:items-start text-center md:text-left flex-1">
+                  <div className="flex flex-col-2 text-center items-center gap-2 ">
+                    <div className="w-12 h-12 lg:w-16 lg:h-16 bg-primary/10 rounded-xl lg:rounded-2xl flex items-center justify-center text-primary mb-8">
+                      {item.title === "Our Vision" ? (
+                        <Eye className="w-6 h-6 lg:w-8 lg:h-8" />
+                      ) : (
+                        <Target className="w-6 h-6 lg:w-8 lg:h-8" />
+                      )}
+                    </div>
+                    <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-primary mb-6">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <p className="text-gray-600 text-lg leading-relaxed italic">
+                    {item.description}
+                  </p>
+                </div>
+                <div className="">
+                  <img
+                    className="m-auto max-h-96 object-cover hover:scale-105 transition-transform duration-300"
+                    src={item.imageUrl}
+                    alt={item.title}
+                  />
+                </div>
+              </div>
+            ))}
           </motion.div>
         </div>
       </section>
@@ -103,13 +143,34 @@ export default function About() {
 
           <ul className="space-y-5">
             {[
-              { text: "We believe in the lifelong learning process.", icon: <BookOpen className="w-5 h-5" /> },
-              { text: "We believe that each individual is unique and has a different style of learning.", icon: <Users className="w-5 h-5" /> },
-              { text: "We believe in honesty at work.", icon: <CheckCircle className="w-5 h-5" /> },
-              { text: "We believe in respect for self and others.", icon: <Award className="w-5 h-5" /> },
-              { text: "We believe that each individual must care for resources.", icon: <Globe className="w-5 h-5" /> },
-              { text: "We believe in constructive competition and cooperation that benefits all.", icon: <Target className="w-5 h-5" /> },
-              { text: "We believe that one should always instil a questioning spirit.", icon: <Eye className="w-5 h-5" /> },
+              {
+                text: "We believe in the lifelong learning process.",
+                icon: <BookOpen className="w-5 h-5" />,
+              },
+              {
+                text: "We believe that each individual is unique and has a different style of learning.",
+                icon: <Users className="w-5 h-5" />,
+              },
+              {
+                text: "We believe in honesty at work.",
+                icon: <CheckCircle className="w-5 h-5" />,
+              },
+              {
+                text: "We believe in respect for self and others.",
+                icon: <Award className="w-5 h-5" />,
+              },
+              {
+                text: "We believe that each individual must care for resources.",
+                icon: <Globe className="w-5 h-5" />,
+              },
+              {
+                text: "We believe in constructive competition and cooperation that benefits all.",
+                icon: <Target className="w-5 h-5" />,
+              },
+              {
+                text: "We believe that one should always instil a questioning spirit.",
+                icon: <Eye className="w-5 h-5" />,
+              },
             ].map((principle, idx) => (
               <motion.li
                 key={idx}
@@ -119,20 +180,14 @@ export default function About() {
                 transition={{ delay: idx * 0.08 }}
                 className="flex items-start gap-4 text-gray-700"
               >
-                <span className="mt-1 text-primary">
-                  {principle.icon}
-                </span>
+                <span className="mt-1 text-primary">{principle.icon}</span>
 
-                <p className="leading-relaxed font-medium">
-                  {principle.text}
-                </p>
+                <p className="leading-relaxed font-medium">{principle.text}</p>
               </motion.li>
             ))}
           </ul>
         </div>
       </section>
-
-
 
       {/* ================= MESSAGE FROM PRINCIPAL ================= */}
       <section className="py-24 bg-accent px-6 overflow-hidden relative">
@@ -143,7 +198,6 @@ export default function About() {
         <div className="max-w-7xl mx-auto relative z-10">
           {/* Main Card */}
           <div className="bg-white rounded-[3rem] p-8 sm:p-10 md:p-14 lg:p-16 shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-center">
-
             {/* Image */}
             <div className="flex justify-center">
               <div className="relative w-full max-w-sm">
@@ -166,11 +220,17 @@ export default function About() {
 
               <div className="space-y-5 text-gray-700 text-base sm:text-lg leading-relaxed">
                 <p>
-                  "It still smells good to me. In the pool of hypocrisy, hegemony, and delusion, I again want to be a child and feel the innocence that brings the very smile on the faces of teachers and parents..."
+                  "It still smells good to me. In the pool of hypocrisy,
+                  hegemony, and delusion, I again want to be a child and feel
+                  the innocence that brings the very smile on the faces of
+                  teachers and parents..."
                 </p>
 
                 <p>
-                  "Moreover, we not only care for students with huge potential but also with great dedication. We believe every child is unique, and we are committed to nurturing what each student deserves..."
+                  "Moreover, we not only care for students with huge potential
+                  but also with great dedication. We believe every child is
+                  unique, and we are committed to nurturing what each student
+                  deserves..."
                 </p>
               </div>
 
@@ -193,10 +253,13 @@ export default function About() {
             </h3>
 
             <p className="text-base sm:text-lg md:text-xl text-white/80 leading-relaxed mb-10">
-              Have questions about admissions, programs, or guidance? Our team is here to help you take the next step toward a brighter academic future.
+              Have questions about admissions, programs, or guidance? Our team
+              is here to help you take the next step toward a brighter academic
+              future.
             </p>
 
-            <Link to="/enquiry"
+            <Link
+              to="/enquiry"
               className="inline-flex items-center justify-center rounded-2xl bg-white px-10 py-4 text-primary font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all"
             >
               Make an Enquiry
@@ -204,10 +267,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
-
-
-
-    </main >
+    </main>
   );
 }
