@@ -18,114 +18,157 @@ export default function About() {
       title: "Our Vision",
       description:
         "The vision of the institution is to establish itself as a Model Educational Centre that enhances the capacity of individuals for living and contributes to the nation's overall development.\"",
-      imageUrl:
-        "https://i.etsystatic.com/63092697/r/il/ba7389/7520843685/il_1588xN.7520843685_jrw5.jpg",
+      imageUrl: "/ourVision.jpeg",
     },
     {
       id: 2,
       title: "Our Mission",
       description:
         "Saipal promotes a world-class learning opportunity to each individual and encourages one and all to explore their inherent potentiality to become competent citizen globally. It facilitates an environment where each individual feels special and think out of the box to stand up for tomorrow’s challenges.",
-      imageUrl:
-        "https://i.pinimg.com/1200x/82/ec/ac/82ecace974cb3ca43b6586967a093e2b.jpg",
+      imageUrl: "/ourMission.jpeg",
     },
   ];
   return (
     <main className="min-h-screen bg-white">
       {/* ================= About Us ================= */}
-      <section className="py-12 px-6">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+      <section className="py-14 sm:py-16 lg:py-24 px-4 sm:px-6 bg-gray-50">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* TEXT */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.7 }}
+            className="text-center lg:text-left"
           >
-            <h2 className="text-sm font-bold text-accent uppercase tracking-widest mb-4">
+            <h2 className="text-xs sm:text-sm font-bold text-accent uppercase tracking-widest mb-3">
               About Us
             </h2>
-            <h3 className="text-3xl md:text-5xl font-bold text-primary mb-8 leading-tight">
+
+            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-6 leading-tight">
               Introduction
             </h3>
-            <div className="space-y-6 text-gray-700 text-lg leading-relaxed">
+
+            <div className="space-y-5 text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed">
               <p>
                 Saipal is a time-tested and Nepal’s premier learning institution
-                which was established in the year 2002. Its commitment to
-                excellence ensures quality education for life. Saipal is known
-                for its student-centred learning, a distinction that has made it
-                one of the most sought after institutions in Kathmandu.
+                established in 2002. Its commitment to excellence ensures
+                quality education for life. Saipal is known for its
+                student-centred learning, making it one of the most sought-after
+                institutions in Kathmandu.
               </p>
+
               <p>
-                At Saipal, every individual student can explore and experience
-                all aspects of life. Each child is equipped with confidence,
-                self-respect, and dynamism. Ultimately, these qualities prepare
-                children for real-life challenges and make them capable to
-                contribute to the overall development of the nation. Highly
-                competent faculties, top-notch infrastructure and facilities and
-                super learning environment combine to establish Saipal as a
-                leading educational institution of Nepal.
+                At Saipal, every student explores all aspects of life with
+                confidence, self-respect, and dynamism. Highly competent
+                faculties, modern infrastructure, and a vibrant learning
+                environment establish Saipal as a leading educational
+                institution in Nepal.
               </p>
             </div>
           </motion.div>
 
+          {/* IMAGE */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="relative"
+            transition={{ duration: 0.7 }}
+            className="relative flex justify-center"
           >
-            <div className="absolute -top-4 -left-4 w-24 h-24 bg-accent/10 rounded-full blur-2xl" />
-            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
-            <img
-              src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1920&q=80"
-              alt="Graduation ceremony"
-              className="w-full max-w-3xl mx-auto rounded-3xl shadow-2xl relative z-10"
-            />
+            {/* Decorative blobs */}
+            <div className="absolute -top-6 -left-6 w-28 h-28 bg-accent/20 rounded-full blur-3xl" />
+            <div className="absolute -bottom-6 -right-6 w-36 h-36 bg-primary/20 rounded-full blur-3xl" />
+
+            {/* Image container */}
+            <div className="relative z-10 w-full max-w-xl lg:max-w-2xl aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
+              <img
+                src="/introduction.jpeg"
+                alt="Graduation ceremony"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* ================= VISION & MISSION ================= */}
-      <section className="py-18 bg-gray-50 px-6">
-        <div className="max-w-7xl mx-auto grid md:grid-col gap-8">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            {VisonMission.map((item) => (
+      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto space-y-10">
+          {VisonMission.map((item) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="
+          grid grid-cols-1 
+          lg:grid-cols-2 
+          gap-6 md:gap-8 
+          items-stretch
+        "
+            >
+              {/* TEXT CARD */}
               <div
-                key={item.id}
-                className="flex flex-col lg:flex-row items-center gap-8 mb-12"
+                className="
+          bg-white 
+          p-6 sm:p-8 md:p-10 lg:p-12
+          rounded-2xl 
+          shadow-md 
+          border border-gray-100
+          flex flex-col justify-center
+          text-center md:text-left
+        "
               >
-                <div className="flex p-12 bg-white rounded-[2.5rem] shadow-sm border border-gray-100 flex-col items-center md:items-start text-center md:text-left flex-1">
-                  <div className="flex flex-col-2 text-center items-center gap-2 ">
-                    <div className="w-12 h-12 lg:w-16 lg:h-16 bg-primary/10 rounded-xl lg:rounded-2xl flex items-center justify-center text-primary mb-8">
-                      {item.title === "Our Vision" ? (
-                        <Eye className="w-6 h-6 lg:w-8 lg:h-8" />
-                      ) : (
-                        <Target className="w-6 h-6 lg:w-8 lg:h-8" />
-                      )}
-                    </div>
-                    <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-primary mb-6">
-                      {item.title}
-                    </h3>
+                {/* Icon + Title */}
+                <div className="flex flex-col items-center md:items-start gap-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                    {item.title === "Our Vision" ? (
+                      <Eye className="w-6 h-6 lg:w-8 lg:h-8" />
+                    ) : (
+                      <Target className="w-6 h-6 lg:w-8 lg:h-8" />
+                    )}
                   </div>
-                  <p className="text-gray-600 text-lg leading-relaxed italic">
-                    {item.description}
-                  </p>
+
+                  <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-primary">
+                    {item.title}
+                  </h3>
                 </div>
-                <div className="">
+
+                {/* Description */}
+                <p className="mt-4 text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed italic">
+                  {item.description}
+                </p>
+              </div>
+
+              {/* IMAGE CARD */}
+              {item.imageUrl && (
+                <div
+                  className="
+            relative 
+            w-full 
+            h-64 sm:h-72 md:h-80 lg:h-full
+            rounded-2xl 
+            overflow-hidden 
+            shadow-md
+          "
+                >
                   <img
-                    className="m-auto max-h-96 object-cover hover:scale-105 transition-transform duration-300"
                     src={item.imageUrl}
                     alt={item.title}
+                    className="
+                absolute inset-0 
+                w-full h-full 
+                object-cover 
+                transition-transform duration-500 
+                hover:scale-105
+              "
                   />
                 </div>
-              </div>
-            ))}
-          </motion.div>
+              )}
+            </motion.div>
+          ))}
         </div>
       </section>
 
@@ -199,11 +242,11 @@ export default function About() {
           {/* Main Card */}
           <div className="bg-white rounded-[3rem] p-8 sm:p-10 md:p-14 lg:p-16 shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-center">
             {/* Image */}
-            <div className="flex justify-center">
+            <div className="flex justify-center ">
               <div className="relative w-full max-w-sm">
                 <div className="absolute -inset-4 bg-accent/20 rounded-3xl rotate-3" />
                 <img
-                  src="https://saipal.edu.np/wp-content/uploads/2023/11/image.jpg?auto=format&fit=crop&q=80&w=800"
+                  src="/principal.jpeg"
                   alt="Principal of Saipal Academy"
                   className="rounded-3xl relative z-10 w-full aspect-[4/5] object-cover"
                 />
