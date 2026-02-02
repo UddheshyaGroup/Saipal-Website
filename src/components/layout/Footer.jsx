@@ -22,7 +22,7 @@ export default function Footer() {
             and School programs with a focus on excellence and leadership.
           </p>
 
-          <div className="flex space-x-4 text-gray-300">
+          <div className="flex space-x-8 text-gray-300">
             <a
               href="https://facebook.com/saipalacademy"
               target="_blank"
@@ -31,14 +31,7 @@ export default function Footer() {
             >
               <FaFacebookF size={20} />
             </a>
-            <a
-              href="https://twitter.com/saipalacademy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-accent transition"
-            >
-              <FaTwitter size={20} />
-            </a>
+
             <a
               href="https://instagram.com/saipalacademy"
               target="_blank"
@@ -47,16 +40,9 @@ export default function Footer() {
             >
               <FaInstagram size={20} />
             </a>
+
             <a
-              href="https://linkedin.com/company/saipalacademy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-accent transition"
-            >
-              <FaLinkedinIn size={20} />
-            </a>
-            <a
-              href="https://youtube.com/saipalacademy"
+              href="https://youtube.com/@saipalacademy2002?si=ZzZa1ryhcg65K8bd"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-accent transition"
