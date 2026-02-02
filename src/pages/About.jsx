@@ -83,7 +83,7 @@ export default function About() {
             {/* Image container */}
             <div className="relative z-10 w-full max-w-xl lg:max-w-2xl aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
               <img
-                src="/saipalAboutUs.jpeg"
+                src="/about.jpeg"
                 alt="Graduation ceremony"
                 className="w-full h-full object-cover"
               />

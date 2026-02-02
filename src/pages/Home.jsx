@@ -40,7 +40,7 @@ export default function Home() {
         {/* Background Image */}
         <div className="absolute inset-0 -z-10">
           <img
-            src="/saipalHero.jpeg"
+            src="/hero.jpeg"
             alt="Outdoor university campus shot"
             className="h-full w-full object-cover brightness-105 contrast-105"
           />
