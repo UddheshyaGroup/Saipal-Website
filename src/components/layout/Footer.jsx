@@ -22,7 +22,7 @@ export default function Footer() {
             and School programs with a focus on excellence and leadership.
           </p>
 
-          <div className="flex space-x-8 text-gray-300">
+          <div className="flex space-x-12 text-gray-300">
             <a
               href="https://facebook.com/saipalacademy"
               target="_blank"
