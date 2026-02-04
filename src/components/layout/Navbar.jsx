@@ -63,8 +63,12 @@ export default function Navbar() {
       <header className="sticky top-0 z-[100] bg-white border-b">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-          <NavLink to="/" className="text-xl font-bold text-primary">
-            Saipal Academy
+          <NavLink to="/" className="flex items-center">
+            <img
+              src="/logo.png"
+              alt="Saipal Academy Logo"
+              className="h-10 w-auto object-contain"
+            />
           </NavLink>
 
           {/* Right Side */}

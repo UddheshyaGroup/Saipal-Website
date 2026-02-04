@@ -32,38 +32,50 @@ export default function Faculty() {
   const facultyData = {
     alevels: [
       {
-        name: "Mr. Raj Sharma",
-        role: "Physics Lecturer",
+        name: "Mr. Sri Hari Timalsina",
+        role: "Biology Lecturer",
         image:
           "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
       {
-        name: "Ms. Sunita Gurung",
-        role: "Mathematics Lecturer",
+        name: "Mr. Sangat Thapa",
+        role: "Accounting Lecturer",
         image:
           "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
       {
-        name: "Mr. Anil Thapa",
-        role: "Chemistry Lecturer",
+        name: "Mr. Balkrishna Poudel",
+        role: "General Paper Lecturer",
         image:
           "https://images.pexels.com/photos/1704488/pexels-photo-1704488.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
       {
-        name: "Ms. Nisha Karki",
-        role: "Biology Lecturer",
+        name: "Mr. Jay Prakash Mishra",
+        role: "Physics Lecturer",
         image:
           "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
       {
-        name: "Mr. Suman KC",
-        role: "English Lecturer",
+        name: "Mr. Ruman Thapa",
+        role: "Computer Lecturer",
         image:
           "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
       {
-        name: "Ms. Richa Shrestha",
-        role: "Computer Science Lecturer",
+        name: "Mr. Prabigya Tuladhar",
+        role: "Business Lecturer",
+        image:
+          "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600",
+      },
+      {
+        name: "Mr. Sundar Pariyar",
+        role: "Economics Lecturer",
+        image:
+          "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600",
+      },
+      {
+        name: "Mr. Devraj Poudel",
+        role: "Mathematics Lecturer",
         image:
           "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
