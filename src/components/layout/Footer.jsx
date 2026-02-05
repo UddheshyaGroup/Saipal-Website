@@ -9,6 +9,7 @@ import {
   FaEnvelope,
   FaClock,
 } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -16,7 +17,13 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-10">
         {/* About Saipal */}
         <div>
-          <h3 className="text-xl font-bold mt-6 mb-6">Saipal Academy</h3>
+          <NavLink to="/" className="flex items-center my-4">
+            <img
+              src="/Logo.png"
+              alt="Saipal Academy Logo"
+              className="h-14 w-auto object-contain"
+            />
+          </NavLink>
           <p className="text-gray-200  mb-4">
             Providing world-class education through Cambridge A-Levels, NEB +2,
             and School programs with a focus on excellence and leadership.
