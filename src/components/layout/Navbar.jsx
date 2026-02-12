@@ -214,6 +214,7 @@ export default function Navbar() {
                       { to: "/blog", label: "Blogs" },
                       { to: "/faculty", label: "Our Faculty" },
                       { to: "/contact", label: "Contact Us" },
+                      { to: "/academicgame", label: "Academic Game" },
                     ].map((item) => (
                       <DrawerLink
                         key={item.to}
@@ -325,11 +326,15 @@ export default function Navbar() {
                   "Blog",
                   "Faculty",
                   "Contact Us",
+                  "Academic Game",
                 ].map((item) => {
                   const to =
                     item === "Home"
                       ? "/"
-                      : `/${item.toLowerCase().replace(/ us/g, "").replace(/\s+/g, "")}`;
+                      : `/${item
+                          .toLowerCase()
+                          .replace(/ us/g, "")
+                          .replace(/\s+/g, "")}`;
                   return (
                     <NavLink
                       key={item}
