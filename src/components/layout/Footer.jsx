@@ -13,7 +13,7 @@ import { NavLink } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="bg-primary text-white pb-16 pt-0">
+    <footer className="bg-primary text-white">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-10">
         {/* About Saipal */}
         <div>
@@ -62,7 +62,7 @@ export default function Footer() {
         {/* Quick Links */}
         <div>
           <h3 className="text-xl font-bold mt-6 mb-6">Quick Links</h3>
-          <ul className="grid grid-cols-2 gap-2 text-gray-300">
+          <ul className="flex flex-col flex-wrap gap-2 text-gray-300">
             <li>
               <a href="/" className="hover:text-accent transition">
                 Home
@@ -86,6 +86,11 @@ export default function Footer() {
             <li>
               <a href="/faculty" className="hover:text-accent transition">
                 Faculty
+              </a>
+            </li>
+            <li>
+              <a href="/academicgame" className="hover:text-accent transition">
+                Academic Game
               </a>
             </li>
             <li>
@@ -172,10 +177,12 @@ export default function Footer() {
       </div>
 
       {/* Copyright */}
-      <div className="border-t border-primary/50 mt-8">
-        <div className="max-w-7xl mx-auto px-6 py-1 flex flex-col md:flex-row items-center justify-between text-sm text-gray-300">
+      <div className="bg-indigo-900 text-center items-center py-6 border-t border-gray-700/20 mt-8">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-around text-base text-gray-300">
           <span>
-            © {new Date().getFullYear()} Saipal Academy. All rights reserved.
+            {new Date().getFullYear()} © Saipal Academy. All rights reserved.
+          </span>
+          <span>
             Powered by:{" "}
             <a
               href="https://uddheshyagroup.com"
