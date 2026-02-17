@@ -113,7 +113,7 @@ export default function Home() {
                 ease: "linear",
               }}
             >
-              Admissions Open for 2025 Batch • NEB Pre-Board Exam Routine
+              College Sports Day (Feb 18–20, 2026) • NEB Board Exam Routine
               Published • Holiday on Maghe Sankranti
             </motion.div>
           </div>
@@ -155,14 +155,14 @@ export default function Home() {
           >
             {[
               {
-                title: "Admissions Open for 2025 Batch",
-                date: "Jan 15, 2026",
-                tag: "New",
-                color: "bg-accent",
+                title: "College Sports Day Announcement (Feb 18–20, 2026)",
+                date: "Feb 17, 2026",
+                tag: "Event",
+                color: "bg-green-600",
               },
               {
-                title: "NEB +2 Pre-Board Examination Routine Published",
-                date: "Jan 10, 2026",
+                title: "NEB +2 Board Examination Routine Published",
+                date: "Feb 17, 2026",
                 tag: "Exam",
                 color: "bg-primary",
               },
