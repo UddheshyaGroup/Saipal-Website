@@ -90,9 +90,12 @@ export default function Gallery() {
 
   const openImage = (index) => setActiveIndex(index);
   const closeModal = () => setActiveIndex(null);
-  const nextImage = () => setActiveIndex((prev) => (prev + 1) % galleryImages.length);
+  const nextImage = () =>
+    setActiveIndex((prev) => (prev + 1) % galleryImages.length);
   const prevImage = () =>
-    setActiveIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+    setActiveIndex(
+      (prev) => (prev - 1 + galleryImages.length) % galleryImages.length,
+    );
 
   useEffect(() => {
     if (thumbContainerRef.current && activeIndex !== null) {
@@ -115,7 +118,8 @@ export default function Gallery() {
           School Gallery
         </h1>
         <p className="mt-3 text-base text-gray-600 sm:text-lg">
-          Moments that make Saipal Academy special – events, activities, and everyday joy.
+          Moments that make Saipal Academy special – events, activities, and
+          everyday joy.
         </p>
       </div>
 
@@ -144,10 +148,9 @@ export default function Gallery() {
 
       {/* Modal */}
       {activeIndex !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 sm:p-4 backdrop-blur-md transition-opacity duration-300">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/75 p-3 sm:p-4 backdrop-blur-md transition-opacity duration-300">
           {/* Modal Container - slightly narrower & more elegant on large screens */}
           <div className="relative flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200/50 md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
-
             {/* Header - clean & professional */}
             <div className="flex items-center justify-between border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-5 py-3.5 sm:px-6">
               <h2 className="truncate pr-6 text-lg font-semibold text-gray-800 sm:text-xl">
@@ -203,10 +206,11 @@ export default function Gallery() {
                   <button
                     key={img.id}
                     onClick={() => setActiveIndex(idx)}
-                    className={`group flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-200 ${idx === activeIndex
-                      ? "border-blue-500 shadow-md scale-105"
-                      : "border-transparent hover:border-blue-300 hover:shadow-sm hover:scale-105"
-                      }`}
+                    className={`group flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-200 ${
+                      idx === activeIndex
+                        ? "border-blue-500 shadow-md scale-105"
+                        : "border-transparent hover:border-blue-300 hover:shadow-sm hover:scale-105"
+                    }`}
                   >
                     <img
                       src={img.image}

@@ -14,6 +14,9 @@ import InquiryForm from "../pages/InquiryForm";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ScrollToTop from "../components/layout/ScrollToTop";
+import Game from "../pages/Game";
+import QuizGame from "../components/Games/QuizGame";
+import DecisionMakingGame from "../components/Games/DecisionMakingGame";
 
 function AppRouter() {
   return (
@@ -29,6 +32,9 @@ function AppRouter() {
         <Route path="/scholarships" element={<Scholarships />} />
         <Route path="/faculty" element={<Faculty />} />
         <Route path="/gallery" element={<Gallery />} />
+        <Route path="/academicgame" element={<Game />} />
+        <Route path="/academicgame/quiz" element={<QuizGame />} />
+        <Route path="/academicgame/decision" element={<DecisionMakingGame />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogDetail />} />
         <Route path="/contact" element={<Contact />} />

@@ -1,6 +1,6 @@
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   FaGraduationCap,
   FaChalkboardTeacher,
@@ -313,22 +313,67 @@ export default function Home() {
           <motion.div
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={{ once: false, amount: 0.1 }}
             variants={{
               hidden: { opacity: 0 },
               show: {
                 opacity: 1,
                 transition: {
                   staggerChildren: 0.2,
+                  delayChildren: 0.09,
                 },
               },
             }}
             className="grid md:grid-cols-4 gap-10 text-center"
           >
-            <StatCard label="Years of Excellence" value={20} suffix="+" />
-            <StatCard label="Students Graduated" value={2500} suffix="+" />
-            <StatCard label="College Placement Rate" value={95} suffix="%" />
-            <StatCard label="Qualified Faculty" value={100} suffix="+" />
+            <motion.img
+              src="./1.png"
+              alt="Years of Excellence"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.6, ease: "easeOut" },
+                },
+              }}
+            />
+            <motion.img
+              src="./2.png"
+              alt="Students Graduated"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.6, ease: "easeOut" },
+                },
+              }}
+            />
+            <motion.img
+              src="./3.png"
+              alt="Placement Rate"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.6, ease: "easeOut" },
+                },
+              }}
+            />
+            <motion.img
+              src="./4.png"
+              alt="College Faculty"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.6, ease: "easeOut" },
+                },
+              }}
+            />
           </motion.div>
         </div>
       </section>
@@ -608,47 +653,6 @@ function AchievementCard({ icon, title, description }) {
       </div>
       <h3 className="text-2xl font-semibold mb-4 text-primary">{title}</h3>
       <p className="text-gray-700 leading-relaxed">{description}</p>
-    </motion.div>
-  );
-}
-
-function StatCard({ label, value, suffix }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.5 });
-
-  useEffect(() => {
-    if (!isInView) return;
-
-    let start = 0;
-    const duration = 2000; // 2 seconds animation
-    const increment = value / (duration / 30);
-    const interval = setInterval(() => {
-      start += increment;
-      if (start >= value) {
-        setCount(value);
-        clearInterval(interval);
-      } else {
-        setCount(Math.ceil(start));
-      }
-    }, 30);
-    return () => clearInterval(interval);
-  }, [value, isInView]);
-
-  return (
-    <motion.div
-      ref={ref}
-      variants={{
-        hidden: { opacity: 0, y: 30 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-      }}
-      className="bg-gray-50 p-10 rounded-xl shadow-md"
-    >
-      <h3 className="text-5xl font-extrabold text-primary">
-        {count}
-        {suffix}
-      </h3>
-      <p className="mt-4 text-lg text-gray-700 font-medium">{label}</p>
     </motion.div>
   );
 }
