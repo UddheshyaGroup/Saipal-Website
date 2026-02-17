@@ -48,7 +48,7 @@ export default function Navbar() {
           <div className="flex items-center gap-3 sm:gap-6 min-w-0">
             <a
               href="mailto:mail@saipal.edu.np"
-              className="flex items-center gap-1 hover:underline truncate"
+              className="hidden sm:flex items-center gap-1 hover:underline truncate"
             >
               <Mail size={12} className="shrink-0" />
               <span className="truncate">mail@saipal.edu.np</span>
@@ -56,7 +56,7 @@ export default function Navbar() {
 
             <a
               href="tel:+977014378154"
-              className="flex items-center gap-1 hover:underline truncate"
+              className="hidden sm:flex items-center gap-1 hover:underline truncate"
             >
               <Phone size={12} className="shrink-0" />
               <span className="truncate">+977-01-4378154</span>
@@ -70,7 +70,9 @@ export default function Navbar() {
               Dhumbarahi, Kathmandu, Nepal
             </span>
 
-            <span className="truncate sm:hidden">Dhumbarahi, Ktm</span>
+            <span className="truncate sm:hidden">
+              Dhumbarahi, Kathmandu, Nepal
+            </span>
           </div>
         </div>
       </div>
@@ -99,7 +101,9 @@ export default function Navbar() {
 
             {/* Desktop Hamburger */}
             <button
-              className={`hidden md:block p-2 hover:bg-gray-100 rounded-full transition-colors ${desktopMenuOpen ? "opacity-0 invisible" : "opacity-100 visible"}`}
+              className={`hidden md:block p-2 hover:bg-gray-100 rounded-full transition-colors ${
+                desktopMenuOpen ? "opacity-0 invisible" : "opacity-100 visible"
+              }`}
               onClick={() => setDesktopMenuOpen(!desktopMenuOpen)}
             >
               <Menu size={24} />
@@ -176,7 +180,9 @@ export default function Navbar() {
                         <span className="text-lg">Programs</span>
                         <ChevronDown
                           size={18}
-                          className={`transition-transform duration-300 ${programsOpen ? "rotate-180" : ""}`}
+                          className={`transition-transform duration-300 ${
+                            programsOpen ? "rotate-180" : ""
+                          }`}
                         />
                       </button>
 
@@ -341,7 +347,11 @@ export default function Navbar() {
                       to={to}
                       onClick={() => setMobileOpen(false)}
                       className={({ isActive }) =>
-                        `px-4 py-3 rounded-xl transition-all ${isActive ? "bg-primary/5 text-primary font-bold shadow-sm" : "text-gray-600 hover:bg-gray-50 font-medium"}`
+                        `px-4 py-3 rounded-xl transition-all ${
+                          isActive
+                            ? "bg-primary/5 text-primary font-bold shadow-sm"
+                            : "text-gray-600 hover:bg-gray-50 font-medium"
+                        }`
                       }
                     >
                       {item}
@@ -381,7 +391,11 @@ function DrawerLink({ to, label, onClick, active }) {
     >
       <span className="text-lg">{label}</span>
       <div
-        className={`w-1.5 h-1.5 rounded-full bg-primary transition-all duration-300 ${active ? "opacity-100 scale-100" : "opacity-0 scale-0 group-hover:scale-100 group-hover:opacity-30"}`}
+        className={`w-1.5 h-1.5 rounded-full bg-primary transition-all duration-300 ${
+          active
+            ? "opacity-100 scale-100"
+            : "opacity-0 scale-0 group-hover:scale-100 group-hover:opacity-30"
+        }`}
       />
     </NavLink>
   );
