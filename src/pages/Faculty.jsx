@@ -1,3 +1,5 @@
+import { User } from "lucide-react";
+
 function FacultySection({ title, data }) {
   return (
     <section className="mb-12">
@@ -9,14 +11,11 @@ function FacultySection({ title, data }) {
         {data.map((f, i) => (
           <div
             key={i}
-            className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all p-4 flex flex-col items-center text-center"
+            className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all p-6 flex flex-col items-center text-center"
           >
-            <div className="w-28 h-28 rounded-full overflow-hidden mb-3 border-2 border-gray-100">
-              <img
-                src={f.image}
-                alt={f.name}
-                className="w-full h-full object-cover"
-              />
+            {/* User Icon Instead of Image */}
+            <div className="w-28 h-28 rounded-full bg-gray-100 flex items-center justify-center mb-4 border-2 border-gray-200">
+              <User size={48} className="text-gray-400" />
             </div>
 
             <h3 className="text-lg font-semibold text-primary">{f.name}</h3>
@@ -31,224 +30,47 @@ function FacultySection({ title, data }) {
 export default function Faculty() {
   const facultyData = {
     alevels: [
-      {
-        name: "Mr. Sri Hari Timalsina",
-        role: "Biology Lecturer",
-        image:
-          "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Sangat Thapa",
-        role: "Accounting Lecturer",
-        image:
-          "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Balkrishna Poudel",
-        role: "General Paper Lecturer",
-        image:
-          "https://images.pexels.com/photos/1704488/pexels-photo-1704488.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Jay Prakash Mishra",
-        role: "Physics Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Ruman Thapa",
-        role: "Computer Lecturer",
-        image:
-          "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Prabigya Tuladhar",
-        role: "Business Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Sundar Pariyar",
-        role: "Economics Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Devraj Poudel",
-        role: "Mathematics Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
+      { name: "Mr. Sri Hari Timalsina", role: "Biology Lecturer" },
+      { name: "Mr. Sangat Thapa", role: "Accounting Lecturer" },
+      { name: "Mr. Balkrishna Poudel", role: "General Paper Lecturer" },
+      { name: "Mr. Jay Prakash Mishra", role: "Physics Lecturer" },
+      { name: "Mr. Ruman Thapa", role: "Computer Lecturer" },
+      { name: "Mr. Prabigya Tuladhar", role: "Business Lecturer" },
+      { name: "Mr. Sundar Pariyar", role: "Economics Lecturer" },
+      { name: "Mr. Devraj Poudel", role: "Mathematics Lecturer" },
     ],
     neb: [
-      {
-        name: "Mr. Arjun Thapa Magar",
-        role: "English Lecturer",
-        image:
-          "https://images.pexels.com/photos/3777943/pexels-photo-3777943.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Ms. Bhagwati Neupane",
-        role: "Nepali Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
+      { name: "Mr. Arjun Thapa Magar", role: "English Lecturer" },
+      { name: "Ms. Bhagwati Neupane", role: "Nepali Lecturer" },
       {
         name: "Mr. Amol Rajlawat",
         role: "Tourism and Mountaineering Lecturer",
-        image:
-          "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
-      {
-        name: "Mr. Santosh Karki",
-        role: "Economics Lecturer",
-        image:
-          "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Khagendra Lamsal",
-        role: "Social Lecturer",
-        image:
-          "https://images.pexels.com/photos/2379002/pexels-photo-2379002.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Nischal Subedi",
-        role: "Accounting Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Prakash Mani Lamsal",
-        role: "Nepali Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Pratik Malla",
-        role: "Hotel Management Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Prem Bahadur Budha",
-        role: "Computer Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Ramhari Bohara",
-        role: "Accounting Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Ram Prajapti",
-        role: "Economics Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Sabita Aryal",
-        role: "Social Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Dipesh Joshi",
-        role: "Economics Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Mohan Pradhan",
-        role: "Mathematics Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Sangya Khatiwada",
-        role: "English Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Mim Sedhain",
-        role: "Nepali Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Ms. Manisha Rasaili",
-        role: "Economics Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Ms. Apekshya Phuyal",
-        role: "Zoology Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Kishor Rai",
-        role: "Lab (Chem/Bio)",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Surya Dhami",
-        role: "Lab (Physics)",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Mahendra Gahatraj",
-        role: "Botany Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Roma Singh",
-        role: "English Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Yubraj Poudel",
-        role: "Physics Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Ashok Raj Joshi",
-        role: "Physics Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Jitesh Kumar Jha",
-        role: "Chemistry Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Devraj Poudel",
-        role: "Mathematics Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Rama Kafle",
-        role: "Chemistry Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        name: "Mr. Keshav Bhatta",
-        role: "Chemistry Lecturer",
-        image:
-          "https://images.pexels.com/photos/1181689/pexels-photo-1181689.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
+      { name: "Mr. Santosh Karki", role: "Economics Lecturer" },
+      { name: "Mr. Khagendra Lamsal", role: "Social Lecturer" },
+      { name: "Mr. Nischal Subedi", role: "Accounting Lecturer" },
+      { name: "Mr. Prakash Mani Lamsal", role: "Nepali Lecturer" },
+      { name: "Mr. Pratik Malla", role: "Hotel Management Lecturer" },
+      { name: "Mr. Prem Bahadur Budha", role: "Computer Lecturer" },
+      { name: "Mr. Ramhari Bohara", role: "Accounting Lecturer" },
+      { name: "Mr. Ram Prajapti", role: "Economics Lecturer" },
+      { name: "Mr. Sabita Aryal", role: "Social Lecturer" },
+      { name: "Mr. Dipesh Joshi", role: "Economics Lecturer" },
+      { name: "Mr. Mohan Pradhan", role: "Mathematics Lecturer" },
+      { name: "Mr. Sangya Khatiwada", role: "English Lecturer" },
+      { name: "Mr. Mim Sedhain", role: "Nepali Lecturer" },
+      { name: "Ms. Manisha Rasaili", role: "Economics Lecturer" },
+      { name: "Ms. Apekshya Phuyal", role: "Zoology Lecturer" },
+      { name: "Mr. Kishor Rai", role: "Lab (Chem/Bio)" },
+      { name: "Mr. Surya Dhami", role: "Lab (Physics)" },
+      { name: "Mr. Mahendra Gahatraj", role: "Botany Lecturer" },
+      { name: "Mr. Roma Singh", role: "English Lecturer" },
+      { name: "Mr. Yubraj Poudel", role: "Physics Lecturer" },
+      { name: "Mr. Ashok Raj Joshi", role: "Physics Lecturer" },
+      { name: "Mr. Jitesh Kumar Jha", role: "Chemistry Lecturer" },
+      { name: "Mr. Devraj Poudel", role: "Mathematics Lecturer" },
+      { name: "Mr. Rama Kafle", role: "Chemistry Lecturer" },
+      { name: "Mr. Keshav Bhatta", role: "Chemistry Lecturer" },
     ],
   };
 

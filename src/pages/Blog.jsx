@@ -38,8 +38,12 @@ export default function Blog() {
 
     setStatus((prevStatus) => ({ ...prevStatus, submitting: true }));
 
-    const BREVO_API_KEY = import.meta.env.VITE_BREVO_API_KEY || import.meta.env.BREVO_API_KEY;
-    const BREVO_FROM = import.meta.env.VITE_BREVO_FROM || import.meta.env.BREVO_FROM || "mail@saipal.edu.np";
+    const BREVO_API_KEY =
+      import.meta.env.VITE_BREVO_API_KEY || import.meta.env.BREVO_API_KEY;
+    const BREVO_FROM =
+      import.meta.env.VITE_BREVO_FROM ||
+      import.meta.env.BREVO_FROM ||
+      "mail@saipal.edu.np";
 
     if (!BREVO_API_KEY) {
       handleResponse(400, "API configuration missing.");
@@ -70,7 +74,10 @@ export default function Blog() {
         handleResponse(200, "Thank you for subscribing to our newsletter!");
       } else {
         const errorData = await res.json();
-        handleResponse(res.status, errorData.message || "Something went wrong.");
+        handleResponse(
+          res.status,
+          errorData.message || "Something went wrong."
+        );
       }
     } catch (error) {
       handleResponse(500, "Could not complete subscription. Please try later.");
@@ -109,23 +116,23 @@ export default function Blog() {
             transition={{ delay: 0.2 }}
             className="text-lg md:text-xl max-w-2xl mx-auto opacity-90"
           >
-            Stay updated with the latest stories, achievements, and academic
-            insights from Saipal Academy.
+            No Blogs Yet! Stay tuned for exciting updates and stories from
+            Saipal Academy.
           </motion.p>
         </div>
       </section>
 
       {/* ================= BLOG GRID ================= */}
-      <section className="max-w-7xl mx-auto px-6 mt-5 relative z-20">
+      {/* <section className="max-w-7xl mx-auto px-6 mt-5 relative z-20">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {BLOG_POSTS.map((post, index) => (
             <BlogCard key={post.id} post={post} index={index} />
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* ================= NEWSLETTER ================= */}
-      <section className="max-w-4xl mx-auto px-6 mt-20">
+      {/* <section className="max-w-4xl mx-auto px-6 mt-20">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row items-center p-8 md:p-12 border border-blue-100">
           <div className="flex-1 text-center md:text-left mb-8 md:mb-0">
             <h2 className="text-3xl font-bold text-primary mb-4">
@@ -157,7 +164,7 @@ export default function Blog() {
             </form>
           </div>
         </div>
-      </section>
+      </section> */}
     </main>
   );
 }
