@@ -1,221 +1,234 @@
 import { useState, useEffect, useRef } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
-/* ---------------- GALLERY DATA ---------------- */
+/* ---------------- DATA ---------------- */
 
-const galleryImages = [
+const albums = [
   {
     id: 1,
     title: "Annual Sports Day",
-    image:
-      "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80",
+    cover: "/SportsDay/SportsImage1.jpeg",
+    photos: [
+      {
+        url: "/SportsDay/SportsImage1.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage2.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage3.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage4.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage5.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage6.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage7.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage8.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage9.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage10.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage11.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage12.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage13.jpeg",
+      },
+      {
+        url: "/SportsDay/SportsImage14.jpeg",
+      },
+    ],
   },
   {
     id: 2,
-    title: "Science Exhibition",
-    image:
-      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: 3,
-    title: "Classroom Activities",
-    image:
-      "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: 4,
-    title: "Graduation Ceremony",
-    image:
-      "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: 5,
-    title: "Computer Lab Session",
-    image:
-      "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: 6,
-    title: "School Cultural Event",
-    image:
-      "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: 7,
-    title: "Library & Study Time",
-    image:
-      "https://images.unsplash.com/photo-1519452575417-564c1401ecc0?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    id: 8,
-    title: "Morning Assembly",
-    image:
-      "https://images.unsplash.com/photo-1604881991720-f91add269bed?auto=format&fit=crop&w=1200&q=80",
+    title: "Hotel Management Practical",
+    cover: "/HM_Practical/HmImage4.jpeg",
+    photos: [
+      {
+        url: "/HM_Practical/HmImage4.jpeg",
+      },
+      {
+        url: "/HM_Practical/HmImage2.jpg",
+      },
+      {
+        url: "/HM_Practical/HmImage3.jpeg",
+      },
+      {
+        url: "/HM_Practical/HmImage1.jpg",
+      },
+      {
+        url: "/HM_Practical/HmImage5.jpeg",
+      },
+    ],
   },
 ];
 
 /* ---------------- COMPONENT ---------------- */
 
 export default function Gallery() {
-  const [activeIndex, setActiveIndex] = useState(null);
-  const thumbContainerRef = useRef(null);
+  const [activeAlbum, setActiveAlbum] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const thumbRef = useRef(null);
 
+  /* Lock scroll when slider open */
   useEffect(() => {
-    if (activeIndex !== null) {
+    if (activeAlbum) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [activeIndex]);
+    return () => (document.body.style.overflow = "");
+  }, [activeAlbum]);
 
+  /* Keyboard navigation */
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (activeIndex === null) return;
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        nextImage();
-      }
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        prevImage();
-      }
-      if (e.key === "Escape") setActiveIndex(null);
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeIndex]);
+    const handleKey = (e) => {
+      if (!activeAlbum) return;
 
-  const openImage = (index) => setActiveIndex(index);
-  const closeModal = () => setActiveIndex(null);
+      if (e.key === "ArrowRight") nextImage();
+      if (e.key === "ArrowLeft") prevImage();
+      if (e.key === "Escape") closeSlider();
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [activeAlbum]);
+
+  const openSlider = (album) => {
+    setActiveAlbum(album);
+    setActiveIndex(0); // start from first image
+  };
+
+  const closeSlider = () => {
+    setActiveAlbum(null);
+  };
+
   const nextImage = () =>
-    setActiveIndex((prev) => (prev + 1) % galleryImages.length);
+    setActiveIndex((prev) => (prev + 1) % activeAlbum.photos.length);
+
   const prevImage = () =>
     setActiveIndex(
-      (prev) => (prev - 1 + galleryImages.length) % galleryImages.length,
+      (prev) =>
+        (prev - 1 + activeAlbum.photos.length) % activeAlbum.photos.length
     );
 
+  /* Auto scroll thumbnail strip */
   useEffect(() => {
-    if (thumbContainerRef.current && activeIndex !== null) {
-      const activeThumb = thumbContainerRef.current.children[activeIndex];
-      if (activeThumb) {
-        activeThumb.scrollIntoView({
+    if (thumbRef.current && activeAlbum) {
+      const el = thumbRef.current.children[activeIndex];
+      if (el) {
+        el.scrollIntoView({
           behavior: "smooth",
           inline: "center",
           block: "nearest",
         });
       }
     }
-  }, [activeIndex]);
+  }, [activeIndex, activeAlbum]);
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-10 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
-          School Gallery
-        </h1>
-        <p className="mt-3 text-base text-gray-600 sm:text-lg">
-          Moments that make Saipal Academy special – events, activities, and
-          everyday joy.
-        </p>
-      </div>
+    <main className="mx-auto max-w-7xl px-4 py-12">
+      <h1 className="mb-10 text-center text-4xl font-bold text-gray-900">
+        School Gallery
+      </h1>
 
-      {/* Grid */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {galleryImages.map((img, index) => (
+      {/* ---------------- ALBUM GRID ---------------- */}
+      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+        {albums.map((album) => (
           <button
-            key={img.id}
-            type="button"
-            onClick={() => openImage(index)}
-            className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100 shadow-sm transition-all hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            key={album.id}
+            onClick={() => openSlider(album)}
+            className="group relative overflow-hidden rounded-2xl shadow-md transition hover:shadow-xl"
           >
             <img
-              src={img.image}
-              alt={img.title}
-              loading="lazy"
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              src={album.cover}
+              alt={album.title}
+              className="h-64 w-full object-cover transition duration-500 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-            <p className="absolute bottom-3 left-3 right-3 truncate text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
-              {img.title}
-            </p>
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute bottom-4 left-4 text-left">
+              <h2 className="text-xl font-semibold text-white">
+                {album.title}
+              </h2>
+              <p className="text-sm text-gray-200">
+                {album.photos.length} Photos
+              </p>
+            </div>
           </button>
         ))}
       </div>
 
-      {/* Modal */}
-      {activeIndex !== null && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/75 p-3 sm:p-4 backdrop-blur-md transition-opacity duration-300">
-          {/* Modal Container - slightly narrower & more elegant on large screens */}
-          <div className="relative flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200/50 md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
-            {/* Header - clean & professional */}
-            <div className="flex items-center justify-between border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-5 py-3.5 sm:px-6">
-              <h2 className="truncate pr-6 text-lg font-semibold text-gray-800 sm:text-xl">
-                {galleryImages[activeIndex].title}
+      {/* ---------------- DIRECT IMAGE SLIDER ---------------- */}
+      {activeAlbum && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
+          <div className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4">
+              <h2 className="truncate pr-6 text-lg font-semibold text-gray-800">
+                {activeAlbum.title}
               </h2>
               <button
-                onClick={closeModal}
-                className="flex items-center justify-center rounded-full bg-white/80 p-2 text-gray-600 shadow-sm transition hover:bg-white hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
-                aria-label="Close gallery"
+                onClick={closeSlider}
+                className="rounded-full bg-white p-2 hover:text-red-600"
               >
-                <X size={26} strokeWidth={2.5} />
+                <X size={24} />
               </button>
             </div>
 
-            {/* Main Image Area - better proportions & centering */}
-            <div className="relative flex flex-1 items-center justify-center bg-gradient-to-b from-gray-50 to-white p-4 sm:p-8">
+            {/* Image Area */}
+            <div className="relative flex items-center justify-center bg-gradient-to-b from-gray-50 to-white p-6">
               <img
-                src={galleryImages[activeIndex].image}
-                alt={galleryImages[activeIndex].title}
-                className="h-[60vh] sm:h-[70vh] max-w-full object-contain rounded-lg shadow-xl"
+                src={activeAlbum.photos[activeIndex].url}
+                alt=""
+                className="h-[65vh] max-w-full object-contain rounded-lg shadow-xl"
               />
 
-              {/* Navigation Arrows - larger touch areas, semi-transparent */}
               <button
                 onClick={prevImage}
-                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:h-14 sm:w-14"
-                aria-label="Previous image"
+                className="absolute left-4 top-1/2 -translate-y-1/2 flex h-14 w-14 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70"
               >
-                <ChevronLeft size={32} strokeWidth={2.5} />
+                <ChevronLeft size={30} />
               </button>
 
               <button
                 onClick={nextImage}
-                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-blue-400 sm:h-14 sm:w-14"
-                aria-label="Next image"
+                className="absolute right-4 top-1/2 -translate-y-1/2 flex h-14 w-14 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70"
               >
-                <ChevronRight size={32} strokeWidth={2.5} />
+                <ChevronRight size={30} />
               </button>
             </div>
 
-            {/* Footer with Thumbnails + Optional Caption */}
-            <div className="border-t border-gray-200 bg-gray-50 px-4 py-4 sm:px-6">
-              {/* Title/Caption repeated here for context when scrolling thumbnails */}
-              <p className="mb-3 text-center text-sm font-medium text-gray-700 sm:hidden">
-                {galleryImages[activeIndex].title}
-              </p>
-
-              <div
-                ref={thumbContainerRef}
-                className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-blue-400 sm:gap-3"
-              >
-                {galleryImages.map((img, idx) => (
+            {/* Thumbnail Strip */}
+            <div className="border-t bg-gray-50 px-4 py-4">
+              <div ref={thumbRef} className="flex gap-3 overflow-x-auto pb-2">
+                {activeAlbum.photos.map((photo, idx) => (
                   <button
-                    key={img.id}
+                    key={idx}
                     onClick={() => setActiveIndex(idx)}
-                    className={`group flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-200 ${
+                    className={`flex-shrink-0 overflow-hidden rounded-lg border-2 transition ${
                       idx === activeIndex
-                        ? "border-blue-500 shadow-md scale-105"
-                        : "border-transparent hover:border-blue-300 hover:shadow-sm hover:scale-105"
+                        ? "border-blue-500 scale-105"
+                        : "border-transparent hover:border-blue-300"
                     }`}
                   >
                     <img
-                      src={img.image}
-                      alt={img.title}
-                      className="h-14 w-20 object-cover transition-transform duration-300 group-hover:scale-110 sm:h-16 sm:w-24"
+                      src={photo.url}
+                      alt=""
+                      className="h-16 w-24 object-cover"
                     />
                   </button>
                 ))}
