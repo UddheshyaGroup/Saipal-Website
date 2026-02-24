@@ -168,7 +168,7 @@ export default function Home() {
               },
               {
                 title: "Holiday Notice: Fagu Purnima",
-                date: "Mar 02, 2026",
+                date: "Feb 24, 2026",
                 tag: "Holiday",
                 color: "bg-gray-600",
               },
