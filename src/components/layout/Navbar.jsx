@@ -278,11 +278,11 @@ export default function Navbar() {
                         },
                         {
                           icon: Linkedin,
-                          url: "https://linkedin.com/company/saipalacademy",
+                          url: "https://www.linkedin.com/company/saipal-academy/",
                         },
                         {
                           icon: Youtube,
-                          url: "https://youtube.com/saipalacademy",
+                          url: "https://www.youtube.com/@saipalacademy2002",
                         },
                       ].map((social, i) => (
                         <a
