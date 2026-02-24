@@ -70,10 +70,10 @@ function Programs() {
 
       <div className="mt-12">
         <div className="rounded-t-3xl bg-white p-6 sm:p-10 lg:p-12 shadow-sm border border-slate-200 border-b-0 overflow-hidden">
-          <h2 className="text-3xl font-extrabold text-primary sm:text-4xl lg:text-5xl">
+          <h2 className="text-3xl font-extrabold text-primary sm:text-4xl lg:text-5xl justify-center text-center">
             {programData[activeTab].title}
           </h2>
-          <p className="mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed max-w-5xl">
+          <p className="mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed max-w-5xl justify-center text-center mx-auto">
             {programData[activeTab].description}
           </p>
 

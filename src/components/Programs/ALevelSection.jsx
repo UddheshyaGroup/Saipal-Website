@@ -185,7 +185,7 @@ export default function ALevelSection() {
 
   return (
     <>
-      <ImageSlider images={ALEVEL_IMAGES} />
+      {/* <ImageSlider images={ALEVEL_IMAGES} /> */}
 
       <div className="mt-16 grid gap-8 lg:grid-cols-2">
         {/* WHY A LEVEL */}
