@@ -142,8 +142,8 @@ export default function Gallery() {
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-12">
-      <h1 className="mb-10 text-center text-4xl font-bold text-gray-900">
-        School Gallery
+      <h1 className="mb-10 text-center text-5xl font-bold text-primary">
+        Gallery
       </h1>
 
       {/* ---------------- ALBUM GRID ---------------- */}
