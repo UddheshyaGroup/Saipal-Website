@@ -114,7 +114,7 @@ export default function Home() {
               }}
             >
               College Sports Day (Feb 18–20, 2026) • NEB Board Exam Routine
-              Published • Holiday on Maghe Sankranti
+              Published • Holiday on Holi
             </motion.div>
           </div>
         </div>
@@ -167,8 +167,8 @@ export default function Home() {
                 color: "bg-primary",
               },
               {
-                title: "Holiday Notice: Maghe Sankranti",
-                date: "Jan 05, 2026",
+                title: "Holiday Notice: Fagu Purnima",
+                date: "Mar 02, 2026",
                 tag: "Holiday",
                 color: "bg-gray-600",
               },
