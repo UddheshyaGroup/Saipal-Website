@@ -276,7 +276,7 @@ export default function Home() {
             className="grid md:grid-cols-3 gap-10"
           >
             <ProgramCard
-              image="/a-levels.jpeg"
+              image="/CambridgeLogo.png"
               title="Cambridge A-Levels"
               query="alevels"
               description="Globally recognized curriculum designed to prepare students for leading universities worldwide."

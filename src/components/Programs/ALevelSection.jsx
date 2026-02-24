@@ -223,7 +223,7 @@ export default function ALevelSection() {
             </div>
             <div className="mt-8 space-y-6 text-blue-50/90 leading-relaxed flex justify-center ">
               <img
-                src="/a-levels.jpeg"
+                src="/CambridgeLogo.png"
                 alt="Cambridge A Levels"
                 className="w-auto max-w-full h-[200px] rounded-3xl object-cover object-center remove-bg"
               />
