@@ -102,70 +102,114 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="
-          grid grid-cols-1 
-          lg:grid-cols-2 
-          gap-6 md:gap-8 
-          items-stretch
-        "
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-stretch"
             >
-              {/* TEXT CARD */}
-              <div
-                className="
-          bg-white 
-          p-6 sm:p-8 md:p-10 lg:p-12
-          rounded-2xl 
-          shadow-md 
-          border border-gray-100
-          flex flex-col justify-center
-          text-center md:text-left
-        "
-              >
-                {/* Icon + Title */}
-                <div className="flex flex-col items-center md:items-start gap-4">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
-                    {item.title === "Our Vision" ? (
-                      <Eye className="w-6 h-6 lg:w-8 lg:h-8" />
-                    ) : (
-                      <Target className="w-6 h-6 lg:w-8 lg:h-8" />
-                    )}
-                  </div>
-
-                  <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-primary">
-                    {item.title}
-                  </h3>
-                </div>
-
-                {/* Description */}
-                <p className="mt-4 text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed italic">
-                  {item.description}
-                </p>
-              </div>
-
-              {/* IMAGE CARD */}
-              {item.imageUrl && (
-                <div
-                  className="
-            relative 
-            w-full 
-            h-64 sm:h-72 md:h-80 lg:h-full
-            rounded-2xl 
-            overflow-hidden 
-            shadow-md
-          "
-                >
-                  <img
-                    src={item.imageUrl}
-                    alt={item.title}
+              {item.title === "Our Vision" ? (
+                <>
+                  {/* IMAGE CARD */}
+                  {item.imageUrl && (
+                    <div
+                      className="
+                        relative 
+                        w-full 
+                        h-64 sm:h-72 md:h-80 lg:h-full
+                        rounded-2xl 
+                        overflow-hidden 
+                        shadow-md
+                      "
+                    >
+                      <img
+                        src={item.imageUrl}
+                        alt={item.title}
+                        className="
+                          absolute inset-0 
+                          w-full h-full 
+                          object-cover 
+                          transition-transform duration-500 
+                          hover:scale-105
+                        "
+                      />
+                    </div>
+                  )}
+                  {/* TEXT CARD */}
+                  <div
                     className="
-                absolute inset-0 
-                w-full h-full 
-                object-cover 
-                transition-transform duration-500 
-                hover:scale-105
-              "
-                  />
-                </div>
+                      bg-white 
+                      p-6 sm:p-8 md:p-10 lg:p-12
+                      rounded-2xl 
+                      shadow-md 
+                      border border-gray-100
+                      flex flex-col justify-center
+                      text-center md:text-left
+                    "
+                  >
+                    {/* Icon + Title */}
+                    <div className="flex flex-col items-center md:items-start gap-4">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                        <Eye className="w-6 h-6 lg:w-8 lg:h-8" />
+                      </div>
+                      <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-primary">
+                        {item.title}
+                      </h3>
+                    </div>
+                    <p className="mt-4 text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed italic">
+                      {item.description}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* TEXT CARD */}
+                  <div
+                    className="
+                      bg-white 
+                      p-6 sm:p-8 md:p-10 lg:p-12
+                      rounded-2xl 
+                      shadow-md 
+                      border border-gray-100
+                      flex flex-col justify-center
+                      text-center md:text-left
+                    "
+                  >
+                    {/* Icon + Title */}
+                    <div className="flex flex-col items-center md:items-start gap-4">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                        <Target className="w-6 h-6 lg:w-8 lg:h-8" />
+                      </div>
+                      <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-primary">
+                        {item.title}
+                      </h3>
+                    </div>
+                    <p className="mt-4 text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed italic">
+                      {item.description}
+                    </p>
+                  </div>
+                  {/* IMAGE CARD */}
+                  {item.imageUrl && (
+                    <div
+                      className="
+                        relative 
+                        w-full 
+                        h-64 sm:h-72 md:h-80 lg:h-full
+                        rounded-2xl 
+                        overflow-hidden 
+                        shadow-md
+                      "
+                    >
+                      <img
+                        src={item.imageUrl}
+                        alt={item.title}
+                        className="
+                          absolute inset-0 
+                          w-full h-full 
+                          object-cover 
+                          transition-transform duration-500 
+                          hover:scale-105
+                        "
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </motion.div>
           ))}
