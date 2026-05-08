@@ -528,7 +528,7 @@ export default function Home() {
         {tourOpen && (
           <motion.div
             onClick={() => setTourOpen(false)} // Close on click outside
-            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-4"
+            className="fixed left-0 right-0 bottom-0 top-[96px] z-50 bg-black/70 flex items-start justify-center px-4 pt-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -550,7 +550,7 @@ export default function Home() {
 
               <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1"
+                src="https://www.youtube.com/embed/o267a1-fCjQ?autoplay=1&vq=hd1080"
                 title="Saipal Academy Virtual Tour"
                 frameBorder="0"
                 allow="autoplay; encrypted-media; picture-in-picture"
