@@ -1,184 +1,153 @@
 import {
   FaFacebookF,
-  FaTwitter,
   FaInstagram,
-  FaLinkedinIn,
   FaYoutube,
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaEnvelope,
   FaClock,
 } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
     <footer className="bg-primary text-white">
-      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-10">
+      <div className="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-10">
         {/* About Saipal */}
         <div>
-          <NavLink to="/" className="flex items-center my-4">
+          <Link to="/" className="inline-block mb-4">
             <img
               src="/Logo.png"
               alt="Saipal Academy Logo"
               className="h-14 w-auto object-contain"
             />
-          </NavLink>
-          <p className="text-gray-200  mb-4">
-            Providing world-class education through Cambridge A-Levels, NEB +2,
-            and School programs with a focus on excellence and leadership.
+          </Link>
+          <p className="text-gray-200 text-sm leading-relaxed mb-6">
+            Empowering students with world-class education from Pre-Primary through Grade 10, Cambridge A-Levels, and NEB +2 programs in Kathmandu, Nepal.
           </p>
 
-          <div className="flex space-x-12 text-gray-300">
+          <div className="flex space-x-6 text-gray-300">
             <a
               href="https://facebook.com/saipalacademy"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-accent transition"
+              className="hover:text-accent transition p-2 bg-white/10 rounded-full"
+              aria-label="Facebook"
             >
-              <FaFacebookF size={20} />
+              <FaFacebookF size={16} />
             </a>
 
             <a
               href="https://instagram.com/saipalacademy"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-accent transition"
+              className="hover:text-accent transition p-2 bg-white/10 rounded-full"
+              aria-label="Instagram"
             >
-              <FaInstagram size={20} />
+              <FaInstagram size={16} />
             </a>
 
             <a
-              href="https://youtube.com/@saipalacademy2002?si=ZzZa1ryhcg65K8bd"
+              href="https://youtube.com/@saipalacademy2002"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-accent transition"
+              className="hover:text-accent transition p-2 bg-white/10 rounded-full"
+              aria-label="YouTube"
             >
-              <FaYoutube size={20} />
+              <FaYoutube size={16} />
             </a>
           </div>
         </div>
 
-        {/* Quick Links */}
+        {/* Divisions & Quick Links */}
         <div>
-          <h3 className="text-xl font-bold mt-6 mb-6">Quick Links</h3>
-          <ul className="flex flex-col flex-wrap gap-2 text-gray-300">
+          <h3 className="text-lg font-bold mb-4 text-accent">Academic Divisions</h3>
+          <ul className="space-y-2 text-sm text-gray-300">
             <li>
-              <a href="/" className="hover:text-accent transition">
-                Home
-              </a>
+              <Link to="/school" className="hover:text-accent transition font-semibold text-white">
+                🏫 Saipal School (K-10)
+              </Link>
             </li>
             <li>
-              <a href="/about" className="hover:text-accent transition">
-                About Us
-              </a>
+              <Link to="/school/programs" className="hover:text-accent transition pl-4 block text-xs">
+                - School Curriculum (K-10)
+              </Link>
             </li>
             <li>
-              <a href="/programs" className="hover:text-accent transition">
-                Programs
-              </a>
+              <Link to="/school/admissions" className="hover:text-accent transition pl-4 block text-xs">
+                - School Admissions
+              </Link>
+            </li>
+
+            <li className="pt-3">
+              <Link to="/college" className="hover:text-accent transition font-semibold text-white">
+                🎓 Saipal College (+2 & A-Levels)
+              </Link>
             </li>
             <li>
-              <a href="/gallery" className="hover:text-accent transition">
-                Gallery
-              </a>
+              <Link to="/programs" className="hover:text-accent transition pl-4 block text-xs">
+                - Cambridge A-Levels & NEB +2
+              </Link>
             </li>
             <li>
-              <a href="/faculty" className="hover:text-accent transition">
-                Faculty
-              </a>
-            </li>
-            <li>
-              <a href="/academicgame" className="hover:text-accent transition">
-                Academic Game
-              </a>
-            </li>
-            <li>
-              <a href="/contact" className="hover:text-accent transition">
-                Contact
-              </a>
+              <Link to="/admissions" className="hover:text-accent transition pl-4 block text-xs">
+                - College Admissions
+              </Link>
             </li>
           </ul>
         </div>
 
         {/* Contact Info */}
         <div>
-          <h3 className="text-xl font-bold mt-6 mb-6">Contact Us</h3>
-          <ul className="space-y-4 text-gray-300">
-            <li className="flex items-center gap-3">
-              <FaMapMarkerAlt />
+          <h3 className="text-lg font-bold mb-4 text-accent">Contact Us</h3>
+          <ul className="space-y-3 text-sm text-gray-300">
+            <li className="flex items-start gap-3">
+              <FaMapMarkerAlt className="mt-1 shrink-0 text-accent" />
               <span>Dhumbarahi, Kathmandu, Nepal</span>
             </li>
             <li className="flex items-center gap-3">
-              <FaPhoneAlt />
-              <a
-                href="tel:+977014378154"
-                className="hover:text-accent transition"
-              >
-                +977-01-4378154
+              <FaPhoneAlt className="shrink-0 text-accent" />
+              <a href="tel:+977014378154" className="hover:text-accent transition">
+                +977-01-4378154 / 4009054
               </a>
             </li>
             <li className="flex items-center gap-3">
-              <FaPhoneAlt />
-              <a
-                href="tel:+977014009054"
-                className="hover:text-accent transition"
-              >
-                +977-01-4009054
-              </a>
-            </li>
-            <li className="flex items-center gap-3">
-              <FaEnvelope />
-              <a
-                href="mailto:mail@saipal.edu.np"
-                className="hover:text-accent transition"
-              >
+              <FaEnvelope className="shrink-0 text-accent" />
+              <a href="mailto:mail@saipal.edu.np" className="hover:text-accent transition">
                 mail@saipal.edu.np
               </a>
             </li>
           </ul>
         </div>
 
-        {/* Office Hours */}
+        {/* Academic Hours */}
         <div>
-          <h3 className="text-xl font-bold mt-6 mb-6">Academic Hours</h3>
+          <h3 className="text-lg font-bold mb-4 text-accent">Academic Hours</h3>
 
-          <ul className="space-y-4 text-gray-300">
-            {/* School Timing */}
+          <ul className="space-y-4 text-xs text-gray-300">
             <li className="flex items-start gap-3">
-              <FaClock className="mt-1" />
+              <FaClock className="mt-0.5 text-accent shrink-0" />
               <div>
-                <p className="font-medium text-white">School</p>
-                <p>9:00 AM – 6:00 PM</p>
+                <p className="font-bold text-white text-sm">School Division</p>
+                <p>9:00 AM – 4:00 PM (Sun - Fri)</p>
               </div>
             </li>
 
-            {/* College Timing */}
             <li className="flex items-start gap-3">
-              <FaClock className="mt-1" />
+              <FaClock className="mt-0.5 text-accent shrink-0" />
               <div>
-                <p className="font-medium text-white">College</p>
-
-                <p>
-                  6:00 AM – 11:00 AM{" "}
-                  <span className="text-gray-400">(Management)</span>
-                </p>
-
-                <p>
-                  11:00 AM – 5:00 PM
-                  <span className="block text-gray-400">
-                    (Science & A-Levels)
-                  </span>
-                </p>
+                <p className="font-bold text-white text-sm">College Division</p>
+                <p>6:00 AM – 11:00 AM <span className="text-gray-400">(Management)</span></p>
+                <p>11:00 AM – 5:00 PM <span className="text-gray-400">(Science & A-Levels)</span></p>
               </div>
             </li>
           </ul>
         </div>
       </div>
 
-      {/* Copyright */}
-      <div className="bg-indigo-900 text-center items-center py-6 border-t border-gray-700/20 mt-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-around text-base text-gray-300">
+      {/* Bottom Bar */}
+      <div className="bg-slate-950 text-center py-4 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-400 gap-2">
           <span>
             {new Date().getFullYear()} © Saipal Academy. All rights reserved.
           </span>
@@ -188,7 +157,7 @@ export default function Footer() {
               href="https://uddheshyagroup.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold hover:text-accent transition"
+              className="font-semibold text-gray-300 hover:text-accent transition"
             >
               Uddheshya Group
             </a>
