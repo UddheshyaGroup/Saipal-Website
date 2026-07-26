@@ -36,55 +36,139 @@ export default function Home() {
   return (
     <main className="overflow-x-hidden">
       {/* ================= HERO SECTION ================= */}
-      <section className="relative min-h-[85vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[88vh] flex items-center overflow-hidden bg-slate-950">
         {/* Background Image */}
-        <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 z-0">
           <img
             src="/hero.jpeg"
-            alt="Outdoor university campus shot"
-            className="h-full w-full object-cover brightness-105 contrast-105"
+            alt="Saipal Academy campus"
+            className="w-full h-full object-cover object-center brightness-105 contrast-105"
           />
-
-          {/* Overlay (lighter = more image visible) */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/65 to-primary/30" />
+          {/* Same gradient effects as School hero */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#2E3192]/95 via-[#2E3192]/80 to-[#2E3192]/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/40" />
         </div>
 
-        {/* Content */}
+        {/* Content: 2-column */}
         <div className="relative z-10 w-full">
-          <div className="max-w-7xl mx-auto px-6 py-24">
+          <div className="max-w-7xl mx-auto px-6 py-20 sm:py-28 grid lg:grid-cols-2 gap-16 items-center">
+
+            {/* ── LEFT: Hero Text (School-style) ── */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9 }}
-              className="max-w-3xl space-y-7 text-left"
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="space-y-5 text-left"
             >
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-white">
-                Empowering Future Leaders <br />
-                with <span className="text-accent">World-Class Education</span>
+              {/* Pulse badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md">
+                <span className="w-2 h-2 rounded-full bg-[#00AEEF] animate-pulse"></span>
+                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] text-white">
+                  Welcome to Saipal Academy
+                </p>
+              </div>
+
+              {/* Headline */}
+              <h1 className="text-2xl sm:text-3xl lg:text-5xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-md">
+                Empowering Future Leaders <br className="hidden sm:inline" />
+                with{" "}
+                <span className="text-[#00AEEF] relative inline-block mt-2">
+                  World-Class Education
+                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#00AEEF]/40" viewBox="0 0 100 10" preserveAspectRatio="none">
+                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="4" fill="transparent" />
+                  </svg>
+                </span>
               </h1>
 
-              <p className="text-base sm:text-lg text-white/90 font-medium leading-relaxed">
-                Saipal Academy offers Cambridge A-Levels, NEB +2, and School
-                programs that prepare students for success both in Nepal and
-                internationally.
+              {/* Subtext */}
+              <p className="text-xs sm:text-base text-white/90 font-medium leading-relaxed max-w-xl drop-shadow-md">
+                Saipal Academy offers Cambridge A-Levels, NEB +2, and School programs that prepare students for success both in Nepal and internationally.
               </p>
 
-              <div className="flex flex-wrap gap-4 pt-4">
+              {/* Buttons */}
+              <div className="flex flex-wrap gap-4 pt-2">
                 <Link
-                  to="/admissions"
-                  className="bg-accent px-8 py-3.5 rounded-xl text-white font-bold shadow-lg hover:scale-105 hover:opacity-95 transition"
+                  to="/college/admissions"
+                  className="bg-[#00AEEF] hover:bg-white hover:text-[#00AEEF] text-white font-bold px-5 py-3 rounded-xl shadow-xl hover:scale-105 transition-all text-xs sm:text-sm group flex items-center gap-2"
                 >
                   Apply Now
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </Link>
-
                 <Link
-                  to="/programs"
-                  className="border-2 border-white/80 px-8 py-3.5 rounded-xl text-white font-bold hover:bg-white hover:text-primary transition"
+                  to="/college/programs"
+                  className="bg-white/10 border-2 border-white/30 hover:bg-white hover:text-[#2E3192] text-white font-bold px-5 py-3 rounded-xl backdrop-blur-md transition-all text-xs sm:text-sm"
                 >
                   Explore Programs
                 </Link>
               </div>
             </motion.div>
+
+            {/* ── RIGHT: Academic Programs ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="space-y-4"
+            >
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] text-white/60">
+                Our Academic Programs
+              </p>
+
+              {/* Cambridge A-Levels */}
+              <Link
+                to="/college/programs"
+                className="group flex items-center gap-5 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl hover:bg-white/20 hover:border-[#00AEEF]/60 transition-all shadow-lg"
+              >
+                <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center p-2 shrink-0 shadow-md">
+                  <img src="/CambridgeLogo.png" alt="Cambridge" className="w-full h-full object-contain" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#00AEEF]">Global Standard</span>
+                  <h3 className="text-white font-bold text-lg leading-snug group-hover:text-[#00AEEF] transition-colors">
+                    Cambridge A-Levels
+                  </h3>
+                  <p className="text-white/55 text-sm mt-0.5">International curriculum, globally recognised</p>
+                </div>
+                <span className="text-white/30 group-hover:text-[#00AEEF] group-hover:translate-x-1 transition-all shrink-0 text-xl">→</span>
+              </Link>
+
+              {/* NEB +2 */}
+              <Link
+                to="/college/programs"
+                className="group flex items-center gap-5 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl hover:bg-white/20 hover:border-emerald-400/60 transition-all shadow-lg"
+              >
+                <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center shrink-0 overflow-hidden shadow-md">
+                  <img src="/+2lelvels.jpeg" alt="NEB" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">National Board</span>
+                  <h3 className="text-white font-bold text-lg leading-snug group-hover:text-emerald-400 transition-colors">
+                    NEB +2 Level
+                  </h3>
+                  <p className="text-white/55 text-sm mt-0.5">Science, Management &amp; Humanities streams</p>
+                </div>
+                <span className="text-white/30 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all shrink-0 text-xl">→</span>
+              </Link>
+
+              {/* School K-10 */}
+              <Link
+                to="/school/programs"
+                className="group flex items-center gap-5 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl hover:bg-white/20 hover:border-amber-400/60 transition-all shadow-lg"
+              >
+                <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center shrink-0 overflow-hidden shadow-md">
+                  <img src="/school-level.jpeg" alt="School" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400">Foundation</span>
+                  <h3 className="text-white font-bold text-lg leading-snug group-hover:text-amber-400 transition-colors">
+                    School Level (K-10)
+                  </h3>
+                  <p className="text-white/55 text-sm mt-0.5">Pre-Primary through Grade 10 (SEE)</p>
+                </div>
+                <span className="text-white/30 group-hover:text-amber-400 group-hover:translate-x-1 transition-all shrink-0 text-xl">→</span>
+              </Link>
+            </motion.div>
+
           </div>
         </div>
       </section>
