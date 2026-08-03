@@ -47,7 +47,7 @@ export default function Navbar() {
           <div className="flex items-center gap-3 sm:gap-6 min-w-0">
             <a
               href="mailto:mail@saipal.edu.np"
-              className="flex items-center gap-1 hover:underline truncate"
+              className="hidden sm:flex items-center gap-1 hover:underline truncate"
             >
               <Mail size={12} className="shrink-0" />
               <span className="truncate">mail@saipal.edu.np</span>

@@ -1,7 +1,16 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { SCHOOL_FACULTY } from "../data/schoolData";
+import { cmsService, cmsBus } from "../services/cmsService";
 
 export default function SchoolFaculty() {
+  const [faculty, setFaculty] = useState(() => cmsService.getFaculty());
+
+  useEffect(() => {
+    setFaculty(cmsService.getFaculty());
+    const handleCmsChange = () => setFaculty(cmsService.getFaculty());
+    cmsBus.addEventListener("cms-data-changed", handleCmsChange);
+    return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
+  }, []);
   return (
     <main className="min-h-screen bg-slate-50 font-sans text-slate-800">
       {/* Header Banner */}
@@ -23,7 +32,7 @@ export default function SchoolFaculty() {
       <div className="max-w-6xl mx-auto px-6 py-16 space-y-20">
         {/* Faculty Grid */}
         <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {SCHOOL_FACULTY.map((member, i) => (
+          {faculty.map((member, i) => (
             <div
               key={i}
               className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex flex-col justify-between"

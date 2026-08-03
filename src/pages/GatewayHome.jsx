@@ -86,7 +86,11 @@ function Half({
       />
 
       {/* ── Content ── */}
-      <div className="relative z-10 flex flex-col justify-center h-full px-8 sm:px-12 lg:px-16 py-24 md:py-0 md:min-h-screen">
+      <div
+        className={`relative z-10 flex flex-col justify-center h-full px-8 sm:px-12 lg:px-16 py-24 md:py-0 md:min-h-screen ${
+          side === "right" ? "items-end text-right" : "items-start text-left"
+        }`}
+      >
         {/* Eyebrow */}
         <motion.p
           initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
@@ -113,7 +117,9 @@ function Half({
           initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: textDelay + 0.16 }}
-          className="text-sm sm:text-base font-semibold mb-10 max-w-xs drop-shadow-md"
+          className={`text-sm sm:text-base font-semibold mb-10 max-w-xs drop-shadow-md ${
+            side === "right" ? "ml-auto" : ""
+          }`}
           style={{ color: "rgba(255,255,255,0.95)" }}
         >
           {copy}

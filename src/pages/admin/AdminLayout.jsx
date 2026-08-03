@@ -1,0 +1,223 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { authService } from "../../services/authService";
+import {
+  LayoutDashboard,
+  Bell,
+  FileText,
+  Users,
+  GraduationCap,
+  Award,
+  Building2,
+  Quote,
+  HelpCircle,
+  Settings,
+  LogOut,
+  ExternalLink,
+  ShieldCheck,
+  Menu,
+  X,
+  School,
+  ArrowLeft,
+  Images,
+} from "lucide-react";
+
+import PortalSelector from "./PortalSelector";
+import DashboardOverview from "./modules/DashboardOverview";
+import NoticesManager from "./modules/NoticesManager";
+import BlogManager from "./modules/BlogManager";
+import FacultyManager from "./modules/FacultyManager";
+import ProgramsManager from "./modules/ProgramsManager";
+import ScholarshipsManager, {
+  FacilitiesManager,
+  TestimonialsManager,
+  SiteSettingsManager,
+} from "./modules/ScholarshipsManager";
+import AdminFaqManager from "./AdminFaqManager";
+import GalleryManager from "./modules/GalleryManager";
+
+export default function AdminLayout() {
+  const navigate = useNavigate();
+  const [selectedDivision, setSelectedDivision] = useState(null); // 'school' | 'college' | null
+  const [activeModule, setActiveModule] = useState("overview");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const currentUser = authService.getCurrentUser();
+
+  // --- Dynamic browser tab title based on active module & division ---
+  useEffect(() => {
+    if (!selectedDivision) {
+      document.title = "Select Admin Portal | Saipal CMS";
+      return;
+    }
+
+    const div = selectedDivision === "school" ? "School" : "College";
+
+    const MODULE_TITLES = {
+      overview:     `${div} Admin — Dashboard`,
+      notices:      `${div} Admin — Notices & Tickers`,
+      blogs:        `${div} Admin — Blog & News`,
+      faculty:      `${div} Admin — Faculty Directory`,
+      programs:     `${div} Admin — Academic Programs`,
+      scholarships: `${div} Admin — Scholarships`,
+      gallery:      `${div} Admin — Gallery Manager`,
+      facilities:   `${div} Admin — Facilities & Clubs`,
+      testimonials: `${div} Admin — Testimonials`,
+      chatbot:      `${div} Admin — AI Chatbot FAQ`,
+      settings:     `${div} Admin — Site Settings`,
+    };
+
+    document.title = MODULE_TITLES[activeModule] || `${div} Admin Panel`;
+  }, [activeModule, selectedDivision]);
+
+  const handleLogout = () => {
+    authService.logout();
+    navigate("/admin/login");
+  };
+
+  // If no portal is selected yet, render PortalSelector landing screen
+  if (!selectedDivision) {
+    return <PortalSelector onSelectPortal={(division) => setSelectedDivision(division)} />;
+  }
+
+  const isSchool = selectedDivision === "school";
+
+  const navItems = [
+    { id: "overview", label: "Dashboard Overview", icon: LayoutDashboard },
+    { id: "notices", label: isSchool ? "School Notices & Tickers" : "College Notices & Tickers", icon: Bell },
+    { id: "blogs", label: "Blog & News Articles", icon: FileText },
+    { id: "faculty", label: isSchool ? "School Faculty Directory" : "College Faculty", icon: Users },
+    { id: "programs", label: isSchool ? "School Levels (K-10)" : "College Programs (+2/A-Levels)", icon: GraduationCap },
+    { id: "scholarships", label: "Scholarships & Aid", icon: Award },
+    { id: "gallery", label: isSchool ? "School Gallery" : "College Gallery", icon: Images },
+    { id: "facilities", label: isSchool ? "School Facilities & Clubs" : "Campus Facilities", icon: Building2 },
+    { id: "testimonials", label: isSchool ? "Parent Testimonials" : "Community Reviews", icon: Quote },
+    { id: "chatbot", label: "AI Chatbot FAQ", icon: HelpCircle },
+    { id: "settings", label: "Site Settings & Info", icon: Settings },
+  ];
+
+  return (
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-100 flex flex-col md:flex-row">
+      {/* ── MOBILE NAVBAR ── */}
+      <div className="md:hidden bg-slate-900 text-white p-4 flex items-center justify-between sticky top-0 z-50">
+        <div className="flex items-center gap-2">
+          {isSchool ? <School className="text-[#00AEEF]" size={22} /> : <GraduationCap className="text-[#2E3192]" size={22} />}
+          <span className="font-extrabold text-sm tracking-wide">
+            {isSchool ? "School Admin Portal" : "College Admin Portal"}
+          </span>
+        </div>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 text-slate-300 hover:text-white"
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* ── SIDEBAR NAVIGATION ── */}
+      <aside
+        className={`w-full md:w-64 bg-slate-900 text-slate-300 flex flex-col justify-between shrink-0 transition-all z-40 ${
+          mobileMenuOpen ? "block" : "hidden md:flex"
+        }`}
+      >
+        <div>
+          {/* Brand Logo Header */}
+          <div className="p-6 border-b border-slate-800 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className={`p-2 rounded-xl text-white ${isSchool ? "bg-[#00AEEF]" : "bg-[#2E3192]"}`}>
+                  {isSchool ? <School size={18} /> : <GraduationCap size={18} />}
+                </div>
+                <div>
+                  <h2 className="font-extrabold text-white text-sm leading-tight">
+                    {isSchool ? "School Admin" : "College Admin"}
+                  </h2>
+                  <p className="text-[10px] text-slate-400">Saipal CMS v2.0</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Switch Portal Button */}
+            <button
+              onClick={() => setSelectedDivision(null)}
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[#00AEEF] text-[11px] font-bold transition cursor-pointer"
+            >
+              <ArrowLeft size={12} /> Switch Division Portal
+            </button>
+          </div>
+
+          {/* Nav Links */}
+          <nav className="p-4 space-y-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeModule === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveModule(item.id);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    isActive
+                      ? isSchool
+                        ? "bg-[#00AEEF] text-white shadow-md"
+                        : "bg-[#2E3192] text-white shadow-md"
+                      : "hover:bg-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <Icon size={16} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* User Info & Footer Actions */}
+        <div className="p-4 border-t border-slate-800 space-y-3">
+          <a
+            href={isSchool ? "/school" : "/college"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 text-xs font-semibold transition"
+          >
+            <span>View {isSchool ? "School" : "College"} Live</span>
+            <ExternalLink size={14} />
+          </a>
+
+          <div className="flex items-center justify-between px-3 py-2 bg-slate-950/60 rounded-xl text-xs">
+            <div className="truncate">
+              <p className="font-bold text-white truncate">{currentUser?.name || "Admin"}</p>
+              <p className="text-[10px] text-slate-400 truncate">{currentUser?.email}</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              title="Logout"
+              className="p-1.5 hover:bg-rose-950 text-rose-400 rounded-lg transition cursor-pointer"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* ── MAIN CONTENT AREA ── */}
+      <main className="flex-1 overflow-y-auto p-4 sm:p-8">
+        {activeModule === "overview" && (
+          <DashboardOverview onNavigate={setActiveModule} division={selectedDivision} />
+        )}
+        {activeModule === "notices" && <NoticesManager division={selectedDivision} />}
+        {activeModule === "blogs" && <BlogManager division={selectedDivision} />}
+        {activeModule === "faculty" && <FacultyManager division={selectedDivision} />}
+        {activeModule === "programs" && <ProgramsManager division={selectedDivision} />}
+        {activeModule === "scholarships" && <ScholarshipsManager division={selectedDivision} />}
+        {activeModule === "gallery" && <GalleryManager division={selectedDivision} />}
+        {activeModule === "facilities" && <FacilitiesManager division={selectedDivision} />}
+        {activeModule === "testimonials" && <TestimonialsManager division={selectedDivision} />}
+        {activeModule === "chatbot" && <AdminFaqManager division={selectedDivision} />}
+        {activeModule === "settings" && <SiteSettingsManager division={selectedDivision} />}
+      </main>
+    </div>
+  );
+}
+

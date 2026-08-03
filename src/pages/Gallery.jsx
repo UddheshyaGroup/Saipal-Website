@@ -1,88 +1,27 @@
 import { useState, useEffect, useRef } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-
-/* ---------------- DATA ---------------- */
-
-const albums = [
-  {
-    id: 1,
-    title: "Annual Sports Day",
-    cover: "/SportsDay/SportsImage1.jpeg",
-    photos: [
-      {
-        url: "/SportsDay/SportsImage1.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage2.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage3.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage4.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage5.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage6.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage7.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage8.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage9.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage10.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage11.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage12.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage13.jpeg",
-      },
-      {
-        url: "/SportsDay/SportsImage14.jpeg",
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "Hotel Management Practical",
-    cover: "/HM_Practical/HmImage4.jpeg",
-    photos: [
-      {
-        url: "/HM_Practical/HmImage4.jpeg",
-      },
-      {
-        url: "/HM_Practical/HmImage2.jpg",
-      },
-      {
-        url: "/HM_Practical/HmImage3.jpeg",
-      },
-      {
-        url: "/HM_Practical/HmImage1.jpg",
-      },
-      {
-        url: "/HM_Practical/HmImage5.jpeg",
-      },
-    ],
-  },
-];
+import { useLocation } from "react-router-dom";
+import { cmsService, cmsBus } from "../services/cmsService";
 
 /* ---------------- COMPONENT ---------------- */
 
 export default function Gallery() {
+  const location = useLocation();
+  const division = location.pathname.startsWith("/school") ? "school" : "college";
+
+  const [albums, setAlbums] = useState([]);
   const [activeAlbum, setActiveAlbum] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const thumbRef = useRef(null);
+
+  const loadAlbums = () => setAlbums(cmsService.getGalleryAlbums(division));
+
+  useEffect(() => {
+    loadAlbums();
+    const handler = () => loadAlbums();
+    cmsBus.addEventListener("cms-data-changed", handler);
+    return () => cmsBus.removeEventListener("cms-data-changed", handler);
+  }, [division]);
 
   /* Lock scroll when slider open */
   useEffect(() => {

@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 import GatewayHome from "../pages/GatewayHome";
 import SchoolHome from "../pages/SchoolHome";
@@ -28,14 +29,21 @@ import Game from "../pages/Game";
 import QuizGame from "../components/Games/QuizGame";
 import DecisionMakingGame from "../components/Games/DecisionMakingGame";
 
+import FaqChatbot from "../components/chatbot/FaqChatbot";
+import AdminLogin from "../pages/admin/AdminLogin";
+import AdminLayout from "../pages/admin/AdminLayout";
+import ProtectedRoute from "../components/admin/ProtectedRoute";
+
 function MainLayout() {
   const location = useLocation();
+  usePageTitle();
   const isGatewayPage = location.pathname === "/";
+  const isAdminPage = location.pathname.startsWith("/admin");
 
   return (
     <>
       <ScrollToTop />
-      {!isGatewayPage && <Navbar />}
+      {!isGatewayPage && !isAdminPage && <Navbar />}
 
       <Routes>
         {/* Gateway Root Route - Split-Screen Entrance */}
@@ -82,9 +90,21 @@ function MainLayout() {
         <Route path="/blog/:id" element={<BlogDetail />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/enquiry" element={<InquiryForm />} />
+
+        {/* Admin Authentication & Management Routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route
+          path="/admin/*"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
-      {!isGatewayPage && <Footer />}
+      {!isGatewayPage && !isAdminPage && <FaqChatbot />}
+      {!isGatewayPage && !isAdminPage && <Footer />}
     </>
   );
 }

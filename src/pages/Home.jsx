@@ -1,6 +1,7 @@
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { cmsService, cmsBus } from "../services/cmsService";
 import {
   FaGraduationCap,
   FaChalkboardTeacher,
@@ -20,6 +21,22 @@ import {
 
 export default function Home() {
   const [tourOpen, setTourOpen] = useState(false);
+  const [notices, setNotices] = useState(() => cmsService.getNotices("college"));
+  const [tickers, setTickers] = useState(() => cmsService.getTickers("college"));
+  const [programs, setPrograms] = useState(() => cmsService.getPrograms());
+
+  const loadCmsData = () => {
+    setNotices(cmsService.getNotices("college"));
+    setTickers(cmsService.getTickers("college"));
+    setPrograms(cmsService.getPrograms());
+  };
+
+  useEffect(() => {
+    loadCmsData();
+    const handleCmsChange = () => loadCmsData();
+    cmsBus.addEventListener("cms-data-changed", handleCmsChange);
+    return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
+  }, []);
 
   // Esc key support
   useEffect(() => {
@@ -32,6 +49,8 @@ export default function Home() {
   useEffect(() => {
     document.body.style.overflow = tourOpen ? "hidden" : "auto";
   }, [tourOpen]);
+
+  const activeTickerText = tickers.filter(t => t.isActive).map(t => t.text).join(" • ");
 
   return (
     <main className="overflow-x-hidden">
@@ -60,14 +79,6 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-5 text-left"
             >
-              {/* Pulse badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md">
-                <span className="w-2 h-2 rounded-full bg-[#00AEEF] animate-pulse"></span>
-                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] text-white">
-                  Welcome to Saipal Academy
-                </p>
-              </div>
-
               {/* Headline */}
               <h1 className="text-2xl sm:text-3xl lg:text-5xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-md">
                 Empowering Future Leaders <br className="hidden sm:inline" />
@@ -114,59 +125,25 @@ export default function Home() {
                 Our Academic Programs
               </p>
 
-              {/* Cambridge A-Levels */}
-              <Link
-                to="/college/programs"
-                className="group flex items-center gap-5 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl hover:bg-white/20 hover:border-[#00AEEF]/60 transition-all shadow-lg"
-              >
-                <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center p-2 shrink-0 shadow-md">
-                  <img src="/CambridgeLogo.png" alt="Cambridge" className="w-full h-full object-contain" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#00AEEF]">Global Standard</span>
-                  <h3 className="text-white font-bold text-lg leading-snug group-hover:text-[#00AEEF] transition-colors">
-                    Cambridge A-Levels
-                  </h3>
-                  <p className="text-white/55 text-sm mt-0.5">International curriculum, globally recognised</p>
-                </div>
-                <span className="text-white/30 group-hover:text-[#00AEEF] group-hover:translate-x-1 transition-all shrink-0 text-xl">→</span>
-              </Link>
-
-              {/* NEB +2 */}
-              <Link
-                to="/college/programs"
-                className="group flex items-center gap-5 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl hover:bg-white/20 hover:border-emerald-400/60 transition-all shadow-lg"
-              >
-                <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center shrink-0 overflow-hidden shadow-md">
-                  <img src="/+2lelvels.jpeg" alt="NEB" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">National Board</span>
-                  <h3 className="text-white font-bold text-lg leading-snug group-hover:text-emerald-400 transition-colors">
-                    NEB +2 Level
-                  </h3>
-                  <p className="text-white/55 text-sm mt-0.5">Science, Management &amp; Humanities streams</p>
-                </div>
-                <span className="text-white/30 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all shrink-0 text-xl">→</span>
-              </Link>
-
-              {/* School K-10 */}
-              <Link
-                to="/school/programs"
-                className="group flex items-center gap-5 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl hover:bg-white/20 hover:border-amber-400/60 transition-all shadow-lg"
-              >
-                <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center shrink-0 overflow-hidden shadow-md">
-                  <img src="/school-level.jpeg" alt="School" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400">Foundation</span>
-                  <h3 className="text-white font-bold text-lg leading-snug group-hover:text-amber-400 transition-colors">
-                    School Level (K-10)
-                  </h3>
-                  <p className="text-white/55 text-sm mt-0.5">Pre-Primary through Grade 10 (SEE)</p>
-                </div>
-                <span className="text-white/30 group-hover:text-amber-400 group-hover:translate-x-1 transition-all shrink-0 text-xl">→</span>
-              </Link>
+              {programs.filter(p => p.division === "college").map((p) => (
+                <Link
+                  key={p.id}
+                  to="/college/programs"
+                  className="group flex items-center gap-5 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl hover:bg-white/20 hover:border-[#00AEEF]/60 transition-all shadow-lg"
+                >
+                  <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center shrink-0 overflow-hidden shadow-md">
+                    <img src={p.image} alt={p.title} className="w-full h-full object-contain p-1" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className={`text-[10px] font-bold uppercase tracking-widest ${p.badgeColor || "text-[#00AEEF]"}`}>{p.badge}</span>
+                    <h3 className="text-white font-bold text-lg leading-snug group-hover:text-[#00AEEF] transition-colors">
+                      {p.title}
+                    </h3>
+                    <p className="text-white/55 text-sm mt-0.5">{p.description}</p>
+                  </div>
+                  <span className="text-white/30 group-hover:text-[#00AEEF] group-hover:translate-x-1 transition-all shrink-0 text-xl">→</span>
+                </Link>
+              ))}
             </motion.div>
 
           </div>
@@ -181,12 +158,10 @@ export default function Home() {
         className="bg-accent text-white overflow-hidden"
       >
         <div className="max-w-7xl mx-auto px-6 h-12 flex items-center gap-4">
-          {/* Static label */}
           <span className="font-bold whitespace-nowrap leading-none">
             📢 Important Notice:
           </span>
 
-          {/* Scrolling text wrapper */}
           <div className="relative flex-1 overflow-hidden">
             <motion.div
               className="whitespace-nowrap leading-none"
@@ -197,8 +172,7 @@ export default function Home() {
                 ease: "linear",
               }}
             >
-              College Sports Day (Feb 18–20, 2026) • NEB Board Exam Routine
-              Published • Holiday on Holi
+              {activeTickerText || "College Sports Day Announcement • NEB Board Exam Routine Published"}
             </motion.div>
           </div>
         </div>
@@ -237,46 +211,29 @@ export default function Home() {
             }}
             className="grid md:grid-cols-3 gap-8"
           >
-            {[
-              {
-                title: "College Sports Day Announcement (Feb 18–20, 2026)",
-                date: "Feb 17, 2026",
-                tag: "Event",
-                color: "bg-green-600",
-              },
-              {
-                title: "NEB +2 Board Examination Routine Published",
-                date: "Feb 17, 2026",
-                tag: "Exam",
-                color: "bg-primary",
-              },
-              {
-                title: "Holiday Notice: Fagu Purnima",
-                date: "Feb 24, 2026",
-                tag: "Holiday",
-                color: "bg-gray-600",
-              },
-            ].map((notice, i) => (
+            {notices.map((notice, i) => (
               <motion.div
-                key={i}
+                key={notice.id || i}
                 variants={{
                   hidden: { opacity: 0, y: 20 },
                   show: { opacity: 1, y: 0 },
                 }}
                 whileHover={{ y: -6 }}
-                className="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition"
+                className="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition flex flex-col justify-between"
               >
-                <span
-                  className={`inline-block mb-3 text-xs font-semibold text-white px-3 py-1 rounded-full ${notice.color}`}
-                >
-                  {notice.tag}
-                </span>
+                <div>
+                  <span
+                    className={`inline-block mb-3 text-xs font-semibold text-white px-3 py-1 rounded-full ${notice.color || "bg-primary"}`}
+                  >
+                    {notice.tag}
+                  </span>
 
-                <h3 className="font-semibold text-lg text-primary mb-2">
-                  {notice.title}
-                </h3>
+                  <h3 className="font-semibold text-lg text-primary mb-2">
+                    {notice.title}
+                  </h3>
+                </div>
 
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 pt-3 border-t">
                   Published on {notice.date}
                 </p>
               </motion.div>

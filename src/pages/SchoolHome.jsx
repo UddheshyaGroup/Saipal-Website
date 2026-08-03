@@ -2,13 +2,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FaTimes, FaStar, FaChevronDown } from "react-icons/fa";
+import { cmsService, cmsBus } from "../services/cmsService";
 import {
   SCHOOL_LEVELS,
-  SCHOOL_NOTICES,
   SCHOOL_FACILITIES,
   SCHOOL_STATS,
-  SCHOOL_CLUBS,
-  SCHOOL_TESTIMONIALS,
   SCHOOL_FAQS,
 } from "../data/schoolData";
 
@@ -24,6 +22,27 @@ export default function SchoolHome() {
   const [tourOpen, setTourOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
   const [currentHeroImage, setCurrentHeroImage] = useState(0);
+
+  const [notices, setNotices] = useState(() => cmsService.getNotices("school"));
+  const [tickers, setTickers] = useState(() => cmsService.getTickers("school"));
+  const [testimonials, setTestimonials] = useState(() => cmsService.getTestimonials());
+  const [programs, setPrograms] = useState(() => cmsService.getPrograms());
+
+  const loadCmsData = () => {
+    setNotices(cmsService.getNotices("school"));
+    setTickers(cmsService.getTickers("school"));
+    setTestimonials(cmsService.getTestimonials());
+    setPrograms(cmsService.getPrograms());
+  };
+
+  useEffect(() => {
+    loadCmsData();
+    const handleCmsChange = () => loadCmsData();
+    cmsBus.addEventListener("cms-data-changed", handleCmsChange);
+    return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
+  }, []);
+
+  const activeTickerText = tickers.filter(t => t.isActive).map(t => t.text).join(" • ");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,14 +87,14 @@ export default function SchoolHome() {
 
         {/* Hero Content */}
         <div className="relative z-10 w-full">
-          <div className="max-w-7xl mx-auto px-6 py-20 sm:py-28">
+          <div className="max-w-7xl mx-auto px-6 py-20 sm:py-28 grid lg:grid-cols-2 gap-16 items-center">
+            {/* ── LEFT: Hero Text ── */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="max-w-3xl space-y-5 text-left"
+              className="space-y-5 text-left"
             >
-
               {/* Headline */}
               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-md">
                 Empowering Young Minds with <br className="hidden sm:inline" />
@@ -110,6 +129,42 @@ export default function SchoolHome() {
                   Explore Curriculum
                 </Link>
               </div>
+            </motion.div>
+
+            {/* ── RIGHT: Academic Programs ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="space-y-4"
+            >
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] text-white/60">
+                OUR ACADEMIC PROGRAMS
+              </p>
+
+              {/* NEB School Level */}
+              <Link
+                to="/school/programs"
+                className="group flex items-center gap-5 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl hover:bg-white/20 hover:border-emerald-400/60 transition-all shadow-lg"
+              >
+                <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center shrink-0 overflow-hidden shadow-md">
+                  <img src="/school-level.jpeg" alt="NEB School Level" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
+                    NATIONAL BOARD
+                  </span>
+                  <h3 className="text-white font-bold text-lg leading-snug group-hover:text-emerald-400 transition-colors">
+                    NEB School Level
+                  </h3>
+                  <p className="text-white/55 text-sm mt-0.5">
+                    From Class 1 to 10
+                  </p>
+                </div>
+                <span className="text-white/30 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all shrink-0 text-xl">
+                  →
+                </span>
+              </Link>
             </motion.div>
           </div>
         </div>
@@ -149,7 +204,7 @@ export default function SchoolHome() {
                 ease: "linear",
               }}
             >
-              School Admissions Open for Academic Year 2026-2027 (Pre-Primary to Grade 9) • Annual Science & STEAM Fair on Feb 28 • Parents Orientation Meeting Scheduled
+              {activeTickerText || "School Admissions Open for Academic Year 2026-2027 (Pre-Primary to Grade 9) • Annual Science & STEAM Fair"}
             </motion.div>
           </div>
         </div>
@@ -227,14 +282,14 @@ export default function SchoolHome() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {SCHOOL_NOTICES.map((notice) => (
+            {notices.map((notice, idx) => (
               <div
-                key={notice.id}
+                key={notice.id || idx}
                 className="bg-white p-7 rounded-2xl border border-slate-200/90 shadow-sm flex flex-col justify-between space-y-4 hover:border-[#00AEEF]/50 transition"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-[#00AEEF] uppercase tracking-wider">
+                    <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full text-white uppercase tracking-wider ${notice.color || "bg-[#00AEEF]"}`}>
                       {notice.tag}
                     </span>
                     <span className="text-xs text-slate-400 font-medium">
@@ -343,7 +398,7 @@ export default function SchoolHome() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {SCHOOL_TESTIMONIALS.map((t, idx) => (
+            {testimonials.map((t, idx) => (
               <div
                 key={idx}
                 className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-4"
