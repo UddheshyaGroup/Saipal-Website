@@ -211,10 +211,10 @@ export default function SchoolHome() {
       </motion.section>
 
       {/* ================= 1. PRINCIPAL'S WELCOME (REDESIGNED SENIOR UI/UX) ================= */}
-      <section className="py-20 bg-white border-b border-slate-200/80">
+      {/* <section className="py-20 bg-white border-b border-slate-200/80">
         <div className="max-w-6xl mx-auto px-6">
           <div className="bg-slate-50 rounded-2xl p-8 sm:p-12 border border-slate-200/80 shadow-sm grid md:grid-cols-12 gap-10 items-center">
-            {/* Principal Photo Card */}
+            
             <div className="md:col-span-4 h-72 sm:h-80 rounded-xl overflow-hidden shadow-sm bg-slate-200">
               <img
                 src="/principal.jpeg"
@@ -223,7 +223,7 @@ export default function SchoolHome() {
               />
             </div>
 
-            {/* Principal Welcome Content */}
+            
             <div className="md:col-span-8 space-y-4">
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#00AEEF]">
                 Principal's Message
@@ -258,7 +258,7 @@ export default function SchoolHome() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ================= 2. SCHOOL NOTICE BOARD (REDESIGNED SENIOR UI/UX) ================= */}
       <section className="bg-slate-50 py-20">

@@ -284,8 +284,8 @@ export default function About() {
 
         <div className="max-w-7xl mx-auto relative z-10">
           {/* Main Card */}
-          <div className="bg-white rounded-[3rem] p-8 sm:p-10 md:p-14 lg:p-16 shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-center">
-            {/* Image */}
+          {/* <div className="bg-white rounded-[3rem] p-8 sm:p-10 md:p-14 lg:p-16 shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-center">
+            
             <div className="flex justify-center ">
               <div className="relative w-full max-w-sm">
                 <div className="absolute -inset-4 bg-accent/20 rounded-3xl rotate-3" />
@@ -297,7 +297,7 @@ export default function About() {
               </div>
             </div>
 
-            {/* Message */}
+            
             <div className="lg:col-span-2">
               <Quote className="text-accent w-12 h-12 sm:w-14 sm:h-14 mb-6 opacity-30" />
 
@@ -321,7 +321,7 @@ export default function About() {
                 </p>
               </div>
 
-              {/* Signature */}
+            
               <div className="pt-8">
                 <p className="font-bold text-xl sm:text-2xl text-primary">
                   Mr. Matrika Prasad Khatiwada
@@ -331,7 +331,7 @@ export default function About() {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* CTA SECTION */}
           <div className="mt-20 text-center max-w-3xl mx-auto text-white">
