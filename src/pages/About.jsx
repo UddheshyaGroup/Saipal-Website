@@ -324,7 +324,7 @@ export default function About() {
               {/* Signature */}
               <div className="pt-8">
                 <p className="font-bold text-xl sm:text-2xl text-primary">
-                  Mr. Ganesh Joshi
+                  Mr. Matrika Prasad Khatiwada
                 </p>
                 <p className="text-accent font-semibold tracking-wider">
                   Principal

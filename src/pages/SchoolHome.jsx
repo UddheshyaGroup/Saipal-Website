@@ -244,7 +244,7 @@ export default function SchoolHome() {
 
               <div className="pt-2 flex items-center justify-between border-t border-slate-200/80 mt-4">
                 <div>
-                  <div className="font-bold text-slate-900 text-sm">Mr. Ganesh Joshi</div>
+                  <div className="font-bold text-slate-900 text-sm">Mr. Govinda Bahadur Dhami</div>
                   <div className="text-xs text-slate-500">Principal</div>
                 </div>
 
