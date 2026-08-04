@@ -1,17 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaCalendarAlt, FaUser, FaTag, FaArrowRight } from "react-icons/fa";
 import Toast from "../components/layout/resuables/Toast";
-
-import { BLOG_POSTS } from "../data/blogData";
+import { cmsService, cmsBus } from "../services/cmsService";
 
 export default function Blog() {
+  const location = useLocation();
+  const division = location.pathname.startsWith("/school") ? "school" : "college";
+
+  const [blogs, setBlogs] = useState([]);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState({
     submitting: false,
     info: { error: false, msg: null },
   });
+
+  const loadBlogs = () => {
+    setBlogs(cmsService.getBlogPosts(division));
+  };
+
+  useEffect(() => {
+    loadBlogs();
+    const handleCmsChange = () => loadBlogs();
+    cmsBus.addEventListener("cms-data-changed", handleCmsChange);
+    return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
+  }, [division]);
 
   const clearStatus = () => {
     setStatus((prev) => ({ ...prev, info: { error: false, msg: null } }));
@@ -116,31 +130,33 @@ export default function Blog() {
             transition={{ delay: 0.2 }}
             className="text-lg md:text-xl max-w-2xl mx-auto opacity-90"
           >
-            No Blogs Yet! Stay tuned for exciting updates and stories from
-            Saipal Academy.
+            {blogs.length === 0 
+              ? `No Blogs Yet! Stay tuned for exciting updates and stories from Saipal ${division === "school" ? "School" : "College"}.`
+              : `Explore latest insights, event recaps, and announcements from Saipal ${division === "school" ? "School" : "College"}.`}
           </motion.p>
         </div>
       </section>
 
       {/* ================= BLOG GRID ================= */}
-      {/* <section className="max-w-7xl mx-auto px-6 mt-5 relative z-20">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {BLOG_POSTS.map((post, index) => (
-            <BlogCard key={post.id} post={post} index={index} />
-          ))}
-        </div>
-      </section> */}
+      {blogs.length > 0 && (
+        <section className="max-w-7xl mx-auto px-6 mt-12 relative z-20">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {blogs.map((post, index) => (
+              <BlogCard key={post.id} post={post} index={index} division={division} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ================= NEWSLETTER ================= */}
-      {/* <section className="max-w-4xl mx-auto px-6 mt-20">
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row items-center p-8 md:p-12 border border-blue-100">
+      <section className="max-w-4xl mx-auto px-6 mt-20">
+        {/* <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row items-center p-8 md:p-12 border border-blue-100">
           <div className="flex-1 text-center md:text-left mb-8 md:mb-0">
             <h2 className="text-3xl font-bold text-primary mb-4">
               Never Miss an Update
             </h2>
             <p className="text-gray-600">
-              Subscribe to our monthly newsletter to get the latest Saipal
-              stories directly in your inbox.
+              Subscribe to our monthly newsletter to get the latest Saipal stories directly in your inbox.
             </p>
           </div>
           <div className="flex-1 w-full md:ml-8">
@@ -151,25 +167,26 @@ export default function Blog() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your email address"
-                className="flex-grow px-6 py-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
+                className="flex-grow px-6 py-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm text-slate-900"
               />
               <button
                 type="submit"
                 disabled={status.submitting}
-                className={`bg-primary text-white px-8 py-4 rounded-xl font-bold hover:shadow-lg transition-all active:scale-95 ${status.submitting ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                className={`bg-primary text-white px-8 py-4 rounded-xl font-bold hover:shadow-lg transition-all active:scale-95 ${
+                  status.submitting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
                 {status.submitting ? "Joining..." : "Subscribe"}
               </button>
             </form>
           </div>
-        </div>
-      </section> */}
+        </div> */}
+      </section>
     </main>
   );
 }
 
-function BlogCard({ post, index }) {
+function BlogCard({ post, index, division }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -178,7 +195,7 @@ function BlogCard({ post, index }) {
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className="bg-white rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col h-full group"
     >
-      <Link to={`/blog/${post.id}`}>
+      <Link to={`/${division}/blog/${post.id}`}>
         {/* Image Container */}
         <div className="relative h-64 overflow-hidden">
           <img

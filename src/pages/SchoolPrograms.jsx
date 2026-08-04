@@ -1,7 +1,17 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { SCHOOL_LEVELS } from "../data/schoolData";
+import { cmsService, cmsBus } from "../services/cmsService";
 
 export default function SchoolPrograms() {
+  const [programs, setPrograms] = useState(() => cmsService.getPrograms("school"));
+
+  useEffect(() => {
+    setPrograms(cmsService.getPrograms("school"));
+    const handleCmsChange = () => setPrograms(cmsService.getPrograms("school"));
+    cmsBus.addEventListener("cms-data-changed", handleCmsChange);
+    return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
+  }, []);
+
   return (
     <main className="min-h-screen bg-slate-50 font-sans text-slate-800">
       {/* Header Banner */}
@@ -11,7 +21,7 @@ export default function SchoolPrograms() {
             Academic Excellence (K – Grade 10)
           </p>
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-            Programs & Curriculum
+            Programs &amp; Curriculum
           </h1>
           <p className="text-slate-200 text-base sm:text-lg max-w-2xl mx-auto font-normal">
             Integrating national educational standards with practical STEAM projects, character building, and individual mentorship.
@@ -20,8 +30,15 @@ export default function SchoolPrograms() {
       </section>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-6 py-16 space-y-16">
-        {SCHOOL_LEVELS.map((prog, idx) => (
+      <div className="max-w-6xl mx-auto px-6 py-16 space-y-12">
+        {programs.length === 0 && (
+          <div className="text-center text-slate-400 py-20">
+            <p className="text-lg font-semibold">No programs found.</p>
+            <p className="text-sm mt-1">Add school programs via the Admin Panel.</p>
+          </div>
+        )}
+
+        {programs.map((prog, idx) => (
           <div
             key={prog.id}
             className="bg-white rounded-2xl p-8 sm:p-10 border border-slate-200 shadow-sm grid lg:grid-cols-12 gap-8 items-center"
@@ -34,7 +51,7 @@ export default function SchoolPrograms() {
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-3 left-3 bg-[#2E3192] text-white text-xs font-bold px-3 py-1 rounded-full shadow">
-                {prog.age}
+                {prog.badge}
               </div>
             </div>
 
@@ -53,22 +70,11 @@ export default function SchoolPrograms() {
                 {prog.description}
               </p>
 
-              <div className="space-y-3 pt-2">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Key Curriculum Highlights:
-                </div>
-                <div className="grid sm:grid-cols-2 gap-2">
-                  {prog.highlights.map((item, i) => (
-                    <div
-                      key={i}
-                      className="text-xs sm:text-sm font-medium text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-200/80 flex items-center gap-2"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#00AEEF] shrink-0" />
-                      <span>{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              {prog.details && (
+                <p className="text-xs text-slate-400 font-mono leading-relaxed">
+                  {prog.details}
+                </p>
+              )}
 
               <div className="pt-2">
                 <Link

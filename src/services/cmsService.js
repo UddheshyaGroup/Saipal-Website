@@ -11,7 +11,8 @@ import {
   INITIAL_SCHOOL_CLUBS,
   INITIAL_COLLEGE_FACULTY,
   INITIAL_SCHOOL_FACULTY_SEED,
-  INITIAL_SCHOOL_TESTIMONIALS,
+  INITIAL_COLLEGE_TESTIMONIALS,
+  INITIAL_SCHOOL_TESTIMONIALS_SEED,
   INITIAL_SITE_SETTINGS,
   INITIAL_GALLERY_ALBUMS,
 } from "../data/initialCmsData";
@@ -67,7 +68,8 @@ const initializeCmsStorage = () => {
     localStorage.setItem(CMS_STORAGE_KEYS.FACULTY, JSON.stringify(allFaculty));
   }
   if (!localStorage.getItem(CMS_STORAGE_KEYS.TESTIMONIALS)) {
-    localStorage.setItem(CMS_STORAGE_KEYS.TESTIMONIALS, JSON.stringify(INITIAL_SCHOOL_TESTIMONIALS));
+    const allTestimonials = [...INITIAL_COLLEGE_TESTIMONIALS, ...INITIAL_SCHOOL_TESTIMONIALS_SEED];
+    localStorage.setItem(CMS_STORAGE_KEYS.TESTIMONIALS, JSON.stringify(allTestimonials));
   }
   if (!localStorage.getItem(CMS_STORAGE_KEYS.SETTINGS)) {
     localStorage.setItem(CMS_STORAGE_KEYS.SETTINGS, JSON.stringify(INITIAL_SITE_SETTINGS));
@@ -223,19 +225,24 @@ export const cmsService = {
     return updated;
   },
 
-  // --- BLOG POSTS ---
-  getBlogPosts: () => getItems(CMS_STORAGE_KEYS.BLOGS, INITIAL_BLOG_POSTS),
+  // --- BLOG POSTS (STRICT DIVISION ISOLATION) ---
+  getBlogPosts: (division = "all") => {
+    const list = getItems(CMS_STORAGE_KEYS.BLOGS, INITIAL_BLOG_POSTS);
+    if (!division || division === "all") return list;
+    return list.filter((p) => (p.division || "school") === division);
+  },
   getBlogPostById: (id) => {
-    const posts = cmsService.getBlogPosts();
+    const posts = getItems(CMS_STORAGE_KEYS.BLOGS, INITIAL_BLOG_POSTS);
     return posts.find((p) => String(p.id) === String(id)) || null;
   },
-  saveBlogPost: (post) => {
+  saveBlogPost: (post, targetDivision = "school") => {
     const list = getItems(CMS_STORAGE_KEYS.BLOGS, INITIAL_BLOG_POSTS);
+    const divisionToSave = post.division || targetDivision || "school";
     let updated;
-    if (post.id) {
-      updated = list.map((p) => (String(p.id) === String(post.id) ? { ...p, ...post } : p));
+    if (post.id && list.some((p) => String(p.id) === String(post.id))) {
+      updated = list.map((p) => (String(p.id) === String(post.id) ? { ...p, ...post, division: divisionToSave } : p));
     } else {
-      updated = [{ ...post, id: Date.now() }, ...list];
+      updated = [{ ...post, id: String(Date.now()), division: divisionToSave }, ...list];
     }
     saveItems(CMS_STORAGE_KEYS.BLOGS, updated, "blogs");
     return updated;
@@ -287,21 +294,26 @@ export const cmsService = {
   },
 
   // --- TESTIMONIALS ---
-  getTestimonials: () => getItems(CMS_STORAGE_KEYS.TESTIMONIALS, INITIAL_SCHOOL_TESTIMONIALS),
-  saveTestimonial: (item) => {
-    const list = getItems(CMS_STORAGE_KEYS.TESTIMONIALS, INITIAL_SCHOOL_TESTIMONIALS);
+  getTestimonials: (division = "all") => {
+    const list = getItems(CMS_STORAGE_KEYS.TESTIMONIALS, [...INITIAL_COLLEGE_TESTIMONIALS, ...INITIAL_SCHOOL_TESTIMONIALS_SEED]);
+    if (!division || division === "all") return list;
+    return list.filter((t) => (t.division || "school") === division);
+  },
+  saveTestimonial: (item, targetDivision = "school") => {
+    const list = getItems(CMS_STORAGE_KEYS.TESTIMONIALS, [...INITIAL_COLLEGE_TESTIMONIALS, ...INITIAL_SCHOOL_TESTIMONIALS_SEED]);
+    const divisionToSave = item.division || targetDivision;
     let updated;
-    if (item.id) {
-      updated = list.map((t) => (t.id === item.id ? { ...t, ...item } : t));
+    if (item.id && list.some((t) => String(t.id) === String(item.id))) {
+      updated = list.map((t) => (String(t.id) === String(item.id) ? { ...t, ...item, division: divisionToSave } : t));
     } else {
-      updated = [...list, { ...item, id: `tst-${Date.now()}` }];
+      updated = [...list, { ...item, id: `tst-${Date.now()}`, division: divisionToSave }];
     }
     saveItems(CMS_STORAGE_KEYS.TESTIMONIALS, updated, "testimonials");
     return updated;
   },
   deleteTestimonial: (id) => {
-    const list = getItems(CMS_STORAGE_KEYS.TESTIMONIALS, INITIAL_SCHOOL_TESTIMONIALS);
-    const updated = list.filter((t) => t.id !== id);
+    const list = getItems(CMS_STORAGE_KEYS.TESTIMONIALS, [...INITIAL_COLLEGE_TESTIMONIALS, ...INITIAL_SCHOOL_TESTIMONIALS_SEED]);
+    const updated = list.filter((t) => String(t.id) !== String(id));
     saveItems(CMS_STORAGE_KEYS.TESTIMONIALS, updated, "testimonials");
     return updated;
   },
@@ -370,7 +382,7 @@ export const cmsService = {
     localStorage.setItem(CMS_STORAGE_KEYS.FACILITIES, JSON.stringify(INITIAL_SCHOOL_FACILITIES));
     localStorage.setItem(CMS_STORAGE_KEYS.CLUBS, JSON.stringify(INITIAL_SCHOOL_CLUBS));
     localStorage.setItem(CMS_STORAGE_KEYS.FACULTY, JSON.stringify([...INITIAL_COLLEGE_FACULTY, ...INITIAL_SCHOOL_FACULTY_SEED]));
-    localStorage.setItem(CMS_STORAGE_KEYS.TESTIMONIALS, JSON.stringify(INITIAL_SCHOOL_TESTIMONIALS));
+    localStorage.setItem(CMS_STORAGE_KEYS.TESTIMONIALS, JSON.stringify([...INITIAL_COLLEGE_TESTIMONIALS, ...INITIAL_SCHOOL_TESTIMONIALS_SEED]));
     localStorage.setItem(CMS_STORAGE_KEYS.SETTINGS, JSON.stringify(INITIAL_SITE_SETTINGS));
     localStorage.setItem(CMS_STORAGE_KEYS.GALLERY, JSON.stringify(INITIAL_GALLERY_ALBUMS));
     cmsBus.notifyChange("all");

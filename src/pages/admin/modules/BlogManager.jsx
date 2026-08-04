@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { cmsService, cmsBus } from "../../../services/cmsService";
 import { Plus, Edit, Trash2, FileText, Image as ImageIcon, Eye } from "lucide-react";
 
-export default function BlogManager() {
+export default function BlogManager({ division = "school" }) {
   const [blogs, setBlogs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
@@ -16,8 +16,13 @@ export default function BlogManager() {
     content: "",
   });
 
+  const isSchool = division === "school";
+  const accentBg = isSchool ? "bg-[#00AEEF] hover:bg-[#0096ce]" : "bg-[#2E3192] hover:bg-[#252880]";
+  const accentText = isSchool ? "text-[#00AEEF]" : "text-[#2E3192]";
+  const accentIconColor = isSchool ? "#00AEEF" : "#2E3192";
+
   const loadBlogs = () => {
-    setBlogs(cmsService.getBlogPosts());
+    setBlogs(cmsService.getBlogPosts(division));
   };
 
   useEffect(() => {
@@ -25,7 +30,7 @@ export default function BlogManager() {
     const handleCmsChange = () => loadBlogs();
     cmsBus.addEventListener("cms-data-changed", handleCmsChange);
     return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
-  }, []);
+  }, [division]);
 
   const handleOpenModal = (blog = null) => {
     if (blog) {
@@ -59,7 +64,8 @@ export default function BlogManager() {
     cmsService.saveBlogPost({
       id: editingBlog?.id,
       ...blogForm,
-    });
+      division,
+    }, division);
     setIsModalOpen(false);
   };
 
@@ -74,16 +80,16 @@ export default function BlogManager() {
       <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <FileText className="text-[#00AEEF]" /> Blog & News Manager
+            <FileText className={accentText} style={{ color: accentIconColor }} /> Blog & News Manager
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Create, edit, and publish school news, event recaps, and study guides.
+            Create, edit, and publish division news, event recaps, and study guides.
           </p>
         </div>
 
         <button
           onClick={() => handleOpenModal()}
-          className="bg-[#00AEEF] hover:bg-[#0097d1] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md cursor-pointer"
+          className={`${accentBg} text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md cursor-pointer`}
         >
           <Plus size={16} /> Write New Article
         </button>

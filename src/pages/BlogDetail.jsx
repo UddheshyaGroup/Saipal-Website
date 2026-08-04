@@ -1,26 +1,27 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FaCalendarAlt,
   FaUser,
-  FaTag,
   FaArrowLeft,
   FaFacebookF,
   FaTwitter,
   FaLinkedinIn,
 } from "react-icons/fa";
-import { BLOG_POSTS } from "../data/blogData";
+import { cmsService } from "../services/cmsService";
 
 export default function BlogDetail() {
   const { id } = useParams();
-  const post = BLOG_POSTS.find((b) => b.id === parseInt(id));
+  const location = useLocation();
+  const division = location.pathname.startsWith("/school") ? "school" : "college";
+  const post = cmsService.getBlogPostById(id);
 
   if (!post) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
         <h2 className="text-3xl font-bold text-primary mb-4">Post Not Found</h2>
         <Link
-          to="/blog"
+          to={`/${division}/blog`}
           className="text-accent hover:underline flex items-center gap-2"
         >
           <FaArrowLeft /> Back to Blog
@@ -124,40 +125,44 @@ export default function BlogDetail() {
       </section>
 
       {/* ================= RELATED POSTS ================= */}
-      <section className="max-w-7xl mx-auto px-6 mt-20">
-        <h2 className="text-3xl font-bold text-primary mb-10 text-center">
-          Continue Reading
-        </h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          {BLOG_POSTS.filter((b) => b.id !== post.id)
-            .slice(0, 3)
-            .map((related) => (
-              <Link
-                key={related.id}
-                to={`/blog/${related.id}`}
-                className="group block h-full"
-              >
-                <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-full border border-gray-100">
-                  <div className="h-48 overflow-hidden">
-                    <img
-                      src={related.image}
-                      alt={related.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
+      {(() => {
+        const related = cmsService.getBlogPosts(division).filter((b) => String(b.id) !== String(post.id)).slice(0, 3);
+        if (related.length === 0) return null;
+        return (
+          <section className="max-w-7xl mx-auto px-6 mt-20">
+            <h2 className="text-3xl font-bold text-primary mb-10 text-center">
+              Continue Reading
+            </h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {related.map((rel) => (
+                <Link
+                  key={rel.id}
+                  to={`/${division}/blog/${rel.id}`}
+                  className="group block h-full"
+                >
+                  <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-full border border-gray-100">
+                    <div className="h-48 overflow-hidden">
+                      <img
+                        src={rel.image}
+                        alt={rel.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-6">
+                      <span className="text-xs font-bold text-accent uppercase tracking-wider">
+                        {rel.category}
+                      </span>
+                      <h3 className="text-xl font-bold text-primary mt-2 group-hover:text-accent line-clamp-2 transition-colors">
+                        {rel.title}
+                      </h3>
+                    </div>
                   </div>
-                  <div className="p-6">
-                    <span className="text-xs font-bold text-accent uppercase tracking-wider">
-                      {related.category}
-                    </span>
-                    <h3 className="text-xl font-bold text-primary mt-2 group-hover:text-accent line-clamp-2 transition-colors">
-                      {related.title}
-                    </h3>
-                  </div>
-                </div>
-              </Link>
-            ))}
-        </div>
-      </section>
+                </Link>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
     </main>
   );
 }

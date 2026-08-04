@@ -1,4 +1,8 @@
-import { BLOG_POSTS as INITIAL_BLOG_POSTS } from "./blogData";
+import { BLOG_POSTS as INITIAL_BLOG_POSTS_RAW } from "./blogData";
+export const INITIAL_BLOG_POSTS = INITIAL_BLOG_POSTS_RAW.map((p) => ({
+  ...p,
+  division: String(p.id) === "1" ? "college" : "school",
+}));
 import {
   SCHOOL_LEVELS as INITIAL_SCHOOL_LEVELS,
   SCHOOL_NOTICES as INITIAL_SCHOOL_NOTICES,
@@ -234,13 +238,46 @@ export const INITIAL_SITE_SETTINGS = {
 };
 
 export {
-  INITIAL_BLOG_POSTS,
   INITIAL_SCHOOL_LEVELS,
   INITIAL_SCHOOL_FACILITIES,
   INITIAL_SCHOOL_STATS,
   INITIAL_SCHOOL_CLUBS,
-  INITIAL_SCHOOL_TESTIMONIALS,
 };
+
+// --- SEED TESTIMONIALS ---
+export const INITIAL_COLLEGE_TESTIMONIALS = [
+  {
+    id: "col-tst-1",
+    name: "Subodh Thapa",
+    relation: "NEB Science Alumnus (Batch 2024)",
+    text: "Studying at Saipal College paved the way for my engineering dreams. The highly experienced faculty and the well-equipped labs helped me secure a high score in NEB Board exams.",
+    rating: 5,
+    division: "college"
+  },
+  {
+    id: "col-tst-2",
+    name: "Kshitiz Shrestha",
+    relation: "Cambridge A-Levels Alumnus",
+    text: "The global perspective and rigorous academic mentoring I received at Saipal helped me secure admission into a premier university abroad with a scholarship.",
+    rating: 5,
+    division: "college"
+  },
+  {
+    id: "col-tst-3",
+    name: "Alisha Karki",
+    relation: "Management Graduate (Batch 2025)",
+    text: "Saipal College doesn't just focus on theory. The internships, hotel management practicals, and practical case-studies prepared us for real-world business challenges.",
+    rating: 5,
+    division: "college"
+  }
+];
+
+export const INITIAL_SCHOOL_TESTIMONIALS_SEED = INITIAL_SCHOOL_TESTIMONIALS.map((t, i) => ({
+  ...t,
+  id: `sch-tst-${i + 1}`,
+  division: "school"
+}));
+
 
 // --- SEED GALLERY ALBUMS ---
 export const INITIAL_GALLERY_ALBUMS = [

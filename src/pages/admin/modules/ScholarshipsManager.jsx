@@ -140,37 +140,182 @@ export function FacilitiesManager() {
   );
 }
 
-export function TestimonialsManager() {
+export function TestimonialsManager({ division = "school" }) {
+  const isSchool = division === "school";
+  const accentBg = isSchool ? "bg-[#00AEEF] hover:bg-[#0096ce]" : "bg-[#2E3192] hover:bg-[#252880]";
+  const accentText = isSchool ? "text-[#00AEEF]" : "text-[#2E3192]";
+  const accentIconColor = isSchool ? "#00AEEF" : "#2E3192";
+
   const [testimonials, setTestimonials] = useState([]);
-  const loadData = () => setTestimonials(cmsService.getTestimonials());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
+  const [form, setForm] = useState({ name: "", relation: "", text: "", rating: 5 });
+
+  const loadData = () => setTestimonials(cmsService.getTestimonials(division));
 
   useEffect(() => {
     loadData();
     const handleCmsChange = () => loadData();
     cmsBus.addEventListener("cms-data-changed", handleCmsChange);
     return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
-  }, []);
+  }, [division]);
+
+  const handleOpenModal = (item = null) => {
+    if (item) {
+      setEditingItem(item);
+      setForm({ ...item });
+    } else {
+      setEditingItem(null);
+      setForm({ name: "", relation: "", text: "", rating: 5, division: division });
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    cmsService.saveTestimonial({ id: editingItem?.id, ...form, division: division }, division);
+    setIsModalOpen(false);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this testimonial?")) {
+      cmsService.deleteTestimonial(id);
+    }
+  };
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-          <Quote className="text-[#00AEEF]" /> Community Testimonials
-        </h1>
-        <p className="text-xs text-slate-500 mt-1">Manage parent and alumni feedback quotes.</p>
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <Quote className={accentText} style={{ color: accentIconColor }} /> {isSchool ? "Parent Testimonials" : "Community Reviews"}
+          </h1>
+          <p className="text-xs text-slate-500 mt-1">Manage feedback, alumni reviews, and parent testimonials.</p>
+        </div>
+        <button
+          onClick={() => handleOpenModal()}
+          className={`${accentBg} text-white px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md cursor-pointer`}
+        >
+          <Plus size={16} /> Add New Review
+        </button>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        {testimonials.map((t, i) => (
-          <div key={t.id || i} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
-            <p className="text-xs text-slate-600 dark:text-slate-300 italic">"{t.text}"</p>
-            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
-              <p className="font-bold text-slate-900 dark:text-white">{t.name}</p>
-              <p className="text-[#00AEEF] font-semibold text-[11px]">{t.relation}</p>
+      {testimonials.length === 0 ? (
+        <div className="text-center py-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl text-slate-400">
+          <Quote size={40} className="mx-auto mb-3 opacity-30" />
+          <p className="font-semibold">No testimonials found</p>
+          <p className="text-xs mt-1">Add your first testimonial using the button above.</p>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-6">
+          {testimonials.map((t, i) => (
+            <div key={t.id || i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 flex flex-col justify-between hover:border-[#00AEEF]/50 transition">
+              <div className="space-y-3">
+                <div className="flex gap-0.5 text-amber-400">
+                  {Array.from({ length: t.rating || 5 }).map((_, idx) => (
+                    <span key={idx}>★</span>
+                  ))}
+                </div>
+                <p className="text-sm text-slate-600 dark:text-slate-300 italic leading-relaxed">"{t.text}"</p>
+              </div>
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <p className="font-bold text-slate-900 dark:text-white text-sm">{t.name}</p>
+                  <p className={`${accentText} font-semibold text-xs mt-0.5`}>{t.relation}</p>
+                </div>
+                <div className="flex gap-1 shrink-0">
+                  <button
+                    onClick={() => handleOpenModal(t)}
+                    title="Edit testimonial"
+                    className="p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg transition"
+                  >
+                    <Edit size={14} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(t.id)}
+                    title="Delete testimonial"
+                    className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
             </div>
+          ))}
+        </div>
+      )}
+
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+              {editingItem ? "Edit Testimonial" : "Add Testimonial"}
+            </h3>
+            <form onSubmit={handleSave} className="space-y-3">
+              <div>
+                <label className="text-xs font-bold uppercase text-slate-500">Name / Author</label>
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  placeholder="e.g. Subodh Thapa"
+                  className="input text-slate-900"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase text-slate-500">Relation / Subtitle</label>
+                <input
+                  type="text"
+                  value={form.relation}
+                  onChange={(e) => setForm({ ...form, relation: e.target.value })}
+                  placeholder="e.g. NEB Alumnus (Batch 2024)"
+                  className="input text-slate-900"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase text-slate-500">Review Text</label>
+                <textarea
+                  rows={4}
+                  value={form.text}
+                  onChange={(e) => setForm({ ...form, text: e.target.value })}
+                  placeholder="Write the testimonial content..."
+                  className="input py-2 text-slate-900 resize-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase text-slate-500 block mb-1">Rating</label>
+                <select
+                  value={form.rating}
+                  onChange={(e) => setForm({ ...form, rating: Number(e.target.value) })}
+                  className="input text-slate-900"
+                >
+                  <option value={5}>5 Stars ★★★★★</option>
+                  <option value={4}>4 Stars ★★★★</option>
+                  <option value={3}>3 Stars ★★★</option>
+                </select>
+              </div>
+              <div className="flex justify-end gap-2 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className={`px-5 py-2.5 ${accentBg} text-white rounded-xl text-xs font-bold`}
+                >
+                  Save Testimonial
+                </button>
+              </div>
+            </form>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

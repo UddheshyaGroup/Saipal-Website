@@ -86,13 +86,13 @@ export default function AdminLayout() {
     { id: "notices", label: isSchool ? "School Notices & Tickers" : "College Notices & Tickers", icon: Bell },
     { id: "blogs", label: "Blog & News Articles", icon: FileText },
     { id: "faculty", label: isSchool ? "School Faculty Directory" : "College Faculty", icon: Users },
-    { id: "programs", label: isSchool ? "School Levels (K-10)" : "College Programs (+2/A-Levels)", icon: GraduationCap },
-    { id: "scholarships", label: "Scholarships & Aid", icon: Award },
+    { id: "programs", label: isSchool ? "School Levels (K-10)" : "Programs (+2/A-Levels)", icon: GraduationCap },
+    ...(isSchool ? [{ id: "scholarships", label: "Scholarships & Aid", icon: Award }] : []),
     { id: "gallery", label: isSchool ? "School Gallery" : "College Gallery", icon: Images },
-    { id: "facilities", label: isSchool ? "School Facilities & Clubs" : "Campus Facilities", icon: Building2 },
+    // ...(isSchool ? [{ id: "facilities", label: "School Facilities & Clubs", icon: Building2 }] : []),
     { id: "testimonials", label: isSchool ? "Parent Testimonials" : "Community Reviews", icon: Quote },
     { id: "chatbot", label: "AI Chatbot FAQ", icon: HelpCircle },
-    { id: "settings", label: "Site Settings & Info", icon: Settings },
+    // { id: "settings", label: "Site Settings & Info", icon: Settings },
   ];
 
   return (
@@ -215,7 +215,7 @@ export default function AdminLayout() {
         {activeModule === "facilities" && <FacilitiesManager division={selectedDivision} />}
         {activeModule === "testimonials" && <TestimonialsManager division={selectedDivision} />}
         {activeModule === "chatbot" && <AdminFaqManager division={selectedDivision} />}
-        {activeModule === "settings" && <SiteSettingsManager division={selectedDivision} />}
+        {/* {activeModule === "settings" && <SiteSettingsManager division={selectedDivision} />} */}
       </main>
     </div>
   );

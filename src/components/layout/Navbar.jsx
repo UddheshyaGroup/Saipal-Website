@@ -351,6 +351,12 @@ export default function Navbar() {
                           active={location.pathname === "/college/gallery" || location.pathname === "/gallery"}
                         />
                         <DrawerLink
+                          to="/college/blog"
+                          label="Blog & News"
+                          onClick={() => setDesktopMenuOpen(false)}
+                          active={location.pathname.startsWith("/college/blog")}
+                        />
+                        <DrawerLink
                           to="/college/contact"
                           label="College Contact"
                           onClick={() => setDesktopMenuOpen(false)}
@@ -555,6 +561,13 @@ export default function Navbar() {
                       className="px-4 py-2.5 rounded-xl text-slate-700 font-semibold hover:bg-slate-50"
                     >
                       College Gallery
+                    </NavLink>
+                    <NavLink
+                      to="/college/blog"
+                      onClick={() => setMobileOpen(false)}
+                      className="px-4 py-2.5 rounded-xl text-slate-700 font-semibold hover:bg-slate-50"
+                    >
+                      ✍️ Blog &amp; News
                     </NavLink>
                     <NavLink
                       to="/college/contact"

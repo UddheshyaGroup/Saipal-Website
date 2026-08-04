@@ -300,6 +300,11 @@ export default function SchoolHome() {
                   <h3 className="font-bold text-lg text-slate-900 leading-snug">
                     {notice.title}
                   </h3>
+                  {(notice.content || notice.description) && (
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+                      {notice.content || notice.description}
+                    </p>
+                  )}
                 </div>
 
                 <div className="pt-2 border-t border-slate-100 text-xs font-semibold text-slate-500">

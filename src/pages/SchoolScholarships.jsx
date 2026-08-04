@@ -1,16 +1,27 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { cmsService, cmsBus } from "../services/cmsService";
 
 export default function SchoolScholarships() {
+  const [scholarships, setScholarships] = useState(() => cmsService.getScholarships("school"));
+
+  useEffect(() => {
+    setScholarships(cmsService.getScholarships("school"));
+    const handleCmsChange = () => setScholarships(cmsService.getScholarships("school"));
+    cmsBus.addEventListener("cms-data-changed", handleCmsChange);
+    return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
+  }, []);
+
   return (
     <main className="min-h-screen bg-slate-50 font-sans text-slate-800">
       {/* Header Banner */}
       <section className="bg-[#2E3192] text-white py-16 sm:py-20">
         <div className="max-w-6xl mx-auto px-6 text-center space-y-4">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#00AEEF]">
-            Rewarding Merit & Talent
+            Rewarding Merit &amp; Talent
           </p>
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-            Scholarships & Financial Aid
+            Scholarships &amp; Financial Aid
           </h1>
           <p className="text-slate-200 text-base sm:text-lg max-w-2xl mx-auto font-normal">
             Ensuring deserving students have access to quality K-10 education regardless of financial background.
@@ -20,52 +31,45 @@ export default function SchoolScholarships() {
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 py-16 space-y-20">
-        {/* Categories */}
-        <section className="grid md:grid-cols-3 gap-6">
-          {[
-            {
-              title: "Academic Merit Waiver",
-              discount: "Up to 100% Tuition Waiver",
-              desc: "Awarded to top performers in entrance evaluation, term toppers, and SEE aspirants demonstrating exceptional scholastic performance.",
-            },
-            {
-              title: "Sports & Talent Award",
-              discount: "Up to 50% Tuition Waiver",
-              desc: "For young athletes, Taekwondo champs, artists, and musicians representing regional or national level competitions.",
-            },
-            {
-              title: "Need-Based Financial Support",
-              discount: "Partial Tuition Assistance",
-              desc: "Special financial aid for hardworking families requiring support to guarantee uninterrupted schooling.",
-            },
-          ].map((sch, i) => (
-            <div
-              key={i}
-              className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between"
-            >
-              <div className="space-y-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#00AEEF]">
-                  Scheme 0{i + 1}
-                </span>
-                <h3 className="text-xl font-bold text-[#2E3192]">{sch.title}</h3>
-                <div className="inline-block bg-[#00AEEF]/10 text-[#00AEEF] font-bold text-xs px-3 py-1 rounded-full border border-[#00AEEF]/20">
-                  {sch.discount}
-                </div>
-                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                  {sch.desc}
-                </p>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100">
-                <Link
-                  to="/school/admissions"
-                  className="text-xs font-bold text-[#00AEEF] hover:underline"
-                >
-                  Inquire for Scholarship →
-                </Link>
-              </div>
+        {/* Scholarship Cards from CMS */}
+        <section>
+          {scholarships.length === 0 ? (
+            <div className="text-center text-slate-400 py-16">
+              <p className="text-lg font-semibold">No scholarship schemes listed yet.</p>
+              <p className="text-sm mt-1">Please check back later or contact the school office.</p>
             </div>
-          ))}
+          ) : (
+            <div className="grid md:grid-cols-3 gap-6">
+              {scholarships.map((sch, i) => (
+                <div
+                  key={sch.id}
+                  className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between"
+                >
+                  <div className="space-y-3">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#00AEEF]">
+                      Scheme 0{i + 1}
+                    </span>
+                    <h3 className="text-xl font-bold text-[#2E3192]">{sch.title}</h3>
+                    <div className="inline-block bg-[#00AEEF]/10 text-[#00AEEF] font-bold text-xs px-3 py-1 rounded-full border border-[#00AEEF]/20">
+                      {sch.coverage}
+                    </div>
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                      {sch.eligibility}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100">
+                    <Link
+                      to="/school/admissions"
+                      className="text-xs font-bold text-[#00AEEF] hover:underline"
+                    >
+                      Inquire for Scholarship →
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* How to Apply */}

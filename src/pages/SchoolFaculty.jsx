@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { cmsService, cmsBus } from "../services/cmsService";
 
 export default function SchoolFaculty() {
-  const [faculty, setFaculty] = useState(() => cmsService.getFaculty());
+  const [faculty, setFaculty] = useState(() => cmsService.getFaculty("school"));
 
   useEffect(() => {
-    setFaculty(cmsService.getFaculty());
-    const handleCmsChange = () => setFaculty(cmsService.getFaculty());
+    setFaculty(cmsService.getFaculty("school"));
+    const handleCmsChange = () => setFaculty(cmsService.getFaculty("school"));
     cmsBus.addEventListener("cms-data-changed", handleCmsChange);
     return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
   }, []);

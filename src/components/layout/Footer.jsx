@@ -125,7 +125,7 @@ export default function Footer() {
                   <FaMapMarkerAlt size={14} />
                 </div>
                 <div>
-                  <p className="font-bold text-white">Campus Location</p>
+                  <p className="font-bold text-white">Location</p>
                   <p className="text-blue-100/60 text-xs mt-0.5">{settings.address || "Dhumbarahi, Kathmandu, Nepal"}</p>
                 </div>
               </li>
@@ -135,7 +135,7 @@ export default function Footer() {
                   <FaPhoneAlt size={14} />
                 </div>
                 <div>
-                  <p className="font-bold text-white">Phone Inquiries</p>
+                  <p className="font-bold text-white">Phone</p>
                   <a href={`tel:${settings.phonePrimary || "+977014378154"}`} className="text-blue-100/60 hover:text-white transition text-xs mt-0.5 block">
                     {settings.phonePrimary || "+977-01-4378154"} {settings.phoneSecondary ? `/ ${settings.phoneSecondary}` : "/ 4009054"}
                   </a>
@@ -147,7 +147,7 @@ export default function Footer() {
                   <FaEnvelope size={14} />
                 </div>
                 <div>
-                  <p className="font-bold text-white">Official Email</p>
+                  <p className="font-bold text-white">Email</p>
                   <a href={`mailto:${settings.email || "mail@saipal.edu.np"}`} className="text-blue-100/60 hover:text-white transition text-xs mt-0.5 block">
                     {settings.email || "mail@saipal.edu.np"}
                   </a>

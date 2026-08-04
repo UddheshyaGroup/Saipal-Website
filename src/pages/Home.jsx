@@ -17,18 +17,21 @@ import {
   FaUniversity,
   FaGlobeAsia,
   FaTimes,
+  FaStar,
 } from "react-icons/fa";
 
 export default function Home() {
   const [tourOpen, setTourOpen] = useState(false);
   const [notices, setNotices] = useState(() => cmsService.getNotices("college"));
   const [tickers, setTickers] = useState(() => cmsService.getTickers("college"));
-  const [programs, setPrograms] = useState(() => cmsService.getPrograms());
+  const [programs, setPrograms] = useState(() => cmsService.getPrograms("college"));
+  const [testimonials, setTestimonials] = useState(() => cmsService.getTestimonials("college"));
 
   const loadCmsData = () => {
     setNotices(cmsService.getNotices("college"));
     setTickers(cmsService.getTickers("college"));
-    setPrograms(cmsService.getPrograms());
+    setPrograms(cmsService.getPrograms("college"));
+    setTestimonials(cmsService.getTestimonials("college"));
   };
 
   useEffect(() => {
@@ -189,13 +192,6 @@ export default function Home() {
             className="flex items-center justify-between mb-10"
           >
             <h2 className="text-3xl font-bold text-primary">📌 Notice Board</h2>
-
-            <Link
-              to="/notices"
-              className="text-accent font-semibold hover:underline"
-            >
-              View All
-            </Link>
           </motion.div>
 
           <motion.div
@@ -231,6 +227,11 @@ export default function Home() {
                   <h3 className="font-semibold text-lg text-primary mb-2">
                     {notice.title}
                   </h3>
+                  {(notice.content || notice.description) && (
+                    <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line mb-3">
+                      {notice.content || notice.description}
+                    </p>
+                  )}
                 </div>
 
                 <p className="text-sm text-gray-500 pt-3 border-t">
@@ -536,6 +537,50 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* ================= TESTIMONIALS ================= */}
+      {testimonials.length > 0 && (
+        <section className="bg-slate-50 py-20 border-t border-b border-slate-100">
+          <div className="max-w-7xl mx-auto px-6 space-y-12">
+            <div className="text-center max-w-2xl mx-auto space-y-3">
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#00AEEF]">
+                Reviews & Feedback
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#2E3192]">
+                What Our Students & Parents Say
+              </h2>
+              <p className="text-gray-600 text-sm sm:text-base">
+                Discover the impact of Saipal College education through the voices of our community.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {testimonials.map((t, idx) => (
+                <div
+                  key={t.id || idx}
+                  className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between space-y-5 hover:border-[#00AEEF]/50 hover:shadow-md transition"
+                >
+                  <div className="space-y-3">
+                    <div className="flex gap-0.5 text-amber-400">
+                      {[...Array(t.rating || 5)].map((_, i) => (
+                        <FaStar key={i} size={14} />
+                      ))}
+                    </div>
+                    <p className="text-gray-600 text-sm italic leading-relaxed">
+                      "{t.text}"
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-100">
+                    <div className="font-bold text-slate-900 text-sm">{t.name}</div>
+                    <div className="text-xs text-[#2E3192] font-semibold mt-0.5">{t.relation}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ================= CTA ================= */}
       <section className="bg-gray-50 py-20">
