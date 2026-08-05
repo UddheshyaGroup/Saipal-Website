@@ -277,15 +277,13 @@ export default function About() {
       </section>
 
       {/* ================= MESSAGE FROM PRINCIPAL ================= */}
-      <section className="py-24 bg-accent px-6 overflow-hidden relative">
-        {/* Decorative elements */}
+      {/* <section className="py-24 bg-accent px-6 overflow-hidden relative">
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full translate-x-1/2 -translate-y-1/2" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/10 rounded-full -translate-x-1/2 translate-y-1/2" />
 
         <div className="max-w-7xl mx-auto relative z-10">
-          {/* Main Card */}
-          {/* <div className="bg-white rounded-[3rem] p-8 sm:p-10 md:p-14 lg:p-16 shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-center">
-            
+          <div className="bg-white rounded-[3rem] p-8 sm:p-10 md:p-14 lg:p-16 shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-center">
+
             <div className="flex justify-center ">
               <div className="relative w-full max-w-sm">
                 <div className="absolute -inset-4 bg-accent/20 rounded-3xl rotate-3" />
@@ -297,7 +295,7 @@ export default function About() {
               </div>
             </div>
 
-            
+
             <div className="lg:col-span-2">
               <Quote className="text-accent w-12 h-12 sm:w-14 sm:h-14 mb-6 opacity-30" />
 
@@ -307,21 +305,34 @@ export default function About() {
 
               <div className="space-y-5 text-gray-700 text-base sm:text-lg leading-relaxed">
                 <p>
-                  "It still smells good to me. In the pool of hypocrisy,
-                  hegemony, and delusion, I again want to be a child and feel
-                  the innocence that brings the very smile on the faces of
-                  teachers and parents..."
+                  Dear Learners, Parents and Guardians,
                 </p>
 
                 <p>
-                  "Moreover, we not only care for students with huge potential
-                  but also with great dedication. We believe every child is
-                  unique, and we are committed to nurturing what each student
-                  deserves..."
+                  Welcome to <strong>Saipal Academy</strong>, a learning community dedicated
+                  to purpose-driven excellence, where every student is encouraged to
+                  discover, develop, and realize their full potential. We believe education
+                  extends beyond academic success by nurturing curiosity, integrity,
+                  resilience, compassion, and a lifelong love for learning.
+                </p>
+
+                <p>
+                  Through our <strong>NEB (+2) Science and Management</strong> programs and
+                  the <strong>Cambridge International A Level</strong> curriculum, students
+                  build a strong academic foundation while developing critical thinking,
+                  creativity, communication, leadership, and a global perspective to thrive
+                  in an ever-changing world.
+                </p>
+
+                <p>
+                  At Saipal Academy, we are committed to shaping confident, responsible, and
+                  empathetic individuals who are prepared to make meaningful contributions to
+                  society. We warmly welcome you to become a part of this journey of growth,
+                  discovery, and academic excellence.
                 </p>
               </div>
 
-            
+
               <div className="pt-8">
                 <p className="font-bold text-xl sm:text-2xl text-primary">
                   Mr. Matrika Prasad Khatiwada
@@ -331,9 +342,8 @@ export default function About() {
                 </p>
               </div>
             </div>
-          </div> */}
+          </div>
 
-          {/* CTA SECTION */}
           <div className="mt-20 text-center max-w-3xl mx-auto text-white">
             <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
               Ready to Begin Your Learning Journey?
@@ -351,6 +361,153 @@ export default function About() {
             >
               Make an Enquiry
             </Link>
+          </div>
+        </div>
+      </section> */}
+      <section className="relative overflow-hidden bg-slate-50 px-6 py-20 sm:py-24">
+        {/* Decorative background */}
+        <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
+        <div className="absolute -right-24 bottom-10 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-7xl">
+          {/* Section label */}
+          <div className="mb-12 text-center">
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.25em] text-accent">
+              Leadership Message
+            </p>
+
+            <h2 className="text-3xl font-bold text-primary sm:text-4xl md:text-5xl">
+              From the Principal’s Desk
+            </h2>
+
+            <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-accent" />
+          </div>
+
+          {/* Principal’s Message Card */}
+          <div className="grid grid-cols-1 items-stretch overflow-hidden rounded-[2rem] border border-gray-100 bg-white shadow-xl lg:grid-cols-5">
+            {/* Image */}
+            <div className="relative min-h-[420px] overflow-hidden lg:col-span-2 lg:min-h-full">
+              <img
+                src="/principal.jpeg"
+                alt="Mr. Matrika Prasad Khatiwada, Principal of Saipal Academy"
+                className="absolute inset-0 h-full w-full object-cover object-top"
+              />
+
+              {/* Image overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/10 to-transparent" />
+
+              {/* Name on image */}
+              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                <p className="text-2xl font-bold">
+                  Mr. Matrika Prasad Khatiwada
+                </p>
+
+                <p className="mt-1 font-semibold tracking-wide text-white/80">
+                  Principal, Saipal Academy
+                </p>
+              </div>
+            </div>
+
+            {/* Message */}
+            <div className="relative p-8 sm:p-10 md:p-12 lg:col-span-3 lg:p-14">
+              <Quote className="mb-6 h-12 w-12 text-accent opacity-20" />
+
+              <p className="mb-6 text-lg font-semibold text-primary">
+                Dear Learners, Parents and Guardians,
+              </p>
+
+              <div className="space-y-5 text-base leading-8 text-gray-600 sm:text-lg">
+                <p>
+                  Welcome to <strong className="text-primary">Saipal Academy</strong>,
+                  a learning community dedicated to purpose-driven excellence, where
+                  every student is encouraged to discover, develop, and realize their
+                  full potential.
+                </p>
+
+                <p>
+                  We believe education extends beyond academic success by nurturing
+                  curiosity, integrity, resilience, compassion, and a lifelong love
+                  for learning.
+                </p>
+
+                <p>
+                  Through our{" "}
+                  <strong className="text-primary">
+                    NEB (+2) Science and Management
+                  </strong>{" "}
+                  programs and the{" "}
+                  <strong className="text-primary">
+                    Cambridge International A Level
+                  </strong>{" "}
+                  curriculum, students develop a strong academic foundation alongside
+                  critical thinking, creativity, communication, leadership, and a
+                  global perspective.
+                </p>
+
+                <p>
+                  At Saipal Academy, we are committed to shaping confident,
+                  responsible, and empathetic individuals prepared to make meaningful
+                  contributions to society. We warmly welcome you to join this journey
+                  of growth, discovery, and academic excellence.
+                </p>
+              </div>
+
+              {/* Signature divider */}
+              <div className="mt-10 flex items-center gap-4 border-t border-gray-100 pt-8">
+                <div className="h-12 w-1 rounded-full bg-accent" />
+
+                <div>
+                  <p className="font-bold text-primary">
+                    Purpose. Excellence. Growth.
+                  </p>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    Building confident learners for a changing world.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Admissions CTA Section */}
+      <section className="relative overflow-hidden bg-accent px-6 py-20 sm:py-24">
+        {/* Decorative elements */}
+        <div className="absolute left-0 top-0 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5" />
+        <div className="absolute bottom-0 right-0 h-96 w-96 translate-x-1/3 translate-y-1/3 rounded-full bg-accent/20 blur-2xl" />
+
+        <div className="relative z-10 mx-auto max-w-4xl">
+          <div className="rounded-[2rem] bg-primary px-8 py-12 text-center shadow-[0_30px_80px_rgba(0,0,0,0.25)] sm:px-12 sm:py-16">
+            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-accent">
+              Admissions & Enquiries
+            </p>
+
+            <h2 className="mx-auto max-w-3xl text-3xl font-bold leading-tight text-white sm:text-4xl md:text-4xl">
+              Ready to Begin Your Learning Journey?
+            </h2>
+
+            <p className="mx-auto mt-6 mb-10 max-w-2xl text-base sm:text-lg leading-8 text-white/80">
+              Learn more about our academic programs, admission process, and student
+              guidance. Our team is ready to help you choose the right pathway for
+              your future.
+            </p>
+
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Link
+                to="/enquiry"
+                className="inline-flex items-center justify-center rounded-xl bg-accent px-9 py-4 font-bold text-white shadow-lg transition-all duration-300 hover:brightness-110 hover:-translate-y-1"
+              >
+                Make an Enquiry
+              </Link>
+
+              <Link
+                to="/programs"
+                className="inline-flex items-center justify-center rounded-xl border border-white/30 bg-transparent px-9 py-4 font-bold text-white transition-all duration-300 hover:bg-white hover:text-primary"
+              >
+                Explore Programs
+              </Link>
+            </div>
           </div>
         </div>
       </section>

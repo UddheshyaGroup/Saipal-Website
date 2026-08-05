@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ALevelSection from "../components/Programs/ALevelSection";
 import NebSection from "../components/Programs/NebSection";
-import SchoolSection from "../components/Programs/SchoolSection";
+// import SchoolSection from "../components/Programs/SchoolSection";
 
 // --- Data ---
 
@@ -17,11 +17,11 @@ const programData = {
     description:
       "The NEB +2 program follows Nepal's national education standards, offering comprehensive courses in Science, Management, and Humanities tailored to prepare students for national and international university education.",
   },
-  school: {
-    title: "School Level",
-    description:
-      "Our school-level program (Grades 1-10) focuses on foundational knowledge and skills, ensuring a holistic development of every child in a nurturing environment.",
-  },
+  // school: {
+  //   title: "School Level",
+  //   description:
+  //     "Our school-level program (Grades 1-10) focuses on foundational knowledge and skills, ensuring a holistic development of every child in a nurturing environment.",
+  // },
 };
 
 function Programs() {
@@ -79,7 +79,7 @@ function Programs() {
 
           {activeTab === "alevels" && <ALevelSection />}
           {activeTab === "neb" && <NebSection />}
-          {activeTab === "school" && <SchoolSection />}
+          {/* {activeTab === "school" && <SchoolSection />} */}
         </div>
       </div>
     </main>

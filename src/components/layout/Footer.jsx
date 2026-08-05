@@ -36,9 +36,9 @@ export default function Footer() {
           <div className="space-y-5">
             <Link to="/" className="inline-block hover:opacity-90 transition-opacity">
               <img
-                src="/Logo.png"
+                src="/White.png"
                 alt="Saipal Academy Logo"
-                className="h-14 w-auto object-contain"
+                className="h-16 w-auto object-contain"
               />
             </Link>
 
