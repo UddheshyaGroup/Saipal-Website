@@ -41,10 +41,22 @@ export default function AdminFaqManager() {
   const [editingCat, setEditingCat] = useState(null);
   const [catForm, setCatForm] = useState({ id: "", name: "", icon: "❓" });
 
-  const loadData = () => {
-    setFaqs(faqService.getFaqs("all", false));
-    setCategories(faqService.getCategories());
-    setSettings(faqService.getSettings());
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+
+  const loadData = async () => {
+    try {
+      const [f, c, s] = await Promise.all([
+        faqService.getFaqs("all", false),
+        faqService.getCategories(),
+        faqService.getSettings(),
+      ]);
+      setFaqs(f);
+      setCategories(c);
+      setSettings(s);
+    } catch (err) {
+      console.error("Failed to load FAQ data:", err);
+    }
   };
 
   useEffect(() => {
@@ -83,34 +95,48 @@ export default function AdminFaqManager() {
     setIsFaqModalOpen(true);
   };
 
-  const handleSaveFaq = (e) => {
+  const handleSaveFaq = async (e) => {
     e.preventDefault();
     if (!faqForm.question.trim() || !faqForm.answer.trim()) {
       alert("Question and Answer are required.");
       return;
     }
-
-    faqService.saveFaq({
-      id: editingFaq?.id,
-      ...faqForm,
-    });
-    setIsFaqModalOpen(false);
-    showToast(editingFaq ? "FAQ updated successfully!" : "New FAQ added successfully!");
-  };
-
-  const handleDeleteFaq = (id) => {
-    if (window.confirm("Are you sure you want to delete this FAQ entry?")) {
-      faqService.deleteFaq(id);
-      showToast("FAQ deleted.");
+    setSaving(true);
+    setSaveError("");
+    try {
+      await faqService.saveFaq({
+        id: editingFaq?.id,
+        ...faqForm,
+      });
+      setIsFaqModalOpen(false);
+      showToast(editingFaq ? "FAQ updated successfully!" : "New FAQ added successfully!");
+    } catch (err) {
+      setSaveError(err.message || "Failed to save FAQ.");
+    } finally {
+      setSaving(false);
     }
   };
 
-  const handleToggleStatus = (id) => {
-    faqService.toggleFaqStatus(id);
-    showToast("Status updated.");
+  const handleDeleteFaq = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this FAQ entry?")) return;
+    try {
+      await faqService.deleteFaq(id);
+      showToast("FAQ deleted.");
+    } catch (err) {
+      alert("Failed to delete FAQ: " + err.message);
+    }
   };
 
-  const handleMoveOrder = (index, direction) => {
+  const handleToggleStatus = async (id) => {
+    try {
+      await faqService.toggleFaqStatus(id);
+      showToast("Status updated.");
+    } catch (err) {
+      alert("Failed to update status: " + err.message);
+    }
+  };
+
+  const handleMoveOrder = async (index, direction) => {
     const list = [...filteredFaqs];
     const targetIndex = direction === "up" ? index - 1 : index + 1;
     if (targetIndex < 0 || targetIndex >= list.length) return;
@@ -119,12 +145,17 @@ export default function AdminFaqManager() {
     list[index] = list[targetIndex];
     list[targetIndex] = temp;
 
-    faqService.reorderFaqs(list);
-    showToast("Display order updated.");
+    try {
+      await faqService.reorderFaqs(list);
+      showToast("Display order updated.");
+    } catch (err) {
+      alert("Failed to reorder: " + err.message);
+    }
   };
 
   // --- CATEGORY CRUD HANDLERS ---
   const handleOpenCatModal = (cat = null) => {
+    setSaveError("");
     if (cat) {
       setEditingCat(cat);
       setCatForm({ id: cat.id, name: cat.name, icon: cat.icon || "📁" });
@@ -135,37 +166,58 @@ export default function AdminFaqManager() {
     setIsCatModalOpen(true);
   };
 
-  const handleSaveCategory = (e) => {
+  const handleSaveCategory = async (e) => {
     e.preventDefault();
     if (!catForm.name.trim()) return;
-
-    faqService.saveCategory({
-      id: editingCat ? editingCat.id : catForm.name.toLowerCase().replace(/[^a-z0-9]/g, "-"),
-      name: catForm.name,
-      icon: catForm.icon,
-    });
-    setIsCatModalOpen(false);
-    showToast("Category saved.");
+    setSaving(true);
+    setSaveError("");
+    try {
+      await faqService.saveCategory({
+        id: editingCat ? editingCat.id : catForm.name.toLowerCase().replace(/[^a-z0-9]/g, "-"),
+        name: catForm.name,
+        icon: catForm.icon,
+      });
+      setIsCatModalOpen(false);
+      showToast("Category saved.");
+    } catch (err) {
+      setSaveError(err.message || "Failed to save category.");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDeleteCategory = (id) => {
-    if (window.confirm("Deleting a category will unassign associated FAQs. Continue?")) {
-      faqService.deleteCategory(id);
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm("Deleting a category will unassign associated FAQs. Continue?")) return;
+    try {
+      await faqService.deleteCategory(id);
       showToast("Category removed.");
+    } catch (err) {
+      alert("Failed to delete category: " + err.message);
     }
   };
 
   // --- SETTINGS HANDLERS ---
-  const handleSaveSettings = (e) => {
+  const handleSaveSettings = async (e) => {
     e.preventDefault();
-    faqService.updateSettings(settings);
-    showToast("Chatbot settings saved successfully!");
+    setSaving(true);
+    setSaveError("");
+    try {
+      await faqService.updateSettings(settings);
+      showToast("Chatbot settings saved successfully!");
+    } catch (err) {
+      setSaveError(err.message || "Failed to save settings.");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleResetDefaults = () => {
-    if (window.confirm("Reset all FAQs, categories, and settings to default seed data?")) {
-      faqService.resetToDefaults();
+  const handleResetDefaults = async () => {
+    if (!window.confirm("Reset all FAQs, categories, and settings to default seed data?")) return;
+    try {
+      await faqService.resetToDefaults();
       showToast("All chatbot data reset to initial defaults.");
+    } catch (err) {
+      alert("Reset failed: " + err.message);
     }
   };
 
@@ -579,19 +631,22 @@ export default function AdminFaqManager() {
                 </label>
               </div>
 
+              {saveError && <p className="text-xs text-rose-600 bg-rose-50 rounded-lg px-3 py-2">{saveError}</p>}
               <div className="flex justify-end gap-3 pt-4 border-t">
                 <button
                   type="button"
                   onClick={() => setIsFaqModalOpen(false)}
-                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold cursor-pointer"
+                  disabled={saving}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold cursor-pointer disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-[#00AEEF] hover:bg-[#0097d1] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer"
+                  disabled={saving}
+                  className="px-6 py-2.5 bg-[#00AEEF] hover:bg-[#0097d1] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer disabled:opacity-50"
                 >
-                  Save Entry
+                  {saving ? "Saving..." : "Save Entry"}
                 </button>
               </div>
             </form>
@@ -631,19 +686,22 @@ export default function AdminFaqManager() {
                 />
               </div>
 
+              {saveError && <p className="text-xs text-rose-600 bg-rose-50 rounded-lg px-3 py-2">{saveError}</p>}
               <div className="flex justify-end gap-3 pt-4 border-t">
                 <button
                   type="button"
                   onClick={() => setIsCatModalOpen(false)}
-                  className="px-5 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold cursor-pointer"
+                  disabled={saving}
+                  className="px-5 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold cursor-pointer disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-[#00AEEF] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer"
+                  disabled={saving}
+                  className="px-6 py-2.5 bg-[#00AEEF] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer disabled:opacity-50"
                 >
-                  Save Category
+                  {saving ? "Saving..." : "Save Category"}
                 </button>
               </div>
             </form>

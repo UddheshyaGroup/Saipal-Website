@@ -16,11 +16,15 @@ export default function GalleryManager({ division }) {
   const [editingAlbum, setEditingAlbum] = useState(null);
   const [albumTitle, setAlbumTitle] = useState("");
   const [albumCover, setAlbumCover] = useState("");
+  const [albumSaving, setAlbumSaving] = useState(false);
+  const [albumError, setAlbumError] = useState("");
 
   // Photo add state
   const [addMode, setAddMode] = useState("upload"); // "upload" | "url"
-  const [newPhotoUrl, setNewPhotoUrl] = useState("");
+  const [bulkUrls, setBulkUrls] = useState("");       // bulk URL textarea
   const [photoError, setPhotoError] = useState("");
+  const [bulkAdding, setBulkAdding] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState({ done: 0, total: 0 });
   const [uploading, setUploading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]); // previews before confirm
   const fileInputRef = useRef(null);
@@ -30,7 +34,14 @@ export default function GalleryManager({ division }) {
   const accentBg = isSchool ? "bg-[#00AEEF]" : "bg-[#2E3192]";
   const accentText = isSchool ? "text-[#00AEEF]" : "text-[#2E3192]";
 
-  const loadAlbums = () => setAlbums(cmsService.getGalleryAlbums(division));
+  const loadAlbums = async () => {
+    try {
+      const data = await cmsService.getGalleryAlbums(division);
+      setAlbums(data);
+    } catch (err) {
+      console.error("Failed to load albums:", err);
+    }
+  };
 
   useEffect(() => {
     loadAlbums();
@@ -39,49 +50,82 @@ export default function GalleryManager({ division }) {
     return () => cmsBus.removeEventListener("cms-data-changed", handler);
   }, [division]);
 
-  const refreshActive = (albumId) => {
-    const updated = cmsService.getGalleryAlbums("all").find((a) => String(a.id) === String(albumId));
-    setActiveAlbum(updated);
-    loadAlbums();
+  const refreshActive = async (albumId) => {
+    try {
+      const allAlbums = await cmsService.getGalleryAlbums("all");
+      const updated = allAlbums.find((a) => String(a.id) === String(albumId));
+      setActiveAlbum(updated);
+      await loadAlbums();
+    } catch (err) {
+      console.error("Failed to refresh active album:", err);
+    }
   };
 
   // ── Album CRUD ──
   const openNewAlbum = () => {
-    setEditingAlbum(null); setAlbumTitle(""); setAlbumCover(""); setShowAlbumForm(true);
+    setEditingAlbum(null); setAlbumTitle(""); setAlbumCover(""); setAlbumError(""); setShowAlbumForm(true);
   };
   const openEditAlbum = (album) => {
-    setEditingAlbum(album); setAlbumTitle(album.title); setAlbumCover(album.cover || ""); setShowAlbumForm(true);
+    setEditingAlbum(album); setAlbumTitle(album.title); setAlbumCover(album.cover || ""); setAlbumError(""); setShowAlbumForm(true);
   };
-  const saveAlbum = () => {
+  const saveAlbum = async () => {
     if (!albumTitle.trim()) return;
-    cmsService.saveGalleryAlbum({
-      ...(editingAlbum || {}),
-      title: albumTitle.trim(),
-      cover: albumCover.trim() || (editingAlbum?.photos?.[0]?.url ?? ""),
-      division,
-    }, division);
-    setShowAlbumForm(false);
-    loadAlbums();
+    setAlbumSaving(true); setAlbumError("");
+    try {
+      await cmsService.saveGalleryAlbum({
+        ...(editingAlbum || {}),
+        title: albumTitle.trim(),
+        cover: albumCover.trim() || (editingAlbum?.photos?.[0]?.url ?? ""),
+        division,
+      }, division);
+      setShowAlbumForm(false);
+    } catch (err) {
+      setAlbumError(err.message || "Failed to save album.");
+    } finally { setAlbumSaving(false); }
   };
-  const deleteAlbum = (id) => {
+  const deleteAlbum = async (id) => {
     if (!window.confirm("Delete this album and all its photos?")) return;
-    cmsService.deleteGalleryAlbum(id);
-    loadAlbums();
+    try { await cmsService.deleteGalleryAlbum(id); }
+    catch (err) { alert("Delete failed: " + err.message); }
   };
 
   // ── Photo CRUD ──
   const openAlbum = (album) => {
     setActiveAlbum(album); setView("photos");
-    setNewPhotoUrl(""); setPhotoError(""); setUploadQueue([]);
+    setBulkUrls(""); setPhotoError(""); setUploadQueue([]);
   };
 
-  // URL mode
-  const addPhotoByUrl = () => {
-    const url = newPhotoUrl.trim();
-    if (!url) { setPhotoError("Please enter a photo URL."); return; }
-    cmsService.addPhotoToAlbum(activeAlbum.id, url);
-    setNewPhotoUrl(""); setPhotoError("");
+  // Bulk URL mode — parse comma/newline-separated links (supports Google Drive share URLs)
+  const addPhotosBulk = async () => {
+    const raw = bulkUrls.trim();
+    if (!raw) { setPhotoError("Please paste at least one URL."); return; }
+
+    // Split on commas, newlines, or spaces — handles any mix
+    const urls = raw
+      .split(/[\s,]+/)
+      .map((u) => u.trim())
+      .filter(Boolean);
+
+    if (!urls.length) { setPhotoError("No valid URLs found."); return; }
+
+    setBulkAdding(true);
+    setBulkProgress({ done: 0, total: urls.length });
+    setPhotoError("");
+
+    let failures = 0;
+    for (let i = 0; i < urls.length; i++) {
+      try {
+        await cmsService.addPhotoToAlbum(activeAlbum.id, urls[i]);
+        setBulkProgress({ done: i + 1, total: urls.length });
+      } catch {
+        failures++;
+      }
+    }
+
+    setBulkAdding(false);
+    setBulkUrls("");
     refreshActive(activeAlbum.id);
+    if (failures > 0) setPhotoError(`${failures} URL(s) failed to add. The rest were added successfully.`);
   };
 
   // Upload mode — read files as base64
@@ -128,21 +172,17 @@ export default function GalleryManager({ division }) {
       });
   };
 
-  const confirmUploads = () => {
+  const confirmUploads = async () => {
     if (!uploadQueue.length) return;
     try {
-      uploadQueue.forEach((item) => {
-        cmsService.addPhotoToAlbum(activeAlbum.id, item.dataUrl);
-      });
+      for (const item of uploadQueue) {
+        await cmsService.addPhotoToAlbum(activeAlbum.id, item.dataUrl);
+      }
       setUploadQueue([]);
       setPhotoError("");
       refreshActive(activeAlbum.id);
     } catch (err) {
-      if (err.name === "QuotaExceededError") {
-        setPhotoError("Storage full. Try uploading fewer photos at a time, or delete unused ones first.");
-      } else {
-        setPhotoError("Upload failed: " + err.message);
-      }
+      setPhotoError("Upload failed: " + err.message);
     }
   };
 
@@ -150,21 +190,26 @@ export default function GalleryManager({ division }) {
     setUploadQueue((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const removePhoto = (photoId) => {
+  const removePhoto = async (photoId) => {
     if (!window.confirm("Remove this photo?")) return;
-    cmsService.removePhotoFromAlbum(activeAlbum.id, photoId);
-    refreshActive(activeAlbum.id);
+    try {
+      await cmsService.removePhotoFromAlbum(activeAlbum.id, photoId);
+      refreshActive(activeAlbum.id);
+    } catch (err) { setPhotoError("Remove failed: " + err.message); }
   };
 
-  const setCoverFromPhoto = (url) => {
-    cmsService.saveGalleryAlbum({ ...activeAlbum, cover: url }, division);
-    setActiveAlbum((prev) => ({ ...prev, cover: url }));
-    loadAlbums();
+  const setCoverFromPhoto = async (url) => {
+    try {
+      await cmsService.saveGalleryAlbum({ ...activeAlbum, cover: url }, division);
+      setActiveAlbum((prev) => ({ ...prev, cover: url }));
+      loadAlbums();
+    } catch (err) { setPhotoError("Cover update failed: " + err.message); }
   };
 
   // ── PHOTO VIEW ──
   if (view === "photos" && activeAlbum) {
     const fresh = albums.find((a) => String(a.id) === String(activeAlbum.id)) || activeAlbum;
+    console.log("FRESH ALBUM PHOTOS:", fresh.photos);
     return (
       <div className="space-y-5">
         {/* Breadcrumb */}
@@ -189,7 +234,7 @@ export default function GalleryManager({ division }) {
             {/* Mode Toggle */}
             <div className="flex rounded-xl overflow-hidden border border-slate-200 text-xs font-bold">
               <button
-                onClick={() => { setAddMode("upload"); setPhotoError(""); setNewPhotoUrl(""); }}
+                onClick={() => { setAddMode("upload"); setPhotoError(""); }}
                 className={`px-3 py-1.5 flex items-center gap-1.5 transition cursor-pointer ${addMode === "upload" ? `text-white` : "text-slate-500 hover:bg-slate-50"}`}
                 style={addMode === "upload" ? { background: accent } : {}}
               >
@@ -261,36 +306,60 @@ export default function GalleryManager({ division }) {
             </div>
           )}
 
-          {/* ── FROM URL ── */}
+          {/* ── FROM URL (Bulk) ── */}
           {addMode === "url" && (
-            <div className="space-y-2">
-              <div className="flex gap-2">
-                <div className="flex-1 relative">
-                  <LinkIcon size={14} className="absolute left-3 top-3 text-slate-400" />
-                  <input
-                    type="url"
-                    value={newPhotoUrl}
-                    onChange={(e) => { setNewPhotoUrl(e.target.value); setPhotoError(""); }}
-                    placeholder="https://example.com/photo.jpg"
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-1 transition"
-                    onKeyDown={(e) => e.key === "Enter" && addPhotoByUrl()}
-                  />
-                </div>
-                <button
-                  onClick={addPhotoByUrl}
-                  className={`${accentBg} text-white px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-1.5 hover:opacity-90 transition cursor-pointer`}
-                >
-                  <ImagePlus size={15} /> Add
-                </button>
-              </div>
-              {photoError && <p className="text-xs text-rose-500 flex items-center gap-1"><AlertTriangle size={12} />{photoError}</p>}
-              {newPhotoUrl && (
-                <img
-                  src={newPhotoUrl} alt="preview"
-                  className="h-28 rounded-xl object-cover border border-slate-200 mt-1"
-                  onError={(e) => { e.target.style.display = "none"; setPhotoError("Could not load image from this URL."); }}
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 block">
+                  Paste Google Drive or image URLs — one per line or comma-separated
+                </label>
+                <textarea
+                  rows={5}
+                  value={bulkUrls}
+                  onChange={(e) => { setBulkUrls(e.target.value); setPhotoError(""); }}
+                  placeholder={`https://drive.google.com/file/d/FILE_ID/view?usp=sharing,\nhttps://drive.google.com/file/d/FILE_ID2/view?usp=sharing,\nhttps://example.com/photo.jpg`}
+                  className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-[#00AEEF] transition font-mono resize-y"
+                  style={{ color: '#1e293b', backgroundColor: '#ffffff' }}
+                  disabled={bulkAdding}
                 />
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Supports Google Drive share links, direct image URLs, or a mix of both.
+                </p>
+                <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg text-[11px] text-amber-800">
+                  <strong>⚠️ Note for Google Drive:</strong> Ensure each Google Drive link's general access is set to <strong>"Anyone with the link can view"</strong>, otherwise the image cannot be loaded by the website.
+                </div>
+              </div>
+
+              {/* Progress */}
+              {bulkAdding && (
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-xs text-slate-500">
+                    <span>Adding photos…</span>
+                    <span>{bulkProgress.done} / {bulkProgress.total}</span>
+                  </div>
+                  <div className="w-full bg-slate-100 rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full transition-all duration-300"
+                      style={{ background: accent, width: `${bulkProgress.total ? (bulkProgress.done / bulkProgress.total) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
               )}
+
+              {photoError && (
+                <p className="text-xs text-rose-500 flex items-center gap-1">
+                  <AlertTriangle size={12} /> {photoError}
+                </p>
+              )}
+
+              <button
+                onClick={addPhotosBulk}
+                disabled={bulkAdding || !bulkUrls.trim()}
+                className={`w-full ${accentBg} text-white py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:opacity-90 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                <ImagePlus size={15} />
+                {bulkAdding ? `Adding… (${bulkProgress.done}/${bulkProgress.total})` : "Add All Photos to Album"}
+              </button>
             </div>
           )}
         </div>
@@ -306,7 +375,7 @@ export default function GalleryManager({ division }) {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {fresh.photos.map((photo) => (
               <div key={photo.id} className="group relative rounded-xl overflow-hidden border border-slate-200 bg-slate-100 aspect-square">
-                <img src={photo.url} alt="" className="w-full h-full object-cover"
+                <img src={photo.url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer"
                   onError={(e) => { e.target.style.background = "#e2e8f0"; e.target.style.display = "block"; }} />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2 p-2">
                   {fresh.cover !== photo.url ? (
@@ -370,13 +439,14 @@ export default function GalleryManager({ division }) {
                   className="w-full px-3 py-2.5 text-sm text-black border border-slate-200 rounded-xl outline-none focus:ring-1" />
                 <p className="text-[10px] text-slate-400 mt-1">If blank, the first added photo becomes the cover.</p>
               </div>
-              {albumCover && <img src={albumCover} alt="preview" className="h-28 w-full object-cover rounded-xl border border-slate-200"
+              {albumCover && <img src={albumCover} alt="preview" className="h-28 w-full object-cover rounded-xl border border-slate-200" referrerPolicy="no-referrer"
                 onError={(e) => e.target.style.display = "none"} />}
             </div>
+            {albumError && <p className="text-xs text-rose-600 bg-rose-50 rounded-lg px-3 py-2">{albumError}</p>}
             <div className="flex gap-2 pt-1">
-              <button onClick={saveAlbum} disabled={!albumTitle.trim()}
+              <button onClick={saveAlbum} disabled={!albumTitle.trim() || albumSaving}
                 className={`flex-1 ${accentBg} text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition cursor-pointer disabled:opacity-40`}>
-                <Save size={15} /> {editingAlbum ? "Save Changes" : "Create Album"}
+                <Save size={15} /> {albumSaving ? "Saving…" : editingAlbum ? "Save Changes" : "Create Album"}
               </button>
               <button onClick={() => setShowAlbumForm(false)}
                 className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition cursor-pointer">
@@ -401,7 +471,7 @@ export default function GalleryManager({ division }) {
               <div className="relative h-44 bg-slate-100 cursor-pointer" onClick={() => openAlbum(album)}>
                 {album.cover ? (
                   <img src={album.cover} alt={album.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300" referrerPolicy="no-referrer"
                     onError={(e) => e.target.style.display = "none"} />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">

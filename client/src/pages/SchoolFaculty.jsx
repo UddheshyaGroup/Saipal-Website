@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { cmsService, cmsBus } from "../services/cmsService";
 
 export default function SchoolFaculty() {
-  const [faculty, setFaculty] = useState(() => cmsService.getFaculty("school"));
+  const [faculty, setFaculty] = useState([]);
 
   useEffect(() => {
-    setFaculty(cmsService.getFaculty("school"));
-    const handleCmsChange = () => setFaculty(cmsService.getFaculty("school"));
+    cmsService.getFaculty("school").then(setFaculty);
+    const handleCmsChange = () => cmsService.getFaculty("school").then(setFaculty);
     cmsBus.addEventListener("cms-data-changed", handleCmsChange);
     return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
   }, []);
@@ -42,6 +42,7 @@ export default function SchoolFaculty() {
                   <img
                     src={member.image}
                     alt={member.name}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-3 left-3 bg-[#2E3192] text-white text-xs font-bold px-3 py-1 rounded-full shadow">

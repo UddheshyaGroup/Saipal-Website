@@ -8,8 +8,17 @@ export function ScholarshipsManager({ division = "college" }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [form, setForm] = useState({ title: "", coverage: "", eligibility: "", category: "Merit Waiver" });
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
-  const loadData = () => setScholarships(cmsService.getScholarships(division));
+  const loadData = async () => {
+    try {
+      const data = await cmsService.getScholarships(division);
+      setScholarships(data);
+    } catch (err) {
+      console.error("Failed to load scholarships:", err);
+    }
+  };
   useEffect(() => {
     loadData();
     const handleCmsChange = () => loadData();
@@ -18,19 +27,27 @@ export function ScholarshipsManager({ division = "college" }) {
   }, [division]);
 
   const handleOpenModal = (item = null) => {
+    setSaveError("");
     if (item) { setEditingItem(item); setForm({ ...item }); }
     else { setEditingItem(null); setForm({ title: "", coverage: "", eligibility: "", category: isSchool ? "School Award" : "College Merit Waiver", division: division }); }
     setIsModalOpen(true);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    cmsService.saveScholarship({ id: editingItem?.id, ...form, division: division }, division);
-    setIsModalOpen(false);
+    setSaving(true); setSaveError("");
+    try {
+      await cmsService.saveScholarship({ id: editingItem?.id, ...form, division }, division);
+      setIsModalOpen(false);
+    } catch (err) {
+      setSaveError(err.message || "Failed to save. Check that the server is running.");
+    } finally { setSaving(false); }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Delete scholarship entry?")) cmsService.deleteScholarship(id);
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete scholarship entry?")) return;
+    try { await cmsService.deleteScholarship(id); }
+    catch (err) { alert("Delete failed: " + err.message); }
   };
 
   return (
@@ -74,9 +91,10 @@ export function ScholarshipsManager({ division = "college" }) {
               <div><label className="text-xs font-bold uppercase text-slate-500">Title</label><input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="input" required /></div>
               <div><label className="text-xs font-bold uppercase text-slate-500">Coverage / Waiver Amount</label><input type="text" value={form.coverage} onChange={(e) => setForm({ ...form, coverage: e.target.value })} className="input" required /></div>
               <div><label className="text-xs font-bold uppercase text-slate-500">Eligibility Requirement</label><textarea rows={3} value={form.eligibility} onChange={(e) => setForm({ ...form, eligibility: e.target.value })} className="input py-2" required /></div>
+              {saveError && <p className="text-xs text-rose-600 bg-rose-50 rounded-lg px-3 py-2">{saveError}</p>}
               <div className="flex justify-end gap-2 pt-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold">Cancel</button>
-                <button type="submit" className="px-5 py-2 bg-[#00AEEF] text-white rounded-xl text-xs font-bold">Save Scholarship</button>
+                <button type="submit" disabled={saving} className="px-5 py-2 bg-[#00AEEF] text-white rounded-xl text-xs font-bold disabled:opacity-50">{saving ? "Saving…" : "Save Scholarship"}</button>
               </div>
             </form>
           </div>
@@ -90,9 +108,17 @@ export function FacilitiesManager() {
   const [facilities, setFacilities] = useState([]);
   const [clubs, setClubs] = useState([]);
 
-  const loadData = () => {
-    setFacilities(cmsService.getFacilities());
-    setClubs(cmsService.getClubs());
+  const loadData = async () => {
+    try {
+      const [f, c] = await Promise.all([
+        cmsService.getFacilities(),
+        cmsService.getClubs(),
+      ]);
+      setFacilities(f);
+      setClubs(c);
+    } catch (err) {
+      console.error("Failed to load facilities/clubs:", err);
+    }
   };
 
   useEffect(() => {
@@ -150,8 +176,17 @@ export function TestimonialsManager({ division = "school" }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [form, setForm] = useState({ name: "", relation: "", text: "", rating: 5 });
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
-  const loadData = () => setTestimonials(cmsService.getTestimonials(division));
+  const loadData = async () => {
+    try {
+      const data = await cmsService.getTestimonials(division);
+      setTestimonials(data);
+    } catch (err) {
+      console.error("Failed to load testimonials:", err);
+    }
+  };
 
   useEffect(() => {
     loadData();
@@ -161,6 +196,7 @@ export function TestimonialsManager({ division = "school" }) {
   }, [division]);
 
   const handleOpenModal = (item = null) => {
+    setSaveError("");
     if (item) {
       setEditingItem(item);
       setForm({ ...item });
@@ -171,16 +207,21 @@ export function TestimonialsManager({ division = "school" }) {
     setIsModalOpen(true);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    cmsService.saveTestimonial({ id: editingItem?.id, ...form, division: division }, division);
-    setIsModalOpen(false);
+    setSaving(true); setSaveError("");
+    try {
+      await cmsService.saveTestimonial({ id: editingItem?.id, ...form, division }, division);
+      setIsModalOpen(false);
+    } catch (err) {
+      setSaveError(err.message || "Failed to save. Check that the server is running.");
+    } finally { setSaving(false); }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this testimonial?")) {
-      cmsService.deleteTestimonial(id);
-    }
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this testimonial?")) return;
+    try { await cmsService.deleteTestimonial(id); }
+    catch (err) { alert("Delete failed: " + err.message); }
   };
 
   return (
@@ -297,20 +338,10 @@ export function TestimonialsManager({ division = "school" }) {
                   <option value={3}>3 Stars ★★★</option>
                 </select>
               </div>
+              {saveError && <p className="text-xs text-rose-600 bg-rose-50 rounded-lg px-3 py-2">{saveError}</p>}
               <div className="flex justify-end gap-2 pt-3">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className={`px-5 py-2.5 ${accentBg} text-white rounded-xl text-xs font-bold`}
-                >
-                  Save Testimonial
-                </button>
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold">Cancel</button>
+                <button type="submit" disabled={saving} className={`px-5 py-2.5 ${accentBg} text-white rounded-xl text-xs font-bold disabled:opacity-50`}>{saving ? "Saving…" : "Save Testimonial"}</button>
               </div>
             </form>
           </div>
@@ -321,14 +352,37 @@ export function TestimonialsManager({ division = "school" }) {
 }
 
 export function SiteSettingsManager() {
-  const [settings, setSettings] = useState(cmsService.getSiteSettings());
+  const [settings, setSettings] = useState({});
   const [savedMessage, setSavedMessage] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
-  const handleSave = (e) => {
+  const loadSettings = async () => {
+    try {
+      const data = await cmsService.getSiteSettings();
+      setSettings(data);
+    } catch (err) {
+      console.error("Failed to load site settings:", err);
+    }
+  };
+
+  useEffect(() => {
+    loadSettings();
+    const handleCmsChange = () => loadSettings();
+    cmsBus.addEventListener("cms-data-changed", handleCmsChange);
+    return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
+  }, []);
+
+  const handleSave = async (e) => {
     e.preventDefault();
-    cmsService.saveSiteSettings(settings);
-    setSavedMessage(true);
-    setTimeout(() => setSavedMessage(false), 3000);
+    setSaving(true); setSaveError("");
+    try {
+      await cmsService.saveSiteSettings(settings);
+      setSavedMessage(true);
+      setTimeout(() => setSavedMessage(false), 3000);
+    } catch (err) {
+      setSaveError(err.message || "Failed to save settings.");
+    } finally { setSaving(false); }
   };
 
   return (
@@ -348,6 +402,10 @@ export function SiteSettingsManager() {
         </div>
       )}
 
+      {saveError && (
+        <div className="p-3 bg-rose-100 text-rose-800 rounded-xl text-xs font-bold text-center">{saveError}</div>
+      )}
+
       <form onSubmit={handleSave} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div><label className="text-xs font-bold uppercase text-slate-500">School Name</label><input type="text" value={settings.schoolName || ""} onChange={(e) => setSettings({ ...settings, schoolName: e.target.value })} className="input" required /></div>
@@ -360,8 +418,8 @@ export function SiteSettingsManager() {
         </div>
 
         <div className="flex justify-end pt-4 border-t">
-          <button type="submit" className="bg-[#2E3192] text-white px-8 py-3 rounded-xl text-xs font-bold shadow-lg flex items-center gap-2 cursor-pointer">
-            <Save size={16} /> Save Settings
+          <button type="submit" disabled={saving} className="bg-[#2E3192] text-white px-8 py-3 rounded-xl text-xs font-bold shadow-lg flex items-center gap-2 cursor-pointer disabled:opacity-50">
+            <Save size={16} /> {saving ? "Saving…" : "Save Settings"}
           </button>
         </div>
       </form>

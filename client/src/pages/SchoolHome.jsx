@@ -23,16 +23,19 @@ export default function SchoolHome() {
   const [activeFaq, setActiveFaq] = useState(null);
   const [currentHeroImage, setCurrentHeroImage] = useState(0);
 
-  const [notices, setNotices] = useState(() => cmsService.getNotices("school"));
-  const [tickers, setTickers] = useState(() => cmsService.getTickers("school"));
-  const [testimonials, setTestimonials] = useState(() => cmsService.getTestimonials());
-  const [programs, setPrograms] = useState(() => cmsService.getPrograms());
+  const [notices, setNotices] = useState([]);
+  const [tickers, setTickers] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
+  const [programs, setPrograms] = useState([]);
 
-  const loadCmsData = () => {
-    setNotices(cmsService.getNotices("school"));
-    setTickers(cmsService.getTickers("school"));
-    setTestimonials(cmsService.getTestimonials());
-    setPrograms(cmsService.getPrograms());
+  const loadCmsData = async () => {
+    const [n, t, tm, p] = await Promise.all([
+      cmsService.getNotices("school"),
+      cmsService.getTickers("school"),
+      cmsService.getTestimonials("school"),
+      cmsService.getPrograms("school"),
+    ]);
+    setNotices(n); setTickers(t); setTestimonials(tm); setPrograms(p);
   };
 
   useEffect(() => {

@@ -22,16 +22,19 @@ import {
 
 export default function Home() {
   const [tourOpen, setTourOpen] = useState(false);
-  const [notices, setNotices] = useState(() => cmsService.getNotices("college"));
-  const [tickers, setTickers] = useState(() => cmsService.getTickers("college"));
-  const [programs, setPrograms] = useState(() => cmsService.getPrograms("college"));
-  const [testimonials, setTestimonials] = useState(() => cmsService.getTestimonials("college"));
+  const [notices, setNotices] = useState([]);
+  const [tickers, setTickers] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
 
-  const loadCmsData = () => {
-    setNotices(cmsService.getNotices("college"));
-    setTickers(cmsService.getTickers("college"));
-    setPrograms(cmsService.getPrograms("college"));
-    setTestimonials(cmsService.getTestimonials("college"));
+  const loadCmsData = async () => {
+    const [n, t, p, tm] = await Promise.all([
+      cmsService.getNotices("college"),
+      cmsService.getTickers("college"),
+      cmsService.getPrograms("college"),
+      cmsService.getTestimonials("college"),
+    ]);
+    setNotices(n); setTickers(t); setPrograms(p); setTestimonials(tm);
   };
 
   useEffect(() => {

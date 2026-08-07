@@ -7,7 +7,7 @@ function FacultyCard({ member }) {
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all p-6 flex flex-col items-center text-center justify-between border border-slate-200">
       <div className="flex flex-col items-center">
         {member.image ? (
-          <img src={member.image} alt={member.name} className="w-28 h-28 rounded-full object-cover mb-4 border-2 border-[#00AEEF] shadow-sm" />
+          <img src={member.image} alt={member.name} referrerPolicy="no-referrer" className="w-28 h-28 rounded-full object-cover mb-4 border-2 border-[#00AEEF] shadow-sm" />
         ) : (
           <div className="w-28 h-28 rounded-full bg-gray-100 flex items-center justify-center mb-4 border-2 border-gray-200">
             <User size={48} className="text-gray-400" />
@@ -27,11 +27,11 @@ function FacultyCard({ member }) {
 }
 
 export default function Faculty() {
-  const [faculty, setFaculty] = useState(() => cmsService.getFaculty("college"));
+  const [faculty, setFaculty] = useState([]);
 
   useEffect(() => {
-    setFaculty(cmsService.getFaculty("college"));
-    const handleCmsChange = () => setFaculty(cmsService.getFaculty("college"));
+    cmsService.getFaculty("college").then(setFaculty);
+    const handleCmsChange = () => cmsService.getFaculty("college").then(setFaculty);
     cmsBus.addEventListener("cms-data-changed", handleCmsChange);
     return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
   }, []);

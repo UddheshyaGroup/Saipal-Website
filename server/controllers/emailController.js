@@ -8,8 +8,8 @@ export const sendEmail = async (req, res) => {
   
   // Route to the correct email depending on division
   const toEmail = isSchool 
-    ? (process.env.SCHOOL_INQUIRY_EMAIL || 'pkrm8848@gmail.com')
-    : (process.env.COLLEGE_INQUIRY_EMAIL || 'pkrm8848@gmail.com');
+    ? (process.env.SCHOOL_INQUIRY_EMAIL || 'pkram8848@gmail.com')
+    : (process.env.COLLEGE_INQUIRY_EMAIL || 'pkram8848@gmail.com');
 
   const brevoApiKey = process.env.BREVO_API_KEY;
   const brevoFrom = process.env.BREVO_FROM || 'mail@saipal.edu.np';

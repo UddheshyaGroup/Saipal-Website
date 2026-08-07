@@ -14,7 +14,7 @@ export default function Gallery() {
   const [activeIndex, setActiveIndex] = useState(0);
   const thumbRef = useRef(null);
 
-  const loadAlbums = () => setAlbums(cmsService.getGalleryAlbums(division));
+  const loadAlbums = async () => setAlbums(await cmsService.getGalleryAlbums(division));
 
   useEffect(() => {
     loadAlbums();
@@ -96,6 +96,7 @@ export default function Gallery() {
             <img
               src={album.cover}
               alt={album.title}
+              referrerPolicy="no-referrer"
               className="h-64 w-full object-cover transition duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/40" />
@@ -133,6 +134,7 @@ export default function Gallery() {
               <img
                 src={activeAlbum.photos[activeIndex].url}
                 alt=""
+                referrerPolicy="no-referrer"
                 className="h-[65vh] max-w-full object-contain rounded-lg shadow-xl"
               />
 
@@ -167,6 +169,7 @@ export default function Gallery() {
                     <img
                       src={photo.url}
                       alt=""
+                      referrerPolicy="no-referrer"
                       className="h-16 w-24 object-cover"
                     />
                   </button>

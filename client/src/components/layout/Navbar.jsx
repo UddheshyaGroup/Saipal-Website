@@ -258,6 +258,12 @@ export default function Navbar() {
                           active={location.pathname === "/school/gallery"}
                         />
                         <DrawerLink
+                          to="/school/blog"
+                          label="School Blog & News"
+                          onClick={() => setDesktopMenuOpen(false)}
+                          active={location.pathname.startsWith("/school/blog")}
+                        />
+                        <DrawerLink
                           to="/school/contact"
                           label="School Contact"
                           onClick={() => setDesktopMenuOpen(false)}
@@ -497,12 +503,19 @@ export default function Navbar() {
                       🏆 School Scholarships
                     </NavLink>
                     <NavLink
-                      to="/school/gallery"
-                      onClick={() => setMobileOpen(false)}
-                      className="px-4 py-2.5 rounded-xl text-slate-700 font-semibold hover:bg-slate-50"
-                    >
-                      🖼️ School Gallery
-                    </NavLink>
+                       to="/school/gallery"
+                       onClick={() => setMobileOpen(false)}
+                       className="px-4 py-2.5 rounded-xl text-slate-700 font-semibold hover:bg-slate-50"
+                     >
+                       🖼️ School Gallery
+                     </NavLink>
+                     <NavLink
+                       to="/school/blog"
+                       onClick={() => setMobileOpen(false)}
+                       className="px-4 py-2.5 rounded-xl text-slate-700 font-semibold hover:bg-slate-50"
+                     >
+                       ✍️ School Blog &amp; News
+                     </NavLink>
                     <NavLink
                       to="/school/contact"
                       onClick={() => setMobileOpen(false)}

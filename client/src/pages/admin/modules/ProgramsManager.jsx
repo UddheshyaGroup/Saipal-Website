@@ -7,6 +7,8 @@ export default function ProgramsManager({ division = "college" }) {
   const [programs, setPrograms] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProgram, setEditingProgram] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [form, setForm] = useState({
     title: "",
     code: "alevels",
@@ -17,7 +19,14 @@ export default function ProgramsManager({ division = "college" }) {
     division: division,
   });
 
-  const loadPrograms = () => setPrograms(cmsService.getPrograms(division));
+  const loadPrograms = async () => {
+    try {
+      const data = await cmsService.getPrograms(division);
+      setPrograms(data);
+    } catch (err) {
+      console.error("Failed to load programs:", err);
+    }
+  };
 
   useEffect(() => {
     loadPrograms();
@@ -45,23 +54,24 @@ export default function ProgramsManager({ division = "college" }) {
     setIsModalOpen(true);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    cmsService.saveProgram(
-      {
-        id: editingProgram?.id,
-        ...form,
-        division: division,
-      },
-      division
-    );
-    setIsModalOpen(false);
+    setSaving(true); setSaveError("");
+    try {
+      await cmsService.saveProgram(
+        { id: editingProgram?.id, ...form, division },
+        division
+      );
+      setIsModalOpen(false);
+    } catch (err) {
+      setSaveError(err.message || "Failed to save. Check that the server is running.");
+    } finally { setSaving(false); }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Delete this program?")) {
-      cmsService.deleteProgram(id);
-    }
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this program?")) return;
+    try { await cmsService.deleteProgram(id); }
+    catch (err) { alert("Delete failed: " + err.message); }
   };
 
   return (
@@ -133,9 +143,10 @@ export default function ProgramsManager({ division = "college" }) {
                 <label className="text-xs font-bold uppercase text-slate-500">Curriculum Details</label>
                 <textarea rows={3} value={form.details} onChange={(e) => setForm({ ...form, details: e.target.value })} className="input py-2" />
               </div>
+              {saveError && <p className="text-xs text-rose-600 bg-rose-50 rounded-lg px-3 py-2">{saveError}</p>}
               <div className="flex justify-end gap-2 pt-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold">Cancel</button>
-                <button type="submit" className="px-5 py-2 bg-[#00AEEF] text-white rounded-xl text-xs font-bold">Save Program</button>
+                <button type="submit" disabled={saving} className="px-5 py-2 bg-[#00AEEF] text-white rounded-xl text-xs font-bold disabled:opacity-50">{saving ? "Saving…" : "Save Program"}</button>
               </div>
             </form>
           </div>

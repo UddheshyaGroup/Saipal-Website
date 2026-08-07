@@ -14,11 +14,11 @@ import {
 import { cmsService, cmsBus } from "../../services/cmsService";
 
 export default function Footer() {
-  const [settings, setSettings] = useState(() => cmsService.getSiteSettings());
+  const [settings, setSettings] = useState({});
 
   useEffect(() => {
-    setSettings(cmsService.getSiteSettings());
-    const handleCmsChange = () => setSettings(cmsService.getSiteSettings());
+    cmsService.getSiteSettings().then(setSettings);
+    const handleCmsChange = () => cmsService.getSiteSettings().then(setSettings);
     cmsBus.addEventListener("cms-data-changed", handleCmsChange);
     return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
   }, []);

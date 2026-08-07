@@ -7,21 +7,33 @@ import { Link } from "react-router-dom";
 
 export default function FaqChatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [settings, setSettings] = useState(() => faqService.getSettings());
-  const [categories, setCategories] = useState(() => faqService.getCategories());
-  const [faqs, setFaqs] = useState(() => faqService.getFaqs("all", true));
+  const [settings, setSettings] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [faqs, setFaqs] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
 
   const chatEndRef = useRef(null);
 
+  const loadData = async () => {
+    try {
+      const [s, c, f] = await Promise.all([
+        faqService.getSettings(),
+        faqService.getCategories(),
+        faqService.getFaqs("all", true),
+      ]);
+      setSettings(s);
+      setCategories(c);
+      setFaqs(f);
+    } catch (err) {
+      console.error("Failed to load chatbot data:", err);
+    }
+  };
+
   useEffect(() => {
-    const handleDataChange = () => {
-      setSettings(faqService.getSettings());
-      setCategories(faqService.getCategories());
-      setFaqs(faqService.getFaqs("all", true));
-    };
+    loadData();
+    const handleDataChange = () => loadData();
     faqBus.addEventListener("faq-data-changed", handleDataChange);
     return () => faqBus.removeEventListener("faq-data-changed", handleDataChange);
   }, []);

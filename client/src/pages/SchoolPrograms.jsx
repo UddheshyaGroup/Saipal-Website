@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { cmsService, cmsBus } from "../services/cmsService";
 
 export default function SchoolPrograms() {
-  const [programs, setPrograms] = useState(() => cmsService.getPrograms("school"));
+  const [programs, setPrograms] = useState([]);
 
   useEffect(() => {
-    setPrograms(cmsService.getPrograms("school"));
-    const handleCmsChange = () => setPrograms(cmsService.getPrograms("school"));
+    cmsService.getPrograms("school").then(setPrograms);
+    const handleCmsChange = () => cmsService.getPrograms("school").then(setPrograms);
     cmsBus.addEventListener("cms-data-changed", handleCmsChange);
     return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
   }, []);

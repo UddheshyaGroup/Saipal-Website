@@ -1,13 +1,5 @@
 import { authService } from "./authService";
-import { INITIAL_FAQS, INITIAL_CATEGORIES, DEFAULT_BOT_SETTINGS } from "../data/initialFaqData";
 
-const STORAGE_KEYS = {
-  FAQS: "saipal_faq_list",
-  CATEGORIES: "saipal_faq_categories",
-  SETTINGS: "saipal_faq_settings",
-};
-
-// Use relative path — works via Vite proxy in dev and on the same host in production
 const API_BASE_URL = "/api";
 
 class FaqEventBus extends EventTarget {
@@ -15,295 +7,140 @@ class FaqEventBus extends EventTarget {
     this.dispatchEvent(new Event("faq-data-changed"));
   }
 }
-
 export const faqBus = new FaqEventBus();
 
-// Normalize MongoDB _id to client id helper
+const convertGoogleDriveUrl = (url) => {
+  if (!url || typeof url !== "string") return url;
+  const fileDRegex = /(?:drive|docs)\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/;
+  const openIdRegex = /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/;
+  const ucIdRegex = /drive\.google\.com\/uc\?id=([a-zA-Z0-9_-]+)/;
+
+  let fileId = null;
+  const match1 = url.match(fileDRegex);
+  if (match1) fileId = match1[1];
+  else {
+    const match2 = url.match(openIdRegex);
+    if (match2) fileId = match2[1];
+    else {
+      const match3 = url.match(ucIdRegex);
+      if (match3) fileId = match3[1];
+    }
+  }
+
+  if (fileId) {
+    return `https://lh3.googleusercontent.com/d/${fileId}`;
+  }
+  return url;
+};
+
 const normalize = (item) => {
   if (!item) return item;
   if (Array.isArray(item)) return item.map(normalize);
-  
-  const id = item.id || item.categoryId || item._id || String(item._id);
-  return {
-    ...item,
-    id: String(id)
-  };
+  const id = item._id ? String(item._id) : (item.categoryId || item.id);
+  const out = { ...item, id: String(id) };
+  if (out.botAvatar) out.botAvatar = convertGoogleDriveUrl(out.botAvatar);
+  return out;
 };
 
-// Initialize LocalStorage with seed data if empty
-const initializeStorage = () => {
-  if (!localStorage.getItem(STORAGE_KEYS.FAQS)) {
-    localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(INITIAL_FAQS));
-  }
-  if (!localStorage.getItem(STORAGE_KEYS.CATEGORIES)) {
-    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(INITIAL_CATEGORIES));
-  }
-  if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) {
-    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(DEFAULT_BOT_SETTINGS));
-  }
-};
-
-initializeStorage();
-
-// Background Sync from Server
-export const syncFaqWithServer = async () => {
-  try {
-    const [faqs, categories, settings] = await Promise.all([
-      fetch(`${API_BASE_URL}/faq/faqs`).then((res) => res.json()),
-      fetch(`${API_BASE_URL}/faq/categories`).then((res) => res.json()),
-      fetch(`${API_BASE_URL}/faq/settings`).then((res) => res.json()),
-    ]);
-
-    // Map categories fields to keep client categories compatible
-    const normalizedCats = categories.map(c => ({
-      ...c,
-      id: c.categoryId || c._id || c.id,
-    }));
-
-    localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(normalize(faqs)));
-    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(normalize(normalizedCats)));
-    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(normalize(settings)));
-
-    faqBus.notifyChange();
-  } catch (err) {
-    console.error("FAQ Background Sync failed:", err);
-  }
-};
-
-// Trigger background sync on startup
-setTimeout(syncFaqWithServer, 500);
-
-// Helper for making API calls
-const makeApiCall = async (endpoint, method = "GET", body = null) => {
+// Authenticated API helper — throws on failure
+const api = async (endpoint, method = "GET", body = null) => {
   const token = authService.getToken();
   const headers = {};
-  
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-  
-  if (body) {
-    headers["Content-Type"] = "application/json";
-  }
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  if (body) headers["Content-Type"] = "application/json";
 
-  const options = {
+  const res = await fetch(`${API_BASE_URL}${endpoint}`, {
     method,
     headers,
-  };
-
-  if (body) {
-    options.body = JSON.stringify(body);
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || `API ${method} ${endpoint} → ${res.status}`);
   }
+  return res.json();
+};
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-  if (!response.ok) {
-    const errData = await response.json().catch(() => ({}));
-    throw new Error(errData.message || `API error on ${method} ${endpoint}`);
-  }
-  return response.json();
+// Public GET
+const pub = async (endpoint) => {
+  const res = await fetch(`${API_BASE_URL}${endpoint}`);
+  if (!res.ok) throw new Error(`Fetch ${endpoint} → ${res.status}`);
+  return res.json();
 };
 
 export const faqService = {
-  // --- FAQs ---
-  getFaqs: (category = "all", onlyActive = true) => {
-    setTimeout(syncFaqWithServer, 0);
-    const data = getItems(STORAGE_KEYS.FAQS, []);
-    let filtered = onlyActive ? data.filter((item) => item.isActive) : data;
-    if (category && category !== "all") {
-      filtered = filtered.filter((item) => item.category === category);
-    }
+  // ── FAQs ────────────────────────────────────────────────────
+  getFaqs: async (category = "all", onlyActive = true) => {
+    const data = await pub("/faq/faqs");
+    const list = normalize(data);
+    let filtered = onlyActive ? list.filter((f) => f.isActive) : list;
+    if (category && category !== "all") filtered = filtered.filter((f) => f.category === category);
     return filtered.sort((a, b) => (a.order || 0) - (b.order || 0));
   },
 
-  getFaqById: (id) => {
-    const faqs = faqService.getFaqs("all", false);
-    return faqs.find((item) => String(item.id) === String(id)) || null;
+  getFaqById: async (id) => {
+    try {
+      const f = await pub(`/faq/faqs/${id}`);
+      return normalize(f);
+    } catch { return null; }
   },
 
   saveFaq: async (faqItem) => {
-    const faqs = faqService.getFaqs("all", false);
-    
-    // Optimistic local save
-    const tempId = faqItem.id || `faq-temp-${Date.now()}`;
-    const optimisticFaq = {
-      ...faqItem,
-      id: tempId,
-      order: faqItem.order || (faqs.length + 1),
-      isActive: faqItem.isActive ?? true,
-    };
-    
-    let localList;
-    if (faqItem.id && faqs.some((f) => String(f.id) === String(faqItem.id))) {
-      localList = faqs.map((f) => (String(f.id) === String(faqItem.id) ? optimisticFaq : f));
-    } else {
-      localList = [...faqs, optimisticFaq];
-    }
-    localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(localList));
+    const isNew = !faqItem.id;
+    const result = await api(isNew ? "/faq/faqs" : `/faq/faqs/${faqItem.id}`, isNew ? "POST" : "PUT", faqItem);
     faqBus.notifyChange();
-
-    try {
-      const isNew = !faqItem.id || String(faqItem.id).startsWith("faq-temp-");
-      const url = isNew ? "/faq/faqs" : `/faq/faqs/${faqItem.id}`;
-      const method = isNew ? "POST" : "PUT";
-      
-      const serverFaq = await makeApiCall(url, method, faqItem);
-      const normalized = normalize(serverFaq);
-
-      const freshList = getItems(STORAGE_KEYS.FAQS, []);
-      const updatedList = freshList.map((f) => (String(f.id) === String(tempId) || String(f.id) === String(normalized.id) ? normalized : f));
-      localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(updatedList));
-      faqBus.notifyChange();
-      return updatedList;
-    } catch (err) {
-      console.error(err);
-      syncFaqWithServer();
-    }
+    return normalize(result);
   },
 
   deleteFaq: async (id) => {
-    const faqs = faqService.getFaqs("all", false);
-    const updated = faqs.filter((f) => String(f.id) !== String(id));
-    localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(updated));
+    await api(`/faq/faqs/${id}`, "DELETE");
     faqBus.notifyChange();
-
-    try {
-      await makeApiCall(`/faq/faqs/${id}`, "DELETE");
-    } catch (err) {
-      console.error(err);
-      syncFaqWithServer();
-    }
-    return updated;
   },
 
   toggleFaqStatus: async (id) => {
-    const faqs = faqService.getFaqs("all", false);
-    const updated = faqs.map((f) => (String(f.id) === String(id) ? { ...f, isActive: !f.isActive } : f));
-    localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(updated));
+    const result = await api(`/faq/faqs/${id}/status`, "PATCH");
     faqBus.notifyChange();
-
-    try {
-      const serverFaq = await makeApiCall(`/faq/faqs/${id}/status`, "PATCH");
-      const normalized = normalize(serverFaq);
-      const freshList = getItems(STORAGE_KEYS.FAQS, []);
-      const updatedList = freshList.map((f) => (String(f.id) === String(normalized.id) ? normalized : f));
-      localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(updatedList));
-      faqBus.notifyChange();
-    } catch (err) {
-      console.error(err);
-      syncFaqWithServer();
-    }
-    return updated;
+    return normalize(result);
   },
 
   reorderFaqs: async (reorderedFaqs) => {
-    const updated = reorderedFaqs.map((f, index) => ({ ...f, order: index + 1 }));
-    localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(updated));
+    const withOrder = reorderedFaqs.map((f, i) => ({ ...f, order: i + 1 }));
+    const result = await api("/faq/faqs/reorder", "POST", { reorderedFaqs: withOrder });
     faqBus.notifyChange();
-
-    try {
-      const serverFaqs = await makeApiCall("/faq/faqs/reorder", "POST", { reorderedFaqs: updated });
-      localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(normalize(serverFaqs)));
-      faqBus.notifyChange();
-    } catch (err) {
-      console.error(err);
-      syncFaqWithServer();
-    }
-    return updated;
+    return normalize(result);
   },
 
-  // --- CATEGORIES ---
-  getCategories: () => {
-    setTimeout(syncFaqWithServer, 0);
-    return getItems(STORAGE_KEYS.CATEGORIES, []);
+  // ── CATEGORIES ──────────────────────────────────────────────
+  getCategories: async () => {
+    const data = await pub("/faq/categories");
+    return normalize(data);
   },
 
   saveCategory: async (categoryItem) => {
-    const categories = faqService.getCategories();
-    
-    // Map custom id/categoryId
     const categoryId = categoryItem.categoryId || categoryItem.id;
-    const tempId = categoryId || `cat-temp-${Date.now()}`;
-    const optimisticCat = { ...categoryItem, id: tempId, categoryId: tempId };
-
-    let localList;
-    if (categoryItem.id && categories.some((c) => String(c.id) === String(categoryItem.id))) {
-      localList = categories.map((c) => (String(c.id) === String(categoryItem.id) ? optimisticCat : c));
-    } else {
-      localList = [...categories, optimisticCat];
-    }
-    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(localList));
+    const isNew = !categoryId;
+    const result = await api(isNew ? "/faq/categories" : `/faq/categories/${categoryId}`, isNew ? "POST" : "PUT", { ...categoryItem, categoryId });
     faqBus.notifyChange();
-
-    try {
-      const serverCat = await makeApiCall("/faq/categories", "POST", { ...categoryItem, categoryId });
-      const normalized = normalize(serverCat);
-      normalized.id = normalized.categoryId || normalized.id;
-
-      const freshList = getItems(STORAGE_KEYS.CATEGORIES, []);
-      const updatedList = freshList.map((c) => (String(c.id) === String(tempId) || String(c.id) === String(normalized.id) ? normalized : c));
-      localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(updatedList));
-      faqBus.notifyChange();
-      return updatedList;
-    } catch (err) {
-      console.error(err);
-      syncFaqWithServer();
-    }
+    return normalize(result);
   },
 
   deleteCategory: async (id) => {
-    const categories = faqService.getCategories();
-    const updated = categories.filter((c) => String(c.id) !== String(id));
-    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(updated));
+    await api(`/faq/categories/${id}`, "DELETE");
     faqBus.notifyChange();
-
-    try {
-      await makeApiCall(`/faq/categories/${id}`, "DELETE");
-    } catch (err) {
-      console.error(err);
-      syncFaqWithServer();
-    }
-    return updated;
   },
 
-  // --- SETTINGS ---
-  getSettings: () => {
-    setTimeout(syncFaqWithServer, 0);
-    return getItems(STORAGE_KEYS.SETTINGS, DEFAULT_BOT_SETTINGS);
+  // ── SETTINGS ────────────────────────────────────────────────
+  getSettings: async () => {
+    const data = await pub("/faq/settings");
+    return normalize(data);
   },
 
   updateSettings: async (newSettings) => {
-    const current = faqService.getSettings();
-    const updated = { ...current, ...newSettings };
-    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
+    const result = await api("/faq/settings", "PUT", newSettings);
     faqBus.notifyChange();
-
-    try {
-      const serverSettings = await makeApiCall("/faq/settings", "PUT", newSettings);
-      const normalized = normalize(serverSettings);
-      localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(normalized));
-      faqBus.notifyChange();
-      return normalized;
-    } catch (err) {
-      console.error(err);
-      syncFaqWithServer();
-    }
+    return normalize(result);
   },
 
-  // --- RESET ALL ---
-  resetToDefaults: () => {
-    localStorage.setItem(STORAGE_KEYS.FAQS, JSON.stringify(INITIAL_FAQS));
-    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(INITIAL_CATEGORIES));
-    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(DEFAULT_BOT_SETTINGS));
-    faqBus.notifyChange();
-    syncFaqWithServer();
-  },
-};
-
-// Helper getter
-const getItems = (key, fallback = []) => {
-  try {
-    return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
-  } catch (e) {
-    return fallback;
-  }
+  // ── RESET (re-fetch from DB) ─────────────────────────────────
+  resetToDefaults: () => faqBus.notifyChange(),
 };

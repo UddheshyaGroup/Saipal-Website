@@ -24,19 +24,31 @@ export const emailService = {
     // 1. If EmailJS configuration is present, use EmailJS directly
     if (serviceId && templateId && publicKey) {
       try {
-        const response = await emailjs.send(
-          serviceId, 
-          templateId, 
-          templateParams || {
-            subject,
-            message_html: htmlContent,
-            reply_to_email: replyTo?.email,
-            reply_to_name: replyTo?.name,
-            from_name: replyTo?.name || "Website Visitor",
-            from_email: replyTo?.email || "no-reply@saipal.edu.np",
-          }, 
-          publicKey
-        );
+        // Strip HTML tags to produce readable plain text for {{message_html}}
+        const plainText = (htmlContent || "")
+          .replace(/<br\s*\/?>/gi, "\n")
+          .replace(/<\/p>/gi, "\n")
+          .replace(/<[^>]+>/g, "")
+          .replace(/&nbsp;/g, " ")
+          .replace(/&amp;/g, "&")
+          .replace(/&lt;/g, "<")
+          .replace(/&gt;/g, ">")
+          .trim();
+
+        // Always include message_html so the template variable is never blank.
+        // Merge with any per-form templateParams so both approaches work.
+        const finalParams = {
+          subject,
+          message_html: plainText,
+          reply_to_email: replyTo?.email,
+          reply_to_name: replyTo?.name,
+          from_name: replyTo?.name || "Website Visitor",
+          from_email: replyTo?.email || "no-reply@saipal.edu.np",
+          ...(templateParams || {}),   // form-specific fields come last to allow overrides
+          message_html: plainText,      // always force plain-text content visible in template
+        };
+
+        const response = await emailjs.send(serviceId, templateId, finalParams, publicKey);
         if (response.status === 200) {
           return { message: "Form submitted successfully via EmailJS!" };
         }

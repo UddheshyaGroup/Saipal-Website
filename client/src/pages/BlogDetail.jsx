@@ -16,34 +16,43 @@ export default function BlogDetail() {
   const location = useLocation();
   const division = location.pathname.startsWith("/school") ? "school" : "college";
 
-  const [post, setPost] = useState(() => cmsService.getBlogPostById(id));
-  const [loading, setLoading] = useState(!post);
+  const [post, setPost] = useState(null);
+  const [related, setRelated] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    // If found in local cache, no need to fetch
-    if (post) {
-      setLoading(false);
-      return;
-    }
-
-    // Otherwise async-fetch from backend
     let cancelled = false;
     setLoading(true);
 
-    cmsService.getBlogPostByIdAsync(id).then((fetched) => {
-      if (cancelled) return;
-      if (fetched) {
-        setPost(fetched);
-        setLoading(false);
-      } else {
+    const loadData = async () => {
+      try {
+        const fetchedPost = await cmsService.getBlogPostById(id);
+        if (cancelled) return;
+        if (fetchedPost) {
+          setPost(fetchedPost);
+          const allBlogs = await cmsService.getBlogPosts(division);
+          if (cancelled) return;
+          const filteredRelated = allBlogs
+            .filter((b) => String(b.id) !== String(fetchedPost.id))
+            .slice(0, 3);
+          setRelated(filteredRelated);
+          setLoading(false);
+        } else {
+          setNotFound(true);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (cancelled) return;
         setNotFound(true);
         setLoading(false);
       }
-    });
+    };
+
+    loadData();
 
     return () => { cancelled = true; };
-  }, [id]);
+  }, [id, division]);
 
   if (loading) {
     return (
@@ -162,44 +171,40 @@ export default function BlogDetail() {
       </section>
 
       {/* ================= RELATED POSTS ================= */}
-      {(() => {
-        const related = cmsService.getBlogPosts(division).filter((b) => String(b.id) !== String(post.id)).slice(0, 3);
-        if (related.length === 0) return null;
-        return (
-          <section className="max-w-7xl mx-auto px-6 mt-20">
-            <h2 className="text-3xl font-bold text-primary mb-10 text-center">
-              Continue Reading
-            </h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              {related.map((rel) => (
-                <Link
-                  key={rel.id}
-                  to={`/${division}/blog/${rel.id}`}
-                  className="group block h-full"
-                >
-                  <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-full border border-gray-100">
-                    <div className="h-48 overflow-hidden">
-                      <img
-                        src={rel.image}
-                        alt={rel.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <span className="text-xs font-bold text-accent uppercase tracking-wider">
-                        {rel.category}
-                      </span>
-                      <h3 className="text-xl font-bold text-primary mt-2 group-hover:text-accent line-clamp-2 transition-colors">
-                        {rel.title}
-                      </h3>
-                    </div>
+      {related.length > 0 && (
+        <section className="max-w-7xl mx-auto px-6 mt-20">
+          <h2 className="text-3xl font-bold text-primary mb-10 text-center">
+            Continue Reading
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {related.map((rel) => (
+              <Link
+                key={rel.id}
+                to={`/${division}/blog/${rel.id}`}
+                className="group block h-full"
+              >
+                <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all h-full border border-gray-100">
+                  <div className="h-48 overflow-hidden">
+                    <img
+                      src={rel.image}
+                      alt={rel.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
                   </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        );
-      })()}
+                  <div className="p-6">
+                    <span className="text-xs font-bold text-accent uppercase tracking-wider">
+                      {rel.category}
+                    </span>
+                    <h3 className="text-xl font-bold text-primary mt-2 group-hover:text-accent line-clamp-2 transition-colors">
+                      {rel.title}
+                    </h3>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

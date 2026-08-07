@@ -7,6 +7,8 @@ export default function FacultyManager({ division = "school" }) {
   const [faculty, setFaculty] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [form, setForm] = useState({
     name: "",
     role: "",
@@ -16,8 +18,13 @@ export default function FacultyManager({ division = "school" }) {
     department: "",
   });
 
-  const loadFaculty = () => {
-    setFaculty(cmsService.getFaculty(division));
+  const loadFaculty = async () => {
+    try {
+      const members = await cmsService.getFaculty(division);
+      setFaculty(members);
+    } catch (err) {
+      console.error("Failed to load faculty:", err);
+    }
   };
 
   useEffect(() => {
@@ -45,23 +52,24 @@ export default function FacultyManager({ division = "school" }) {
     setIsModalOpen(true);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    cmsService.saveFacultyMember(
-      {
-        ...form,
-        id: editingMember?.id || form.id,
-        division: division, // Enforce current division!
-      },
-      division
-    );
-    setIsModalOpen(false);
+    setSaving(true); setSaveError("");
+    try {
+      await cmsService.saveFacultyMember(
+        { ...form, id: editingMember?.id || form.id, division },
+        division
+      );
+      setIsModalOpen(false);
+    } catch (err) {
+      setSaveError(err.message || "Failed to save. Check that the server is running.");
+    } finally { setSaving(false); }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Remove this faculty member from directory?")) {
-      cmsService.deleteFacultyMember(id);
-    }
+  const handleDelete = async (id) => {
+    if (!window.confirm("Remove this faculty member?")) return;
+    try { await cmsService.deleteFacultyMember(id); }
+    catch (err) { alert("Delete failed: " + err.message); }
   };
 
   return (
@@ -88,7 +96,7 @@ export default function FacultyManager({ division = "school" }) {
         {faculty.map((member, i) => (
           <div key={member.id || i} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm flex flex-col justify-between p-5 space-y-4">
             <div className="space-y-3 text-center">
-              <img src={member.image} alt={member.name} className="w-24 h-24 rounded-full object-cover mx-auto shadow-md border-2 border-[#00AEEF]" />
+              <img src={member.image} alt={member.name} referrerPolicy="no-referrer" className="w-24 h-24 rounded-full object-cover mx-auto shadow-md border-2 border-[#00AEEF]" />
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white text-base">{member.name}</h3>
                 <p className="text-xs text-[#00AEEF] font-semibold">{member.role}</p>
@@ -134,9 +142,10 @@ export default function FacultyManager({ division = "school" }) {
                 <label className="text-xs font-bold uppercase text-slate-500">Profile Photo URL</label>
                 <input type="text" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} className="input" required />
               </div>
+              {saveError && <p className="text-xs text-rose-600 bg-rose-50 rounded-lg px-3 py-2">{saveError}</p>}
               <div className="flex justify-end gap-2 pt-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold">Cancel</button>
-                <button type="submit" className="px-5 py-2 bg-[#00AEEF] text-white rounded-xl text-xs font-bold">Save Member</button>
+                <button type="submit" disabled={saving} className="px-5 py-2 bg-[#00AEEF] text-white rounded-xl text-xs font-bold disabled:opacity-50">{saving ? "Saving…" : "Save Member"}</button>
               </div>
             </form>
           </div>

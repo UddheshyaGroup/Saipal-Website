@@ -20,7 +20,12 @@ export const protect = async (req, res, next) => {
 
       return next();
     } catch (error) {
-      console.error(error);
+      // Suppress noisy stack traces for expected JWT rejections (expired / wrong secret)
+      if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+        console.warn(`[Auth] Token rejected: ${error.message}`);
+      } else {
+        console.error('[Auth] Unexpected error:', error);
+      }
       return res.status(401).json({ message: 'Not authorized, token failed' });
     }
   }

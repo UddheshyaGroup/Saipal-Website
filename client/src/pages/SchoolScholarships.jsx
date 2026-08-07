@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { cmsService, cmsBus } from "../services/cmsService";
 
 export default function SchoolScholarships() {
-  const [scholarships, setScholarships] = useState(() => cmsService.getScholarships("school"));
+  const [scholarships, setScholarships] = useState([]);
 
   useEffect(() => {
-    setScholarships(cmsService.getScholarships("school"));
-    const handleCmsChange = () => setScholarships(cmsService.getScholarships("school"));
+    cmsService.getScholarships("school").then(setScholarships);
+    const handleCmsChange = () => cmsService.getScholarships("school").then(setScholarships);
     cmsBus.addEventListener("cms-data-changed", handleCmsChange);
     return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
   }, []);

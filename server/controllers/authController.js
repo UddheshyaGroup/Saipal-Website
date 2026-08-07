@@ -16,7 +16,16 @@ export const loginUser = async (req, res) => {
 
   try {
     const cleanEmail = email.trim().toLowerCase();
-    const user = await User.findOne({ email: cleanEmail });
+    
+    // Fallback match to support either spelling for admin
+    let user;
+    if (cleanEmail === 'pkram8848@gmail.com' || cleanEmail === 'pkrm8848@gmail.com') {
+      user = await User.findOne({
+        $or: [{ email: 'pkram8848@gmail.com' }, { email: 'pkrm8848@gmail.com' }]
+      });
+    } else {
+      user = await User.findOne({ email: cleanEmail });
+    }
 
     if (user && (await user.comparePassword(password))) {
       res.json({

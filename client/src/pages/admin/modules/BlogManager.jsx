@@ -6,6 +6,8 @@ export default function BlogManager({ division = "school" }) {
   const [blogs, setBlogs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [blogForm, setBlogForm] = useState({
     title: "",
     category: "Academics",
@@ -21,8 +23,13 @@ export default function BlogManager({ division = "school" }) {
   const accentText = isSchool ? "text-[#00AEEF]" : "text-[#2E3192]";
   const accentIconColor = isSchool ? "#00AEEF" : "#2E3192";
 
-  const loadBlogs = () => {
-    setBlogs(cmsService.getBlogPosts(division));
+  const loadBlogs = async () => {
+    try {
+      const posts = await cmsService.getBlogPosts(division);
+      setBlogs(posts);
+    } catch (err) {
+      console.error("Failed to load blog posts:", err);
+    }
   };
 
   useEffect(() => {
@@ -59,20 +66,21 @@ export default function BlogManager({ division = "school" }) {
     setIsModalOpen(true);
   };
 
-  const handleSaveBlog = (e) => {
+  const handleSaveBlog = async (e) => {
     e.preventDefault();
-    cmsService.saveBlogPost({
-      id: editingBlog?.id,
-      ...blogForm,
-      division,
-    }, division);
-    setIsModalOpen(false);
+    setSaving(true); setSaveError("");
+    try {
+      await cmsService.saveBlogPost({ id: editingBlog?.id, ...blogForm, division }, division);
+      setIsModalOpen(false);
+    } catch (err) {
+      setSaveError(err.message || "Failed to save. Check that the server is running.");
+    } finally { setSaving(false); }
   };
 
-  const handleDeleteBlog = (id) => {
-    if (window.confirm("Delete this blog article?")) {
-      cmsService.deleteBlogPost(id);
-    }
+  const handleDeleteBlog = async (id) => {
+    if (!window.confirm("Delete this blog article?")) return;
+    try { await cmsService.deleteBlogPost(id); }
+    catch (err) { alert("Delete failed: " + err.message); }
   };
 
   return (
@@ -177,9 +185,10 @@ export default function BlogManager({ division = "school" }) {
                 <textarea rows={6} value={blogForm.content} onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })} className="input py-2 font-mono text-xs" required />
               </div>
 
+              {saveError && <p className="text-xs text-rose-600 bg-rose-50 rounded-lg px-3 py-2 mt-1">{saveError}</p>}
               <div className="flex justify-end gap-3 pt-4 border-t">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold">Cancel</button>
-                <button type="submit" className="px-6 py-2.5 bg-[#00AEEF] text-white rounded-xl text-xs font-bold shadow-md">Publish Article</button>
+                <button type="submit" disabled={saving} className="px-6 py-2.5 bg-[#00AEEF] text-white rounded-xl text-xs font-bold shadow-md disabled:opacity-50">{saving ? "Publishing…" : "Publish Article"}</button>
               </div>
             </form>
           </div>

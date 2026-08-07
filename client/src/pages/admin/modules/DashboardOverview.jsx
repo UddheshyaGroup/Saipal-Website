@@ -22,13 +22,23 @@ export default function DashboardOverview({ onNavigate, division }) {
     faqsCount: 0,
   });
 
-  const loadStats = () => {
-    setStats({
-      noticesCount: cmsService.getNotices(division || "all").length,
-      blogsCount: cmsService.getBlogPosts().length,
-      facultyCount: cmsService.getFaculty().length,
-      faqsCount: faqService.getFaqs("all", false).length,
-    });
+  const loadStats = async () => {
+    try {
+      const [notices, blogs, faculty, faqs] = await Promise.all([
+        cmsService.getNotices(division || "all"),
+        cmsService.getBlogPosts(),
+        cmsService.getFaculty(),
+        faqService.getFaqs("all", false),
+      ]);
+      setStats({
+        noticesCount: notices.length,
+        blogsCount: blogs.length,
+        facultyCount: faculty.length,
+        faqsCount: faqs.length,
+      });
+    } catch (err) {
+      console.error("Error loading dashboard stats:", err);
+    }
   };
 
   useEffect(() => {

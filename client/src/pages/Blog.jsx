@@ -17,8 +17,8 @@ export default function Blog() {
     info: { error: false, msg: null },
   });
 
-  const loadBlogs = () => {
-    setBlogs(cmsService.getBlogPosts(division));
+  const loadBlogs = async () => {
+    setBlogs(await cmsService.getBlogPosts(division));
   };
 
   useEffect(() => {

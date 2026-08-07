@@ -1,0 +1,30 @@
+# ── Environment Variables ─────────────────────────────────────────────────────
+# Never commit secrets — covers both client and server .env files
+.env
+.env.local
+.env.*.local
+client/.env
+client/.env.local
+server/.env
+server/.env.local
+
+# ── Dependencies ──────────────────────────────────────────────────────────────
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# ── Build Outputs ─────────────────────────────────────────────────────────────
+dist/
+client/dist/
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+logs/
+
+# ── OS / Editor ───────────────────────────────────────────────────────────────
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+Thumbs.db
