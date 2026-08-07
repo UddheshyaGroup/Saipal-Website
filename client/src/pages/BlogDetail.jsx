@@ -1,4 +1,5 @@
 import { useParams, Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   FaCalendarAlt,
@@ -14,9 +15,46 @@ export default function BlogDetail() {
   const { id } = useParams();
   const location = useLocation();
   const division = location.pathname.startsWith("/school") ? "school" : "college";
-  const post = cmsService.getBlogPostById(id);
 
-  if (!post) {
+  const [post, setPost] = useState(() => cmsService.getBlogPostById(id));
+  const [loading, setLoading] = useState(!post);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    // If found in local cache, no need to fetch
+    if (post) {
+      setLoading(false);
+      return;
+    }
+
+    // Otherwise async-fetch from backend
+    let cancelled = false;
+    setLoading(true);
+
+    cmsService.getBlogPostByIdAsync(id).then((fetched) => {
+      if (cancelled) return;
+      if (fetched) {
+        setPost(fetched);
+        setLoading(false);
+      } else {
+        setNotFound(true);
+        setLoading(false);
+      }
+    });
+
+    return () => { cancelled = true; };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <div className="w-12 h-12 border-4 border-[#2E3192] border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-slate-500 text-sm font-medium">Loading article…</p>
+      </div>
+    );
+  }
+
+  if (notFound || !post) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
         <h2 className="text-3xl font-bold text-primary mb-4">Post Not Found</h2>
@@ -86,7 +124,7 @@ export default function BlogDetail() {
           <div className="mt-16 pt-10 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                {post.author.charAt(0)}
+                {post.author?.charAt(0) || "A"}
               </div>
               <div>
                 <p className="text-sm text-gray-500 font-medium">
@@ -98,7 +136,6 @@ export default function BlogDetail() {
 
             <div className="flex gap-4">
               <span className="text-sm font-bold text-gray-400">Share:</span>
-              {/* Added simple placeholders for share functionality */}
               <div className="flex gap-3">
                 <a
                   href="#"

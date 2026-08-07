@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Toast from "../components/layout/resuables/Toast";
 import { AnimatePresence } from "framer-motion";
+import { emailService } from "../services/emailService";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -51,49 +52,38 @@ function Contact() {
     e.preventDefault();
     setStatus((prevStatus) => ({ ...prevStatus, submitting: true }));
 
-    const BREVO_API_KEY = import.meta.env.VITE_BREVO_API_KEY;
-    const BREVO_FROM = import.meta.env.VITE_BREVO_FROM || "mail@saipal.edu.np";
-
-    if (!BREVO_API_KEY) {
-      handleResponse(400, "API Key is missing. Please check your configuration.");
-      return;
-    }
-
+    const isSchool = window.location.pathname.startsWith("/school");
     const fullName = `${formData.firstName} ${formData.lastName}`;
+    const subject = `New Contact Form Submission from ${fullName}`;
+    const htmlContent = `
+      <h3>New Message from Contact Form</h3>
+      <p><strong>First Name:</strong> ${formData.firstName}</p>
+      <p><strong>Last Name:</strong> ${formData.lastName}</p>
+      <p><strong>Email:</strong> ${formData.email}</p>
+      <p><strong>Phone:</strong> ${formData.phone}</p>
+      <p><strong>Message:</strong></p>
+      <p>${formData.message}</p>
+    `;
 
     try {
-      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "api-key": BREVO_API_KEY,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          sender: { name: "Saipal Website", email: BREVO_FROM },
-          to: [{ email: BREVO_FROM, name: "Saipal Academy Admin" }],
-          replyTo: { email: formData.email, name: fullName },
-          subject: `New Contact Form Submission from ${fullName}`,
-          htmlContent: `
-            <h3>New Message from Contact Form</h3>
-            <p><strong>First Name:</strong> ${formData.firstName}</p>
-            <p><strong>Last Name:</strong> ${formData.lastName}</p>
-            <p><strong>Email:</strong> ${formData.email}</p>
-            <p><strong>Phone:</strong> ${formData.phone}</p>
-            <p><strong>Message:</strong></p>
-            <p>${formData.message}</p>
-          `,
-        }),
+      await emailService.sendEmail({
+        type: isSchool ? "school" : "college",
+        subject,
+        htmlContent,
+        replyTo: { email: formData.email, name: fullName },
+        templateParams: {
+          subject,
+          from_name: fullName,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          from_email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+        }
       });
-
-      if (res.ok) {
-        handleResponse(200, "Message sent successfully!");
-      } else {
-        const errorData = await res.json();
-        handleResponse(res.status, errorData.message || "Failed to send message.");
-      }
+      handleResponse(200, "Message sent successfully!");
     } catch (error) {
-      handleResponse(500, "An error occurred. Please try again later.");
+      handleResponse(500, error.message || "An error occurred. Please try again later.");
     }
   };
 

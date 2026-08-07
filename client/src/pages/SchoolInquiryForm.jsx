@@ -2,6 +2,7 @@ import { useState } from "react";
 import Input from "../components/layout/resuables/Input";
 import Toast from "../components/layout/resuables/Toast";
 import { AnimatePresence } from "framer-motion";
+import { emailService } from "../services/emailService";
 
 export default function SchoolInquiryForm() {
   const [formData, setFormData] = useState({
@@ -62,53 +63,47 @@ export default function SchoolInquiryForm() {
     e.preventDefault();
     setStatus((prevStatus) => ({ ...prevStatus, submitting: true }));
 
-    const BREVO_API_KEY = import.meta.env.VITE_BREVO_API_KEY || import.meta.env.BREVO_API_KEY;
-    const BREVO_FROM = import.meta.env.VITE_BREVO_FROM || import.meta.env.BREVO_FROM || "mail@saipal.edu.np";
-
-    if (!BREVO_API_KEY) {
-      handleResponse(400, "API Key is missing. Please check configuration.");
-      return;
-    }
+    const subject = `New School Inquiry Submission from ${formData.parentName} (${formData.gradeSeeking})`;
+    const htmlContent = `
+      <h3>New Saipal School Inquiry</h3>
+      <p><strong>Parent / Guardian Name:</strong> ${formData.parentName}</p>
+      <p><strong>Student Name:</strong> ${formData.studentName}</p>
+      <p><strong>Grade Seeking:</strong> ${formData.gradeSeeking}</p>
+      <p><strong>Phone:</strong> ${formData.phone}</p>
+      <p><strong>Email:</strong> ${formData.email}</p>
+      <p><strong>Address:</strong> ${formData.address}</p>
+      <p><strong>Purpose:</strong> ${formData.purpose}</p>
+      <p><strong>Preferred Meeting Mode:</strong> ${formData.mode}</p>
+      <p><strong>Preferred Date/Time:</strong> ${formData.dateTime}</p>
+      <p><strong>How Heard:</strong> ${formData.source}</p>
+      <p><strong>Message / Notes:</strong></p>
+      <p>${formData.message}</p>
+    `;
 
     try {
-      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "api-key": BREVO_API_KEY,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          sender: { name: "Saipal School Website", email: BREVO_FROM },
-          to: [{ email: BREVO_FROM, name: "Saipal School Admissions Desk" }],
-          replyTo: { email: formData.email, name: formData.parentName },
-          subject: `New School Inquiry Submission from ${formData.parentName} (${formData.gradeSeeking})`,
-          htmlContent: `
-            <h3>New Saipal School Inquiry</h3>
-            <p><strong>Parent / Guardian Name:</strong> ${formData.parentName}</p>
-            <p><strong>Student Name:</strong> ${formData.studentName}</p>
-            <p><strong>Grade Seeking:</strong> ${formData.gradeSeeking}</p>
-            <p><strong>Phone:</strong> ${formData.phone}</p>
-            <p><strong>Email:</strong> ${formData.email}</p>
-            <p><strong>Address:</strong> ${formData.address}</p>
-            <p><strong>Purpose:</strong> ${formData.purpose}</p>
-            <p><strong>Preferred Meeting Mode:</strong> ${formData.mode}</p>
-            <p><strong>Preferred Date/Time:</strong> ${formData.dateTime}</p>
-            <p><strong>How Heard:</strong> ${formData.source}</p>
-            <p><strong>Message / Notes:</strong></p>
-            <p>${formData.message}</p>
-          `,
-        }),
+      await emailService.sendEmail({
+        type: "school",
+        subject,
+        htmlContent,
+        replyTo: { email: formData.email, name: formData.parentName },
+        templateParams: {
+          subject,
+          from_name: formData.parentName,
+          from_email: formData.email,
+          student_name: formData.studentName,
+          grade_seeking: formData.gradeSeeking,
+          phone: formData.phone,
+          address: formData.address,
+          purpose: formData.purpose,
+          mode: formData.mode,
+          date_time: formData.dateTime,
+          source: formData.source,
+          message: formData.message,
+        }
       });
-
-      if (res.ok) {
-        handleResponse(200, "School inquiry submitted successfully! Our team will contact you shortly.");
-      } else {
-        const errorData = await res.json();
-        handleResponse(res.status, errorData.message || "Failed to submit inquiry.");
-      }
+      handleResponse(200, "School inquiry submitted successfully! Our team will contact you shortly.");
     } catch (error) {
-      handleResponse(500, "An error occurred. Please try again later.");
+      handleResponse(500, error.message || "An error occurred. Please try again later.");
     }
   };
 

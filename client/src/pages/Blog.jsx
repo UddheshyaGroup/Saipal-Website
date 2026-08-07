@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { FaCalendarAlt, FaUser, FaTag, FaArrowRight } from "react-icons/fa";
 import Toast from "../components/layout/resuables/Toast";
 import { cmsService, cmsBus } from "../services/cmsService";
+import { emailService } from "../services/emailService";
 
 export default function Blog() {
   const location = useLocation();
@@ -52,49 +53,28 @@ export default function Blog() {
 
     setStatus((prevStatus) => ({ ...prevStatus, submitting: true }));
 
-    const BREVO_API_KEY =
-      import.meta.env.VITE_BREVO_API_KEY || import.meta.env.BREVO_API_KEY;
-    const BREVO_FROM =
-      import.meta.env.VITE_BREVO_FROM ||
-      import.meta.env.BREVO_FROM ||
-      "mail@saipal.edu.np";
-
-    if (!BREVO_API_KEY) {
-      handleResponse(400, "API configuration missing.");
-      return;
-    }
+    const subject = `New Newsletter Subscription - ${email}`;
+    const htmlContent = `
+      <h3>New Newsletter Subscription</h3>
+      <p>A new user has subscribed to the Saipal Academy newsletter.</p>
+      <p><strong>Email:</strong> ${email}</p>
+    `;
 
     try {
-      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "api-key": BREVO_API_KEY,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          sender: { name: "Saipal Website", email: BREVO_FROM },
-          to: [{ email: BREVO_FROM, name: "Saipal Academy Admin" }],
-          subject: `New Newsletter Subscription - ${email}`,
-          htmlContent: `
-            <h3>New Newsletter Subscription</h3>
-            <p>A new user has subscribed to the Saipal Academy newsletter.</p>
-            <p><strong>Email:</strong> ${email}</p>
-          `,
-        }),
+      await emailService.sendEmail({
+        type: division,
+        subject,
+        htmlContent,
+        replyTo: { email, name: email },
+        templateParams: {
+          subject,
+          from_email: email,
+          message: `A new newsletter subscriber: ${email}`,
+        }
       });
-
-      if (res.ok) {
-        handleResponse(200, "Thank you for subscribing to our newsletter!");
-      } else {
-        const errorData = await res.json();
-        handleResponse(
-          res.status,
-          errorData.message || "Something went wrong."
-        );
-      }
+      handleResponse(200, "Thank you for subscribing to our newsletter!");
     } catch (error) {
-      handleResponse(500, "Could not complete subscription. Please try later.");
+      handleResponse(500, error.message || "Could not complete subscription. Please try later.");
     }
   };
 

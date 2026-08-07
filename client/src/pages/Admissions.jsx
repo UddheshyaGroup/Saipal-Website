@@ -2,6 +2,7 @@ import { useState } from "react";
 import Input from "../components/layout/resuables/Input";
 import Toast from "../components/layout/resuables/Toast";
 import { AnimatePresence } from "framer-motion";
+import { emailService } from "../services/emailService";
 
 export default function Admissions() {
   const [formData, setFormData] = useState({
@@ -68,59 +69,57 @@ export default function Admissions() {
     e.preventDefault();
     setStatus((prevStatus) => ({ ...prevStatus, submitting: true }));
 
-    const BREVO_API_KEY = import.meta.env.VITE_BREVO_API_KEY || import.meta.env.BREVO_API_KEY;
-    const BREVO_FROM = import.meta.env.VITE_BREVO_FROM || import.meta.env.BREVO_FROM || "mail@saipal.edu.np";
-
-    if (!BREVO_API_KEY) {
-      handleResponse(400, "API Key is missing. Please check your configuration.");
-      return;
-    }
+    const type = formData.applyingFor === "School Level" ? "school" : "college";
+    const subject = `New Admission Application from ${formData.studentName}`;
+    const htmlContent = `
+      <h3>New Admission Application</h3>
+      <p><strong>Student Full Name:</strong> ${formData.studentName}</p>
+      <p><strong>Date of Birth:</strong> ${formData.dob}</p>
+      <p><strong>Gender:</strong> ${formData.gender}</p>
+      <p><strong>Applying For:</strong> ${formData.applyingFor}</p>
+      <p><strong>Grade Applying For:</strong> ${formData.gradeApplying}</p>
+      <hr />
+      <p><strong>Previous School:</strong> ${formData.previousSchool}</p>
+      <p><strong>Last Grade Completed:</strong> ${formData.lastGrade}</p>
+      <hr />
+      <p><strong>Parent/Guardian Name:</strong> ${formData.parentName}</p>
+      <p><strong>Relation:</strong> ${formData.relation}</p>
+      <p><strong>Mobile Number:</strong> ${formData.phone}</p>
+      <p><strong>Email Address:</strong> ${formData.email}</p>
+      <p><strong>Home Address:</strong> ${formData.address}</p>
+      <hr />
+      <p><strong>Documents:</strong> ${formData.documents}</p>
+      <p><strong>Additional Message:</strong></p>
+      <p>${formData.message}</p>
+    `;
 
     try {
-      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "api-key": BREVO_API_KEY,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          sender: { name: "Saipal Website", email: BREVO_FROM },
-          to: [{ email: BREVO_FROM, name: "Saipal Academy Admin" }],
-          replyTo: { email: formData.email, name: formData.studentName },
-          subject: `New Admission Application from ${formData.studentName}`,
-          htmlContent: `
-            <h3>New Admission Application</h3>
-            <p><strong>Student Full Name:</strong> ${formData.studentName}</p>
-            <p><strong>Date of Birth:</strong> ${formData.dob}</p>
-            <p><strong>Gender:</strong> ${formData.gender}</p>
-            <p><strong>Applying For:</strong> ${formData.applyingFor}</p>
-            <p><strong>Grade Applying For:</strong> ${formData.gradeApplying}</p>
-            <hr />
-            <p><strong>Previous School:</strong> ${formData.previousSchool}</p>
-            <p><strong>Last Grade Completed:</strong> ${formData.lastGrade}</p>
-            <hr />
-            <p><strong>Parent/Guardian Name:</strong> ${formData.parentName}</p>
-            <p><strong>Relation:</strong> ${formData.relation}</p>
-            <p><strong>Mobile Number:</strong> ${formData.phone}</p>
-            <p><strong>Email Address:</strong> ${formData.email}</p>
-            <p><strong>Home Address:</strong> ${formData.address}</p>
-            <hr />
-            <p><strong>Documents:</strong> ${formData.documents}</p>
-            <p><strong>Additional Message:</strong></p>
-            <p>${formData.message}</p>
-          `,
-        }),
+      await emailService.sendEmail({
+        type,
+        subject,
+        htmlContent,
+        replyTo: { email: formData.email, name: formData.studentName },
+        templateParams: {
+          subject,
+          from_name: formData.studentName,
+          from_email: formData.email,
+          dob: formData.dob,
+          gender: formData.gender,
+          applying_for: formData.applyingFor,
+          grade_applying: formData.gradeApplying,
+          previous_school: formData.previousSchool,
+          last_grade: formData.lastGrade,
+          parent_name: formData.parentName,
+          relation: formData.relation,
+          phone: formData.phone,
+          address: formData.address,
+          documents: formData.documents,
+          message: formData.message,
+        }
       });
-
-      if (res.ok) {
-        handleResponse(200, "Admission form submitted successfully!");
-      } else {
-        const errorData = await res.json();
-        handleResponse(res.status, errorData.message || "Failed to submit admission form.");
-      }
+      handleResponse(200, "Admission form submitted successfully!");
     } catch (error) {
-      handleResponse(500, "An error occurred. Please try again later.");
+      handleResponse(500, error.message || "An error occurred. Please try again later.");
     }
   };
 

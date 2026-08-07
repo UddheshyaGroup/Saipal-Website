@@ -2,6 +2,7 @@ import { useState } from "react";
 import Input from "../components/layout/resuables/Input";
 import Toast from "../components/layout/resuables/Toast";
 import { AnimatePresence } from "framer-motion";
+import { emailService } from "../services/emailService";
 
 export default function Scholarships() {
   const [formData, setFormData] = useState({
@@ -66,58 +67,55 @@ export default function Scholarships() {
     e.preventDefault();
     setStatus((prevStatus) => ({ ...prevStatus, submitting: true }));
 
-    const BREVO_API_KEY = import.meta.env.VITE_BREVO_API_KEY || import.meta.env.BREVO_API_KEY;
-    const BREVO_FROM = import.meta.env.VITE_BREVO_FROM || import.meta.env.BREVO_FROM || "mail@saipal.edu.np";
-
-    if (!BREVO_API_KEY) {
-      handleResponse(400, "API Key is missing. Please check your configuration.");
-      return;
-    }
+    const type = formData.applyingFor === "School Level" ? "school" : "college";
+    const subject = `New Scholarship Application from ${formData.studentName}`;
+    const htmlContent = `
+      <h3>New Scholarship Application</h3>
+      <p><strong>Student Full Name:</strong> ${formData.studentName}</p>
+      <p><strong>Date of Birth:</strong> ${formData.dob}</p>
+      <p><strong>Applying For:</strong> ${formData.applyingFor}</p>
+      <p><strong>Current School/College:</strong> ${formData.currentSchool}</p>
+      <p><strong>Current/Last Grade:</strong> ${formData.grade}</p>
+      <p><strong>Last Exam Result:</strong> ${formData.lastResult}</p>
+      <p><strong>Scholarship Type:</strong> ${formData.scholarshipType}</p>
+      <p><strong>Achievements:</strong></p>
+      <p>${formData.achievements}</p>
+      <hr />
+      <p><strong>Parent/Guardian Name:</strong> ${formData.parentName}</p>
+      <p><strong>Mobile Number:</strong> ${formData.phone}</p>
+      <p><strong>Email Address:</strong> ${formData.email}</p>
+      <p><strong>Home Address:</strong> ${formData.address}</p>
+      <hr />
+      <p><strong>Additional Information:</strong></p>
+      <p>${formData.message}</p>
+    `;
 
     try {
-      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "api-key": BREVO_API_KEY,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          sender: { name: "Saipal Website", email: BREVO_FROM },
-          to: [{ email: BREVO_FROM, name: "Saipal Academy Admin" }],
-          replyTo: { email: formData.email, name: formData.studentName },
-          subject: `New Scholarship Application from ${formData.studentName}`,
-          htmlContent: `
-            <h3>New Scholarship Application</h3>
-            <p><strong>Student Full Name:</strong> ${formData.studentName}</p>
-            <p><strong>Date of Birth:</strong> ${formData.dob}</p>
-            <p><strong>Applying For:</strong> ${formData.applyingFor}</p>
-            <p><strong>Current School/College:</strong> ${formData.currentSchool}</p>
-            <p><strong>Current/Last Grade:</strong> ${formData.grade}</p>
-            <p><strong>Last Exam Result:</strong> ${formData.lastResult}</p>
-            <p><strong>Scholarship Type:</strong> ${formData.scholarshipType}</p>
-            <p><strong>Achievements:</strong></p>
-            <p>${formData.achievements}</p>
-            <hr />
-            <p><strong>Parent/Guardian Name:</strong> ${formData.parentName}</p>
-            <p><strong>Mobile Number:</strong> ${formData.phone}</p>
-            <p><strong>Email Address:</strong> ${formData.email}</p>
-            <p><strong>Home Address:</strong> ${formData.address}</p>
-            <hr />
-            <p><strong>Additional Information:</strong></p>
-            <p>${formData.message}</p>
-          `,
-        }),
+      await emailService.sendEmail({
+        type,
+        subject,
+        htmlContent,
+        replyTo: { email: formData.email, name: formData.studentName },
+        templateParams: {
+          subject,
+          from_name: formData.studentName,
+          from_email: formData.email,
+          dob: formData.dob,
+          applying_for: formData.applyingFor,
+          current_school: formData.currentSchool,
+          grade: formData.grade,
+          last_result: formData.lastResult,
+          scholarship_type: formData.scholarshipType,
+          achievements: formData.achievements,
+          parent_name: formData.parentName,
+          phone: formData.phone,
+          address: formData.address,
+          message: formData.message,
+        }
       });
-
-      if (res.ok) {
-        handleResponse(200, "Scholarship application submitted successfully!");
-      } else {
-        const errorData = await res.json();
-        handleResponse(res.status, errorData.message || "Failed to submit application.");
-      }
+      handleResponse(200, "Scholarship application submitted successfully!");
     } catch (error) {
-      handleResponse(500, "An error occurred. Please try again later.");
+      handleResponse(500, error.message || "An error occurred. Please try again later.");
     }
   };
 
