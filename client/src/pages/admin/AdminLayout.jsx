@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { authService } from "../../services/authService";
 import {
   LayoutDashboard,
@@ -36,12 +36,52 @@ import ScholarshipsManager, {
 import AdminFaqManager from "./AdminFaqManager";
 import GalleryManager from "./modules/GalleryManager";
 
+const pathToModuleMap = {
+  dashboard: "overview",
+  notices: "notices",
+  blogs: "blogs",
+  faculty: "faculty",
+  programs: "programs",
+  scholarships: "scholarships",
+  gallery: "gallery",
+  testimonials: "testimonials",
+  chatbot: "chatbot",
+};
+
+const moduleToPathMap = {
+  overview: "dashboard",
+  notices: "notices",
+  blogs: "blogs",
+  faculty: "faculty",
+  programs: "programs",
+  scholarships: "scholarships",
+  gallery: "gallery",
+  testimonials: "testimonials",
+  chatbot: "chatbot",
+};
+
 export default function AdminLayout() {
   const navigate = useNavigate();
-  const [selectedDivision, setSelectedDivision] = useState(null); // 'school' | 'college' | null
-  const [activeModule, setActiveModule] = useState("overview");
+  const location = useLocation();
+
+  const pathParts = location.pathname.split("/").filter(Boolean);
+  const selectedDivision = (pathParts[1] === "school" || pathParts[1] === "college") ? pathParts[1] : null;
+  const moduleFromPath = pathParts[2];
+  const activeModule = pathToModuleMap[moduleFromPath] || "overview";
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const currentUser = authService.getCurrentUser();
+
+  // Enforce redirection to /admin/:division/dashboard if path is incomplete or invalid
+  useEffect(() => {
+    const parts = location.pathname.split("/").filter(Boolean);
+    if (parts[1] === "school" || parts[1] === "college") {
+      const currentModule = parts[2];
+      if (!currentModule || !pathToModuleMap[currentModule]) {
+        navigate(`/admin/${parts[1]}/dashboard`, { replace: true });
+      }
+    }
+  }, [location.pathname, navigate]);
 
   // --- Dynamic browser tab title based on active module & division ---
   useEffect(() => {
@@ -76,7 +116,13 @@ export default function AdminLayout() {
 
   // If no portal is selected yet, render PortalSelector landing screen
   if (!selectedDivision) {
-    return <PortalSelector onSelectPortal={(division) => setSelectedDivision(division)} />;
+    return (
+      <PortalSelector
+        onSelectPortal={(division) => {
+          navigate(`/admin/${division}/dashboard`);
+        }}
+      />
+    );
   }
 
   const isSchool = selectedDivision === "school";
@@ -138,7 +184,7 @@ export default function AdminLayout() {
 
             {/* Switch Portal Button */}
             <button
-              onClick={() => setSelectedDivision(null)}
+              onClick={() => navigate("/admin")}
               className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[#00AEEF] text-[11px] font-bold transition cursor-pointer"
             >
               <ArrowLeft size={12} /> Switch Division Portal
@@ -154,7 +200,7 @@ export default function AdminLayout() {
                 <button
                   key={item.id}
                   onClick={() => {
-                    setActiveModule(item.id);
+                    navigate(`/admin/${selectedDivision}/${moduleToPathMap[item.id]}`);
                     setMobileMenuOpen(false);
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer ${
@@ -204,7 +250,12 @@ export default function AdminLayout() {
       {/* ── MAIN CONTENT AREA ── */}
       <main className="flex-1 overflow-y-auto p-4 sm:p-8">
         {activeModule === "overview" && (
-          <DashboardOverview onNavigate={setActiveModule} division={selectedDivision} />
+          <DashboardOverview
+            onNavigate={(moduleId) => {
+              navigate(`/admin/${selectedDivision}/${moduleToPathMap[moduleId] || "dashboard"}`);
+            }}
+            division={selectedDivision}
+          />
         )}
         {activeModule === "notices" && <NoticesManager division={selectedDivision} />}
         {activeModule === "blogs" && <BlogManager division={selectedDivision} />}

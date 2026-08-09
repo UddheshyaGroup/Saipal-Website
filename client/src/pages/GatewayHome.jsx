@@ -207,32 +207,10 @@ export default function GatewayHome() {
       {/* ════ CENTER SEAM ════ */}
       <div className="hidden md:flex absolute top-0 bottom-0 left-1/2 -translate-x-1/2 z-40 flex-col items-center justify-center pointer-events-none">
         <div
-          className="w-px flex-grow opacity-40"
+          className="w-px h-full opacity-40"
           style={{
             background:
-              "linear-gradient(to bottom, transparent, #00AEEF 25%, #00AEEF 75%, transparent)",
-          }}
-        />
-        <div
-          className="w-10 h-10 rounded-full flex items-center justify-center my-2 shadow-2xl"
-          style={{
-            background: "#020617",
-            border: "1.5px solid rgba(0,174,239,0.65)",
-            boxShadow: "0 0 24px rgba(0,174,239,0.5)",
-          }}
-        >
-          <img
-            src="/Logo.png"
-            alt=""
-            aria-hidden
-            className="w-5 h-5 object-contain"
-            style={{ filter: "brightness(0) invert(1)" }}
-          />
-        </div>
-        <div
-          className="w-px flex-grow opacity-40"
-          style={{
-            background: "linear-gradient(to bottom, #00AEEF 75%, transparent)",
+              "linear-gradient(to bottom, transparent, #00AEEF 15%, #00AEEF 85%, transparent)",
           }}
         />
       </div>
