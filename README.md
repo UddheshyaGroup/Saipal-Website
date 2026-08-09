@@ -171,7 +171,7 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 #### **Start Backend Server**
 ```bash
 cd server
-npm run dev
+npm start
 ```
 *The backend API will run on `http://localhost:5000`.*
 
