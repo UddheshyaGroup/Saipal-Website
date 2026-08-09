@@ -7,19 +7,22 @@ export default function NoticesManager({ division = "all" }) {
   const [tickers, setTickers] = useState([]);
   const [isNoticeModalOpen, setIsNoticeModalOpen] = useState(false);
   const [editingNotice, setEditingNotice] = useState(null);
+
+  const defaultDivision = division && division !== "all" ? division : "college";
+
   const [noticeForm, setNoticeForm] = useState({
     title: "",
     date: "",
     tag: "Notice",
     color: "bg-[#00AEEF]",
-    division: division || "all",
+    division: defaultDivision,
     content: "",
     status: "published",
   });
 
   const [isTickerModalOpen, setIsTickerModalOpen] = useState(false);
   const [editingTicker, setEditingTicker] = useState(null);
-  const [tickerForm, setTickerForm] = useState({ text: "", division: division || "all", isActive: true });
+  const [tickerForm, setTickerForm] = useState({ text: "", division: defaultDivision, isActive: true });
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
 
@@ -45,6 +48,8 @@ export default function NoticesManager({ division = "all" }) {
 
   // --- NOTICE HANDLERS ---
   const handleOpenNoticeModal = (notice = null) => {
+    setSaveError("");
+    const targetDiv = division && division !== "all" ? division : "college";
     if (notice) {
       setEditingNotice(notice);
       setNoticeForm({
@@ -52,8 +57,8 @@ export default function NoticesManager({ division = "all" }) {
         date: notice.date || new Date().toLocaleDateString(),
         tag: notice.tag || "Notice",
         color: notice.color || "bg-[#00AEEF]",
-        division: notice.division || division || "all",
-        content: notice.content || "",
+        division: notice.division || targetDiv,
+        content: notice.content || notice.description || "",
         status: notice.status || "published",
       });
     } else {
@@ -63,7 +68,7 @@ export default function NoticesManager({ division = "all" }) {
         date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
         tag: "Admissions",
         color: "bg-[#00AEEF]",
-        division: division || "all",
+        division: targetDiv,
         content: "",
         status: "published",
       });
@@ -77,7 +82,7 @@ export default function NoticesManager({ division = "all" }) {
     try {
       await cmsService.saveNotice(
         { id: editingNotice?.id, ...noticeForm, division: noticeForm.division || division },
-        division
+        noticeForm.division || division
       );
       setIsNoticeModalOpen(false);
     } catch (err) {
@@ -94,12 +99,13 @@ export default function NoticesManager({ division = "all" }) {
   // --- TICKER HANDLERS ---
   const handleOpenTickerModal = (ticker = null) => {
     setSaveError("");
+    const targetDiv = division && division !== "all" ? division : "college";
     if (ticker) {
       setEditingTicker(ticker);
-      setTickerForm({ text: ticker.text || "", division: ticker.division || "all", isActive: ticker.isActive ?? true });
+      setTickerForm({ text: ticker.text || "", division: ticker.division || targetDiv, isActive: ticker.isActive ?? true });
     } else {
       setEditingTicker(null);
-      setTickerForm({ text: "", division: "all", isActive: true });
+      setTickerForm({ text: "", division: targetDiv, isActive: true });
     }
     setIsTickerModalOpen(true);
   };
@@ -108,7 +114,7 @@ export default function NoticesManager({ division = "all" }) {
     e.preventDefault();
     setSaving(true); setSaveError("");
     try {
-      await cmsService.saveTicker({ id: editingTicker?.id, ...tickerForm });
+      await cmsService.saveTicker({ id: editingTicker?.id, ...tickerForm }, tickerForm.division || division);
       setIsTickerModalOpen(false);
     } catch (err) {
       setSaveError(err.message || "Failed to save ticker.");
@@ -158,7 +164,7 @@ export default function NoticesManager({ division = "all" }) {
 
         <div className="divide-y divide-slate-100 dark:divide-slate-800 border rounded-xl overflow-hidden">
           {tickers.length === 0 ? (
-            <p className="p-4 text-xs text-slate-400">No ticker messages found.</p>
+            <p className="p-4 text-xs text-slate-400">No ticker messages found for this portal.</p>
           ) : (
             tickers.map((t) => (
               <div key={t.id} className="p-4 flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/40">
@@ -204,7 +210,7 @@ export default function NoticesManager({ division = "all" }) {
                 </div>
 
                 <h3 className="font-bold text-base text-slate-900 dark:text-white leading-snug">{n.title}</h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">{n.content}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">{n.content || n.description}</p>
               </div>
 
               <div className="pt-3 border-t border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
@@ -247,9 +253,9 @@ export default function NoticesManager({ division = "all" }) {
                 <div>
                   <label className="text-xs font-bold uppercase text-slate-500">Division</label>
                   <select value={noticeForm.division} onChange={(e) => setNoticeForm({ ...noticeForm, division: e.target.value })} className="input">
-                    <option value="all">All Divisions</option>
                     <option value="school">School Division</option>
                     <option value="college">College Division</option>
+                    <option value="all">All Divisions (Both)</option>
                   </select>
                 </div>
                 <div>
@@ -290,9 +296,9 @@ export default function NoticesManager({ division = "all" }) {
               <div>
                 <label className="text-xs font-bold uppercase text-slate-500">Target Division</label>
                 <select value={tickerForm.division} onChange={(e) => setTickerForm({ ...tickerForm, division: e.target.value })} className="input">
-                  <option value="all">All (School & College)</option>
                   <option value="school">School Only</option>
                   <option value="college">College Only</option>
+                  <option value="all">All (School &amp; College)</option>
                 </select>
               </div>
               {saveError && <p className="text-xs text-rose-600 bg-rose-50 rounded-lg px-3 py-2">{saveError}</p>}
