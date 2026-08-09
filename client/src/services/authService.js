@@ -1,6 +1,6 @@
 const AUTH_STORAGE_KEY = "saipal_admin_session";
-// Use relative path — works via Vite proxy in dev and on the same host in production
-const API_BASE_URL = "/api";
+// Use relative path in dev (via proxy) and support environment variable in production
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
 export const authService = {
   // Simple hashing function for client-side password verification (kept for backward compatibility)
