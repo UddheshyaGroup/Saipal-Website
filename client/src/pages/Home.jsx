@@ -197,28 +197,11 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-primary">📌 Notice Board</h2>
           </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={{
-              hidden: { opacity: 0 },
-              show: {
-                opacity: 1,
-                transition: { staggerChildren: 0.15 },
-              },
-            }}
-            className="grid md:grid-cols-3 gap-8"
-          >
+          <div className="grid md:grid-cols-3 gap-8">
             {notices.map((notice, i) => (
-              <motion.div
+              <div
                 key={notice.id || i}
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  show: { opacity: 1, y: 0 },
-                }}
-                whileHover={{ y: -6 }}
-                className="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition flex flex-col justify-between"
+                className="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition flex flex-col justify-between hover:-translate-y-1.5 duration-200"
               >
                 <div>
                   <span
@@ -240,9 +223,9 @@ export default function Home() {
                 <p className="text-sm text-gray-500 pt-3 border-t">
                   Published on {notice.date}
                 </p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
