@@ -77,6 +77,26 @@ const api = async (endpoint, method = "GET", body = null) => {
   return res.json();
 };
 
+// ── Authenticated multipart/form-data upload helper ────────────
+const apiUpload = async (endpoint, method = "POST", formData) => {
+  const token = authService.getToken();
+  const headers = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  // Do NOT set Content-Type — browser sets it with the multipart boundary
+
+  const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    method,
+    headers,
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || `API ${method} ${endpoint} → ${res.status}`);
+  }
+  return res.json();
+};
+
 // ── Public (unauthenticated) GET ──────────────────────────────
 const pub = async (endpoint) => {
   const res = await fetch(`${API_BASE_URL}${endpoint}`);
@@ -130,12 +150,40 @@ export const cmsService = {
     if (!division || division === "all") return list;
     return list.filter((m) => (m.division || "school") === division);
   },
+  // Save faculty member using a plain JSON body (URL mode)
   saveFacultyMember: async (member, targetDivision = "school") => {
     const division = member.division || targetDivision;
     const isNew = !member.id;
     const body = { ...member, division };
     if (body.image) body.image = convertGoogleDriveUrl(body.image);
-    const result = await api(isNew ? "/cms/faculty" : `/cms/faculty/${member.id}`, isNew ? "POST" : "PUT", body);
+    // Pass ?division= so the server routes the upload to the correct Cloudinary folder
+    const endpoint = isNew
+      ? `/cms/faculty?division=${division}`
+      : `/cms/faculty/${member.id}?division=${division}`;
+    const result = await api(endpoint, isNew ? "POST" : "PUT", body);
+    cmsBus.notifyChange("faculty");
+    return normalize(result);
+  },
+  // Save faculty member with a file upload (multipart/form-data)
+  saveFacultyMemberWithFile: async (member, imageFile, targetDivision = "school") => {
+    const division = member.division || targetDivision;
+    const isNew = !member.id;
+
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    formData.append("name", member.name || "");
+    formData.append("role", member.role || "");
+    formData.append("qualification", member.qualification || "");
+    formData.append("experience", member.experience || "");
+    formData.append("department", member.department || "");
+    formData.append("division", division);
+    if (!isNew) formData.append("id", member.id);
+
+    // Pass ?division= so the server selects the correct Cloudinary folder
+    const endpoint = isNew
+      ? `/cms/faculty?division=${division}`
+      : `/cms/faculty/${member.id}?division=${division}`;
+    const result = await apiUpload(endpoint, isNew ? "POST" : "PUT", formData);
     cmsBus.notifyChange("faculty");
     return normalize(result);
   },

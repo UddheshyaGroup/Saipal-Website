@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { cmsService, cmsBus } from "../../../services/cmsService";
-import { Plus, Edit, Trash2, Users } from "lucide-react";
+import { Plus, Edit, Trash2, Users, Link2, Upload, X, Image } from "lucide-react";
+
+const MAX_FILE_SIZE_MB = 10;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 export default function FacultyManager({ division = "school" }) {
   const isSchool = division === "school";
@@ -9,6 +12,14 @@ export default function FacultyManager({ division = "school" }) {
   const [editingMember, setEditingMember] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
+
+  // "url" | "upload"
+  const [imageMode, setImageMode] = useState("url");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [fileSizeError, setFileSizeError] = useState("");
+  const fileInputRef = useRef(null);
+
   const [form, setForm] = useState({
     name: "",
     role: "",
@@ -34,10 +45,18 @@ export default function FacultyManager({ division = "school" }) {
     return () => cmsBus.removeEventListener("cms-data-changed", handleCmsChange);
   }, [division]);
 
+  const resetImageState = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setFileSizeError("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleOpenModal = (member = null) => {
     if (member) {
       setEditingMember(member);
       setForm({ ...member });
+      setImagePreview(member.image || null);
     } else {
       setEditingMember(null);
       setForm({
@@ -48,22 +67,58 @@ export default function FacultyManager({ division = "school" }) {
         image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600",
         department: isSchool ? "Primary Level" : "A-Levels & +2 Science",
       });
+      setImagePreview(null);
     }
+    setImageMode("url");
+    resetImageState();
+    setSaveError("");
     setIsModalOpen(true);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFileSizeError("");
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setFileSizeError(`File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum allowed size is ${MAX_FILE_SIZE_MB} MB.`);
+      setImageFile(null);
+      setImagePreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
-    setSaving(true); setSaveError("");
+    setSaving(true);
+    setSaveError("");
+
     try {
-      await cmsService.saveFacultyMember(
-        { ...form, id: editingMember?.id || form.id, division },
-        division
-      );
+      if (imageMode === "upload" && imageFile) {
+        // Upload via multipart/form-data → Cloudinary saipal_media/faculty/[division]
+        await cmsService.saveFacultyMemberWithFile(
+          { ...form, id: editingMember?.id || form.id, division },
+          imageFile,
+          division
+        );
+      } else {
+        // URL mode — plain JSON save
+        await cmsService.saveFacultyMember(
+          { ...form, id: editingMember?.id || form.id, division },
+          division
+        );
+      }
       setIsModalOpen(false);
+      resetImageState();
     } catch (err) {
       setSaveError(err.message || "Failed to save. Check that the server is running.");
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -72,12 +127,17 @@ export default function FacultyManager({ division = "school" }) {
     catch (err) { alert("Delete failed: " + err.message); }
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    resetImageState();
+  };
+
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <Users className="text-[#00AEEF]" /> Faculty & Staff Directory
+            <Users className="text-[#00AEEF]" /> Faculty &amp; Staff Directory
           </h1>
           <p className="text-xs text-slate-500 mt-1">
             Manage teacher profiles, qualifications, and department leaders.
@@ -119,8 +179,20 @@ export default function FacultyManager({ division = "school" }) {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingMember ? "Edit Member" : "Add Faculty Member"}</h3>
+          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                {editingMember ? "Edit Member" : "Add Faculty Member"}
+              </h3>
+              <button
+                type="button"
+                onClick={handleCloseModal}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
             <form onSubmit={handleSave} className="space-y-3">
               <div>
                 <label className="text-xs font-bold uppercase text-slate-500">Name</label>
@@ -138,14 +210,110 @@ export default function FacultyManager({ division = "school" }) {
                 <label className="text-xs font-bold uppercase text-slate-500">Experience</label>
                 <input type="text" value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} className="input" required />
               </div>
+
+              {/* ── Profile Photo section ── */}
               <div>
-                <label className="text-xs font-bold uppercase text-slate-500">Profile Photo URL</label>
-                <input type="text" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} className="input" required />
+                <label className="text-xs font-bold uppercase text-slate-500 block mb-2">Profile Photo</label>
+
+                {/* Mode tabs */}
+                <div className="flex rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => { setImageMode("url"); resetImageState(); }}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold transition ${
+                      imageMode === "url"
+                        ? "bg-[#00AEEF] text-white"
+                        : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    }`}
+                  >
+                    <Link2 size={13} /> URL
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setImageMode("upload"); setForm({ ...form, image: "" }); }}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold transition ${
+                      imageMode === "upload"
+                        ? "bg-[#00AEEF] text-white"
+                        : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    }`}
+                  >
+                    <Upload size={13} /> Upload
+                  </button>
+                </div>
+
+                {imageMode === "url" ? (
+                  <>
+                    <input
+                      type="text"
+                      value={form.image}
+                      onChange={(e) => { setForm({ ...form, image: e.target.value }); setImagePreview(e.target.value); }}
+                      className="input"
+                      placeholder="https://..."
+                      required={imageMode === "url"}
+                    />
+                    {form.image && (
+                      <img
+                        src={imagePreview || form.image}
+                        alt="preview"
+                        referrerPolicy="no-referrer"
+                        className="mt-2 w-16 h-16 rounded-full object-cover border-2 border-[#00AEEF] mx-auto"
+                        onError={(e) => { e.target.style.display = "none"; }}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {/* Drop zone / file picker */}
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-5 text-center cursor-pointer hover:border-[#00AEEF] transition group"
+                    >
+                      {imagePreview ? (
+                        <div className="flex flex-col items-center gap-2">
+                          <img src={imagePreview} alt="preview" className="w-20 h-20 rounded-full object-cover border-2 border-[#00AEEF]" />
+                          <span className="text-xs text-slate-500 dark:text-slate-400">{imageFile?.name}</span>
+                          <span className="text-[10px] text-slate-400">({(imageFile?.size / 1024 / 1024).toFixed(2)} MB)</span>
+                          <span className="text-xs text-[#00AEEF] font-semibold">Click to change</span>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-[#00AEEF]/10 transition">
+                            <Image size={22} className="text-slate-400 group-hover:text-[#00AEEF] transition" />
+                          </div>
+                          <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Click to upload photo</p>
+                          <p className="text-[10px] text-slate-400">JPG, PNG, WEBP &bull; Max {MAX_FILE_SIZE_MB} MB</p>
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                    {fileSizeError && (
+                      <p className="text-xs text-rose-600 bg-rose-50 rounded-lg px-3 py-2 mt-2">{fileSizeError}</p>
+                    )}
+                    {imageMode === "upload" && !imageFile && !editingMember && (
+                      <p className="text-[10px] text-slate-400 mt-1 text-center">
+                        No file chosen — a photo is required.
+                      </p>
+                    )}
+                  </>
+                )}
               </div>
+
               {saveError && <p className="text-xs text-rose-600 bg-rose-50 rounded-lg px-3 py-2">{saveError}</p>}
               <div className="flex justify-end gap-2 pt-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold">Cancel</button>
-                <button type="submit" disabled={saving} className="px-5 py-2 bg-[#00AEEF] text-white rounded-xl text-xs font-bold disabled:opacity-50">{saving ? "Saving…" : "Save Member"}</button>
+                <button type="button" onClick={handleCloseModal} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold">Cancel</button>
+                <button
+                  type="submit"
+                  disabled={saving || (imageMode === "upload" && !!fileSizeError)}
+                  className="px-5 py-2 bg-[#00AEEF] text-white rounded-xl text-xs font-bold disabled:opacity-50"
+                >
+                  {saving ? "Saving…" : "Save Member"}
+                </button>
               </div>
             </form>
           </div>
