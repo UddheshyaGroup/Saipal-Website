@@ -7,6 +7,7 @@ import Scholarship from '../models/Scholarship.js';
 import Testimonial from '../models/Testimonial.js';
 import GalleryAlbum from '../models/GalleryAlbum.js';
 import SiteSettings from '../models/SiteSettings.js';
+import { destroyCloudinaryAsset } from '../config/cloudinary.js';
 
 // --- Helper to parse division filter ---
 const getDivisionQuery = (req) => {
@@ -32,7 +33,7 @@ export const createNotice = async (req, res) => {
   try {
     const noticeData = { ...req.body };
     if (req.file) {
-      noticeData.attachment = req.file.path; // Save uploaded PDF or document URL
+      noticeData.attachment = req.file.path;
     }
     const notice = new Notice(noticeData);
     const saved = await notice.save();
@@ -46,9 +47,17 @@ export const updateNotice = async (req, res) => {
   try {
     const { id } = req.params;
     const noticeData = { ...req.body };
+
     if (req.file) {
+      // A new file was uploaded — delete the old attachment from Cloudinary
+      const existing = await Notice.findById(id);
+      if (existing?.attachment) {
+        const isRaw = existing.attachment.includes('/raw/');
+        await destroyCloudinaryAsset(existing.attachment, isRaw ? 'raw' : 'image');
+      }
       noticeData.attachment = req.file.path;
     }
+
     const updated = await Notice.findByIdAndUpdate(id, noticeData, { new: true });
     if (!updated) return res.status(404).json({ message: 'Notice not found' });
     res.json(updated);
@@ -62,6 +71,13 @@ export const deleteNotice = async (req, res) => {
     const { id } = req.params;
     const deleted = await Notice.findByIdAndDelete(id);
     if (!deleted) return res.status(404).json({ message: 'Notice not found' });
+
+    // Clean up attachment from Cloudinary
+    if (deleted.attachment) {
+      const isRaw = deleted.attachment.includes('/raw/');
+      await destroyCloudinaryAsset(deleted.attachment, isRaw ? 'raw' : 'image');
+    }
+
     res.json({ message: 'Notice deleted successfully', id });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -141,7 +157,7 @@ export const createBlog = async (req, res) => {
   try {
     const blogData = { ...req.body };
     if (req.file) {
-      blogData.image = req.file.path; // Set Cloudinary image URL
+      blogData.image = req.file.path;
     }
     const blog = new Blog(blogData);
     const saved = await blog.save();
@@ -155,9 +171,14 @@ export const updateBlog = async (req, res) => {
   try {
     const { id } = req.params;
     const blogData = { ...req.body };
+
     if (req.file) {
+      // New image uploaded — delete old one from Cloudinary
+      const existing = await Blog.findById(id);
+      if (existing?.image) await destroyCloudinaryAsset(existing.image);
       blogData.image = req.file.path;
     }
+
     const updated = await Blog.findByIdAndUpdate(id, blogData, { new: true });
     if (!updated) return res.status(404).json({ message: 'Blog post not found' });
     res.json(updated);
@@ -171,6 +192,10 @@ export const deleteBlog = async (req, res) => {
     const { id } = req.params;
     const deleted = await Blog.findByIdAndDelete(id);
     if (!deleted) return res.status(404).json({ message: 'Blog post not found' });
+
+    // Remove cover image from Cloudinary
+    if (deleted.image) await destroyCloudinaryAsset(deleted.image);
+
     res.json({ message: 'Blog post deleted successfully', id });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -208,9 +233,14 @@ export const updateFaculty = async (req, res) => {
   try {
     const { id } = req.params;
     const facultyData = { ...req.body };
+
     if (req.file) {
+      // New photo uploaded — delete old profile photo from Cloudinary
+      const existing = await Faculty.findById(id);
+      if (existing?.image) await destroyCloudinaryAsset(existing.image);
       facultyData.image = req.file.path;
     }
+
     const updated = await Faculty.findByIdAndUpdate(id, facultyData, { new: true });
     if (!updated) return res.status(404).json({ message: 'Faculty member not found' });
     res.json(updated);
@@ -224,6 +254,10 @@ export const deleteFaculty = async (req, res) => {
     const { id } = req.params;
     const deleted = await Faculty.findByIdAndDelete(id);
     if (!deleted) return res.status(404).json({ message: 'Faculty member not found' });
+
+    // Remove profile photo from Cloudinary
+    if (deleted.image) await destroyCloudinaryAsset(deleted.image);
+
     res.json({ message: 'Faculty member deleted successfully', id });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -261,9 +295,14 @@ export const updateProgram = async (req, res) => {
   try {
     const { id } = req.params;
     const programData = { ...req.body };
+
     if (req.file) {
+      // New image uploaded — delete old program cover from Cloudinary
+      const existing = await Program.findById(id);
+      if (existing?.image) await destroyCloudinaryAsset(existing.image);
       programData.image = req.file.path;
     }
+
     const updated = await Program.findByIdAndUpdate(id, programData, { new: true });
     if (!updated) return res.status(404).json({ message: 'Program not found' });
     res.json(updated);
@@ -277,6 +316,10 @@ export const deleteProgram = async (req, res) => {
     const { id } = req.params;
     const deleted = await Program.findByIdAndDelete(id);
     if (!deleted) return res.status(404).json({ message: 'Program not found' });
+
+    // Remove cover image from Cloudinary
+    if (deleted.image) await destroyCloudinaryAsset(deleted.image);
+
     res.json({ message: 'Program deleted successfully', id });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -392,7 +435,6 @@ export const createGalleryAlbum = async (req, res) => {
     if (req.file) {
       albumData.cover = req.file.path;
     }
-    // Set empty photos list initially if not provided
     if (!albumData.photos) albumData.photos = [];
     else if (typeof albumData.photos === 'string') {
       albumData.photos = JSON.parse(albumData.photos);
@@ -409,12 +451,18 @@ export const updateGalleryAlbum = async (req, res) => {
   try {
     const { id } = req.params;
     const albumData = { ...req.body };
+
     if (req.file) {
+      // New cover uploaded — delete old cover from Cloudinary
+      const existing = await GalleryAlbum.findById(id);
+      if (existing?.cover) await destroyCloudinaryAsset(existing.cover);
       albumData.cover = req.file.path;
     }
+
     if (albumData.photos && typeof albumData.photos === 'string') {
       albumData.photos = JSON.parse(albumData.photos);
     }
+
     const updated = await GalleryAlbum.findByIdAndUpdate(id, albumData, { new: true });
     if (!updated) return res.status(404).json({ message: 'Album not found' });
     res.json(updated);
@@ -428,6 +476,15 @@ export const deleteGalleryAlbum = async (req, res) => {
     const { id } = req.params;
     const deleted = await GalleryAlbum.findByIdAndDelete(id);
     if (!deleted) return res.status(404).json({ message: 'Album not found' });
+
+    // Remove album cover + all photos from Cloudinary in parallel
+    const urlsToDelete = [
+      deleted.cover,
+      ...(deleted.photos || []).map((p) => p.url),
+    ].filter(Boolean);
+
+    await Promise.all(urlsToDelete.map((url) => destroyCloudinaryAsset(url)));
+
     res.json({ message: 'Album deleted successfully', id });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -437,13 +494,12 @@ export const deleteGalleryAlbum = async (req, res) => {
 export const addPhotoToAlbum = async (req, res) => {
   try {
     const { id } = req.params;
-    
-    // Accept either a Multer/Cloudinary file upload OR a plain JSON photoUrl
+
     let photoUrl;
     if (req.file) {
-      photoUrl = req.file.path; // Cloudinary URL from multer-storage-cloudinary
+      photoUrl = req.file.path;
     } else if (req.body && req.body.photoUrl) {
-      photoUrl = req.body.photoUrl; // Plain URL (from URL mode or base64 data URL)
+      photoUrl = req.body.photoUrl;
     } else {
       return res.status(400).json({ message: 'No file uploaded and no photoUrl provided' });
     }
@@ -465,8 +521,19 @@ export const removePhotoFromAlbum = async (req, res) => {
     const album = await GalleryAlbum.findById(albumId);
     if (!album) return res.status(404).json({ message: 'Album not found' });
 
-    album.photos = album.photos.filter((p) => String(p._id) !== String(photoId) && String(p.id) !== String(photoId));
+    // Find the photo to delete before removing it from the array
+    const photoToDelete = album.photos.find(
+      (p) => String(p._id) === String(photoId) || String(p.id) === String(photoId)
+    );
+
+    album.photos = album.photos.filter(
+      (p) => String(p._id) !== String(photoId) && String(p.id) !== String(photoId)
+    );
     const saved = await album.save();
+
+    // Now delete from Cloudinary after DB is updated
+    if (photoToDelete?.url) await destroyCloudinaryAsset(photoToDelete.url);
+
     res.json(saved);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -480,7 +547,6 @@ export const getSiteSettings = async (req, res) => {
   try {
     let settings = await SiteSettings.findOne();
     if (!settings) {
-      // Create default settings if not exists
       settings = new SiteSettings();
       await settings.save();
     }

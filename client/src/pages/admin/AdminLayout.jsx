@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   Bell,
   FileText,
+  Newspaper,
   Users,
   GraduationCap,
   Award,
@@ -26,6 +27,7 @@ import PortalSelector from "./PortalSelector";
 import DashboardOverview from "./modules/DashboardOverview";
 import NoticesManager from "./modules/NoticesManager";
 import BlogManager from "./modules/BlogManager";
+import NewsManager from "./modules/NewsManager";
 import FacultyManager from "./modules/FacultyManager";
 import ProgramsManager from "./modules/ProgramsManager";
 import ScholarshipsManager, {
@@ -40,6 +42,7 @@ const pathToModuleMap = {
   dashboard: "overview",
   notices: "notices",
   blogs: "blogs",
+  news: "news",
   faculty: "faculty",
   programs: "programs",
   scholarships: "scholarships",
@@ -52,6 +55,7 @@ const moduleToPathMap = {
   overview: "dashboard",
   notices: "notices",
   blogs: "blogs",
+  news: "news",
   faculty: "faculty",
   programs: "programs",
   scholarships: "scholarships",
@@ -95,7 +99,8 @@ export default function AdminLayout() {
     const MODULE_TITLES = {
       overview:     `${div} Admin — Dashboard`,
       notices:      `${div} Admin — Notices & Tickers`,
-      blogs:        `${div} Admin — Blog & News`,
+      blogs:        `${div} Admin — Blog Articles`,
+      news:         `${div} Admin — News Articles`,
       faculty:      `${div} Admin — Faculty Directory`,
       programs:     `${div} Admin — Academic Programs`,
       scholarships: `${div} Admin — Scholarships`,
@@ -128,17 +133,16 @@ export default function AdminLayout() {
   const isSchool = selectedDivision === "school";
 
   const navItems = [
-    { id: "overview", label: "Dashboard Overview", icon: LayoutDashboard },
-    { id: "notices", label: isSchool ? "School Notices & Tickers" : "College Notices & Tickers", icon: Bell },
-    { id: "blogs", label: "Blog & News Articles", icon: FileText },
-    { id: "faculty", label: isSchool ? "School Faculty Directory" : "College Faculty", icon: Users },
-    { id: "programs", label: isSchool ? "School Levels (K-10)" : "Programs (+2/A-Levels)", icon: GraduationCap },
+    { id: "overview",     label: "Dashboard Overview",                              icon: LayoutDashboard },
+    { id: "notices",      label: "Notices & Tickers",                               icon: Bell },
+    { id: "blogs",        label: "Blog Articles",                                   icon: FileText },
+    { id: "news",         label: "News Articles",                                   icon: Newspaper },
+    { id: "faculty",      label: "Faculty Directory",                               icon: Users },
+    { id: "programs",     label: isSchool ? "Levels (K-10)" : "Programs (+2/A-Levels)", icon: GraduationCap },
     ...(isSchool ? [{ id: "scholarships", label: "Scholarships & Aid", icon: Award }] : []),
-    { id: "gallery", label: isSchool ? "School Gallery" : "College Gallery", icon: Images },
-    // ...(isSchool ? [{ id: "facilities", label: "School Facilities & Clubs", icon: Building2 }] : []),
+    { id: "gallery",      label: "Gallery",                                         icon: Images },
     { id: "testimonials", label: isSchool ? "Parent Testimonials" : "Community Reviews", icon: Quote },
-    { id: "chatbot", label: "AI Chatbot FAQ", icon: HelpCircle },
-    // { id: "settings", label: "Site Settings & Info", icon: Settings },
+    { id: "chatbot",      label: "AI Chatbot FAQ",                                  icon: HelpCircle },
   ];
 
   return (
@@ -191,7 +195,7 @@ export default function AdminLayout() {
         </div>
 
         {/* Nav Links */}
-        <nav className="p-4 space-y-1 flex-1 overflow-y-auto min-h-0">
+        <nav className="p-4 flex-1 overflow-y-auto min-h-0 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeModule === item.id;
@@ -257,6 +261,7 @@ export default function AdminLayout() {
         )}
         {activeModule === "notices" && <NoticesManager division={selectedDivision} />}
         {activeModule === "blogs" && <BlogManager division={selectedDivision} />}
+        {activeModule === "news" && <NewsManager division={selectedDivision} />}
         {activeModule === "faculty" && <FacultyManager division={selectedDivision} />}
         {activeModule === "programs" && <ProgramsManager division={selectedDivision} />}
         {activeModule === "scholarships" && <ScholarshipsManager division={selectedDivision} />}

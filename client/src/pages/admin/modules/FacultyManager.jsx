@@ -64,7 +64,7 @@ export default function FacultyManager({ division = "school" }) {
         role: isSchool ? "K-10 Teacher" : "Lecturer",
         qualification: isSchool ? "M.Ed. / B.Ed." : "M.Sc. / M.A. / M.B.S",
         experience: "5+ Years",
-        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600",
+        image: "",
         department: isSchool ? "Primary Level" : "A-Levels & +2 Science",
       });
       setImagePreview(null);

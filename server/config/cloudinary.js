@@ -52,7 +52,10 @@ const uploadNotice = makeUploader('saipal_media/notices', {
 });
 
 // Blogs
-const uploadBlog = makeUploader('saipal_media/blogs', { maxSizeMB: 5 });
+const uploadBlog = makeUploader('saipal_media/blogs', { maxSizeMB: 10 });
+
+// News
+const uploadNews = makeUploader('saipal_media/news', { maxSizeMB: 10 });
 
 // Faculty — per division
 const uploadFacultyCollege = makeUploader('saipal_media/faculty/college', { maxSizeMB: 10 });
@@ -85,9 +88,38 @@ export {
   upload,               // legacy / fallback
   uploadNotice,
   uploadBlog,
+  uploadNews,
   uploadFacultyCollege,
   uploadFacultySchool,
   uploadProgram,
   uploadGallery,
   uploadReview,
 };
+
+// ─────────────────────────────────────────────────────────────────
+// Helper: delete an asset from Cloudinary by its URL.
+// Extracts public_id from the URL, then calls destroy().
+// Supports images and raw files (PDFs).
+// Silently no-ops for non-Cloudinary URLs (e.g. Unsplash, Google).
+// ─────────────────────────────────────────────────────────────────
+export const destroyCloudinaryAsset = async (url, resourceType = 'image') => {
+  if (!url || typeof url !== 'string') return;
+  if (!url.includes('res.cloudinary.com')) return; // skip external URLs
+
+  try {
+    // Cloudinary URLs look like:
+    //   https://res.cloudinary.com/<cloud>/image/upload/v1234/saipal_media/folder/filename.jpg
+    //   https://res.cloudinary.com/<cloud>/raw/upload/saipal_media/folder/file.pdf
+    const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[^.]+)?$/);
+    if (!match) return;
+
+    const publicId = match[1]; // e.g. "saipal_media/faculty/college/abc123"
+
+    await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+    console.log(`[Cloudinary] Deleted: ${publicId}`);
+  } catch (err) {
+    // Never fail the main request due to cleanup errors
+    console.warn(`[Cloudinary] Failed to delete asset (${url}):`, err.message);
+  }
+};
+

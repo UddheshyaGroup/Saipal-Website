@@ -232,12 +232,14 @@ export const cmsService = {
     cmsBus.notifyChange("scholarships");
   },
 
-  // ── BLOGS ───────────────────────────────────────────────────
+  // ── BLOGS ─────────────────────────────────────────────────
   getBlogPosts: async (division = "all") => {
     const data = await pub("/cms/blogs");
     const list = normalize(data);
-    if (!division || division === "all") return list;
-    return list.filter((p) => (p.division || "school") === division);
+    // Filter out news-type posts so blogs list only shows blog type
+    const blogs = list.filter((p) => !p.type || p.type === "blog");
+    if (!division || division === "all") return blogs;
+    return blogs.filter((p) => (p.division || "school") === division);
   },
   getBlogPostById: async (id) => {
     try {
@@ -247,27 +249,91 @@ export const cmsService = {
       return null;
     }
   },
-  // Kept for backward compat
-  getBlogPostByIdAsync: async (id) => {
-    try {
-      const post = await pub(`/cms/blogs/${id}`);
-      return normalize(post);
-    } catch {
-      return null;
-    }
-  },
+  // Save blog post — URL/JSON mode
   saveBlogPost: async (post, targetDivision = "school") => {
     const division = post.division || targetDivision;
     const isNew = !post.id;
-    const body = { ...post, division };
+    const body = { ...post, division, type: "blog" };
     if (body.image) body.image = convertGoogleDriveUrl(body.image);
     const result = await api(isNew ? "/cms/blogs" : `/cms/blogs/${post.id}`, isNew ? "POST" : "PUT", body);
+    cmsBus.notifyChange("blogs");
+    return normalize(result);
+  },
+  // Save blog post — file upload mode (multipart/form-data → saipal_media/blogs)
+  saveBlogPostWithFile: async (post, imageFile, targetDivision = "school") => {
+    const division = post.division || targetDivision;
+    const isNew = !post.id;
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    formData.append("title", post.title || "");
+    formData.append("category", post.category || "");
+    formData.append("author", post.author || "");
+    formData.append("date", post.date || "");
+    formData.append("summary", post.summary || "");
+    formData.append("content", post.content || "");
+    formData.append("division", division);
+    formData.append("type", "blog");
+    if (!isNew) formData.append("id", post.id);
+    const endpoint = isNew ? "/cms/blogs" : `/cms/blogs/${post.id}`;
+    const result = await apiUpload(endpoint, isNew ? "POST" : "PUT", formData);
     cmsBus.notifyChange("blogs");
     return normalize(result);
   },
   deleteBlogPost: async (id) => {
     await api(`/cms/blogs/${id}`, "DELETE");
     cmsBus.notifyChange("blogs");
+  },
+
+  // ── NEWS ─────────────────────────────────────────────────
+  getNewsPosts: async (division = "all") => {
+    const data = await pub("/cms/news");
+    const list = normalize(data);
+    // Filter to only news-type posts
+    const news = list.filter((p) => p.type === "news");
+    if (!division || division === "all") return news;
+    return news.filter((p) => (p.division || "school") === division);
+  },
+  getNewsPostById: async (id) => {
+    try {
+      const post = await pub(`/cms/news/${id}`);
+      return normalize(post);
+    } catch {
+      return null;
+    }
+  },
+  // Save news post — URL/JSON mode
+  saveNewsPost: async (post, targetDivision = "school") => {
+    const division = post.division || targetDivision;
+    const isNew = !post.id;
+    const body = { ...post, division, type: "news" };
+    if (body.image) body.image = convertGoogleDriveUrl(body.image);
+    const result = await api(isNew ? "/cms/news" : `/cms/news/${post.id}`, isNew ? "POST" : "PUT", body);
+    cmsBus.notifyChange("news");
+    return normalize(result);
+  },
+  // Save news post — file upload mode (multipart/form-data → saipal_media/news)
+  saveNewsPostWithFile: async (post, imageFile, targetDivision = "school") => {
+    const division = post.division || targetDivision;
+    const isNew = !post.id;
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    formData.append("title", post.title || "");
+    formData.append("category", post.category || "");
+    formData.append("author", post.author || "");
+    formData.append("date", post.date || "");
+    formData.append("summary", post.summary || "");
+    formData.append("content", post.content || "");
+    formData.append("division", division);
+    formData.append("type", "news");
+    if (!isNew) formData.append("id", post.id);
+    const endpoint = isNew ? "/cms/news" : `/cms/news/${post.id}`;
+    const result = await apiUpload(endpoint, isNew ? "POST" : "PUT", formData);
+    cmsBus.notifyChange("news");
+    return normalize(result);
+  },
+  deleteNewsPost: async (id) => {
+    await api(`/cms/news/${id}`, "DELETE");
+    cmsBus.notifyChange("news");
   },
 
   // ── TESTIMONIALS ────────────────────────────────────────────

@@ -62,6 +62,8 @@ function MainLayout() {
         <Route path="/school/enquiry" element={<SchoolInquiryForm />} />
         <Route path="/school/blog" element={<Blog />} />
         <Route path="/school/blog/:id" element={<BlogDetail />} />
+        <Route path="/school/news" element={<Blog />} />
+        <Route path="/school/news/:id" element={<BlogDetail />} />
 
         {/* College Division Routes */}
         <Route path="/college" element={<Home />} />
@@ -75,6 +77,8 @@ function MainLayout() {
         <Route path="/college/enquiry" element={<InquiryForm />} />
         <Route path="/college/blog" element={<Blog />} />
         <Route path="/college/blog/:id" element={<BlogDetail />} />
+        <Route path="/college/news" element={<Blog />} />
+        <Route path="/college/news/:id" element={<BlogDetail />} />
 
         {/* Shared / Legacy Fallback Routes */}
         <Route path="/about" element={<About />} />

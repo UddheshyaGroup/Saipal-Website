@@ -8,7 +8,8 @@ const blogSchema = new mongoose.Schema({
   image: { type: String, required: true }, // cover image url
   summary: { type: String, required: true },
   content: { type: String, required: true },
-  division: { type: String, enum: ['school', 'college', 'all'], default: 'college' }
+  division: { type: String, enum: ['school', 'college', 'all'], default: 'college' },
+  type: { type: String, enum: ['blog', 'news'], default: 'blog' }
 }, { timestamps: true });
 
 const Blog = mongoose.model('Blog', blogSchema);

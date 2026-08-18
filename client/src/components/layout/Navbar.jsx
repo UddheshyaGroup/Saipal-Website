@@ -259,9 +259,15 @@ export default function Navbar() {
                         />
                         <DrawerLink
                           to="/school/blog"
-                          label="School Blog & News"
+                          label="School Blog"
                           onClick={() => setDesktopMenuOpen(false)}
                           active={location.pathname.startsWith("/school/blog")}
+                        />
+                        <DrawerLink
+                          to="/school/news"
+                          label="School News"
+                          onClick={() => setDesktopMenuOpen(false)}
+                          active={location.pathname.startsWith("/school/news")}
                         />
                         <DrawerLink
                           to="/school/contact"
@@ -358,9 +364,15 @@ export default function Navbar() {
                         />
                         <DrawerLink
                           to="/college/blog"
-                          label="Blog & News"
+                          label="College Blog"
                           onClick={() => setDesktopMenuOpen(false)}
                           active={location.pathname.startsWith("/college/blog")}
+                        />
+                        <DrawerLink
+                          to="/college/news"
+                          label="College News"
+                          onClick={() => setDesktopMenuOpen(false)}
+                          active={location.pathname.startsWith("/college/news")}
                         />
                         <DrawerLink
                           to="/college/contact"
@@ -502,7 +514,7 @@ export default function Navbar() {
                     >
                       🏆 School Scholarships
                     </NavLink>
-                    <NavLink
+                     <NavLink
                        to="/school/gallery"
                        onClick={() => setMobileOpen(false)}
                        className="px-4 py-2.5 rounded-xl text-slate-700 font-semibold hover:bg-slate-50"
@@ -514,7 +526,14 @@ export default function Navbar() {
                        onClick={() => setMobileOpen(false)}
                        className="px-4 py-2.5 rounded-xl text-slate-700 font-semibold hover:bg-slate-50"
                      >
-                       ✍️ School Blog &amp; News
+                       ✍️ School Blog
+                     </NavLink>
+                     <NavLink
+                       to="/school/news"
+                       onClick={() => setMobileOpen(false)}
+                       className="px-4 py-2.5 rounded-xl text-slate-700 font-semibold hover:bg-slate-50"
+                     >
+                       📰 School News
                      </NavLink>
                     <NavLink
                       to="/school/contact"
@@ -575,13 +594,20 @@ export default function Navbar() {
                     >
                       College Gallery
                     </NavLink>
-                    <NavLink
-                      to="/college/blog"
-                      onClick={() => setMobileOpen(false)}
-                      className="px-4 py-2.5 rounded-xl text-slate-700 font-semibold hover:bg-slate-50"
-                    >
-                      ✍️ Blog &amp; News
-                    </NavLink>
+                     <NavLink
+                       to="/college/blog"
+                       onClick={() => setMobileOpen(false)}
+                       className="px-4 py-2.5 rounded-xl text-slate-700 font-semibold hover:bg-slate-50"
+                     >
+                       ✍️ College Blog
+                     </NavLink>
+                     <NavLink
+                       to="/college/news"
+                       onClick={() => setMobileOpen(false)}
+                       className="px-4 py-2.5 rounded-xl text-slate-700 font-semibold hover:bg-slate-50"
+                     >
+                       📰 College News
+                     </NavLink>
                     <NavLink
                       to="/college/contact"
                       onClick={() => setMobileOpen(false)}

@@ -3,6 +3,7 @@ import {
   upload,
   uploadNotice,
   uploadBlog,
+  uploadNews,
   uploadFacultyCollege,
   uploadFacultySchool,
   uploadProgram,
@@ -35,6 +36,9 @@ router.get('/notices', getNotices);
 router.get('/tickers', getTickers);
 router.get('/blogs', getBlogs);
 router.get('/blogs/:id', getBlogById);
+// News — public read (reuses Blog controller, filtered by type in service)
+router.get('/news', getBlogs);
+router.get('/news/:id', getBlogById);
 router.get('/faculty', getFaculty);
 router.get('/programs', getPrograms);
 router.get('/scholarships', getScholarships);
@@ -54,10 +58,16 @@ router.post('/tickers', protect, createTicker);
 router.put('/tickers/:id', protect, updateTicker);
 router.delete('/tickers/:id', protect, deleteTicker);
 
-// Blogs — covers go to saipal_media/blogs (5 MB)
+// Blogs — covers go to saipal_media/blogs (10 MB)
 router.post('/blogs', protect, uploadBlog.single('image'), createBlog);
 router.put('/blogs/:id', protect, uploadBlog.single('image'), updateBlog);
 router.delete('/blogs/:id', protect, deleteBlog);
+
+// News — covers go to saipal_media/news (10 MB)
+// Reuses Blog model with type='news' — filtered by controller/service
+router.post('/news', protect, uploadNews.single('image'), createBlog);
+router.put('/news/:id', protect, uploadNews.single('image'), updateBlog);
+router.delete('/news/:id', protect, deleteBlog);
 
 // Faculty — profile photos go to saipal_media/faculty/college or /school (10 MB)
 // The division is read from ?division= query param or request body
