@@ -18,6 +18,7 @@ import {
   FaGlobeAsia,
   FaTimes,
   FaStar,
+  FaQuoteLeft,
 } from "react-icons/fa";
 
 export default function Home() {
@@ -183,6 +184,110 @@ export default function Home() {
           </div>
         </div>
       </motion.section>
+
+      {/* ================= PRINCIPAL'S MESSAGE ================= */}
+      <section className="relative overflow-hidden bg-slate-50 px-6 py-20 sm:py-24">
+        {/* Decorative background */}
+        <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
+        <div className="absolute -right-24 bottom-10 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-7xl">
+          {/* Section label */}
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-bold text-primary sm:text-4xl md:text-5xl">
+              Principal’s Message
+            </h2>
+
+            <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-accent" />
+          </div>
+
+          {/* Principal’s Message Card */}
+          <div className="grid grid-cols-1 items-stretch overflow-hidden rounded-[2rem] border border-gray-100 bg-white shadow-xl lg:grid-cols-5">
+            {/* Message (Left side) */}
+            <div className="relative p-8 sm:p-10 md:p-12 lg:col-span-3 lg:order-1 lg:p-14">
+              <FaQuoteLeft className="mb-6 h-12 w-12 text-accent opacity-20" />
+
+              <p className="mb-6 text-lg font-semibold text-primary">
+                Dear Learners, Parents and Guardians,
+              </p>
+
+              <div className="space-y-5 text-base leading-8 text-gray-600 sm:text-lg">
+                <p>
+                  Welcome to <strong className="text-primary">Saipal Academy</strong>,
+                  a learning community dedicated to purpose-driven excellence, where
+                  every student is encouraged to discover, develop, and realize their
+                  full potential.
+                </p>
+
+                <p>
+                  We believe education extends beyond academic success by nurturing
+                  curiosity, integrity, resilience, compassion, and a lifelong love
+                  for learning.
+                </p>
+
+                <p>
+                  Through our{" "}
+                  <strong className="text-primary">
+                    NEB (+2) Science and Management
+                  </strong>{" "}
+                  programs and the{" "}
+                  <strong className="text-primary">
+                    Cambridge International A Level
+                  </strong>{" "}
+                  curriculum, students develop a strong academic foundation alongside
+                  critical thinking, creativity, communication, leadership, and a
+                  global perspective.
+                </p>
+
+                <p>
+                  At Saipal Academy, we are committed to shaping confident,
+                  responsible, and empathetic individuals prepared to make meaningful
+                  contributions to society. We warmly welcome you to join this journey
+                  of growth, discovery, and academic excellence.
+                </p>
+              </div>
+
+              {/* Signature divider */}
+              <div className="mt-10 flex items-center gap-4 border-t border-gray-100 pt-8">
+                <div className="h-12 w-1 rounded-full bg-accent" />
+
+                <div>
+                  <p className="font-bold text-primary">
+                    Purpose. Excellence. Growth.
+                  </p>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    Building confident learners for a changing world.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Image (Right side) */}
+            <div className="relative min-h-[420px] overflow-hidden lg:col-span-2 lg:order-2 lg:min-h-full">
+              <img
+                src="/principal.jpeg"
+                alt="Mr. Matrika Prasad Khatiwada, Principal of Saipal Academy"
+                className="absolute inset-0 h-full w-full object-cover object-top"
+              />
+
+              {/* Image overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/10 to-transparent" />
+
+              {/* Name on image */}
+              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                <p className="text-2xl font-bold">
+                  Mr. Matrika Prasad Khatiwada
+                </p>
+
+                <p className="mt-1 font-semibold tracking-wide text-white/80">
+                  Principal, Saipal Academy
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ================= NOTICE BOARD ================= */}
       <section className="bg-white py-16">
