@@ -38,7 +38,7 @@ function App() {
             color: "#222",
           }}
         >
-          This page doesn't exist.
+          This website doesn't exist.
         </h2>
 
         <p
@@ -47,7 +47,7 @@ function App() {
             color: "#777",
           }}
         >
-          The page you're looking for is currently unavailable.
+          The website you're looking for is currently unavailable.
         </p>
       </div>
     </div>
